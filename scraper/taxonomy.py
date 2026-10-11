@@ -170,7 +170,7 @@ RULES = {
         r"(?:AI|value|model) alignment", r"interpretab\w*", r"explainab\w*", r"CS:XAI", r"fairness",
         r"responsible (?:AI|machine learning)", r"trustworthy (?:AI|machine learning|ML)",
         r"adversarial (?:examples?|attacks?|robustness)", r"CS:FAccT",
-        r"privacy-preserving", r"differential privacy", r"mechanistic interpretability", r"AI ethics",
+        r"privacy-preserving", r"differential(?:ly)? priva\w*", r"mechanistic interpretability", r"AI ethics",
         r"ethics (?:of|in) (?:AI|artificial intelligence)", r"AI governance", r"AI policy",
     ],
     "ai.theory": [
