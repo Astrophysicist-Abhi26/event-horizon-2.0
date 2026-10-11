@@ -13,7 +13,7 @@ Evidence, strongest first:
 
 A sub-field is assigned when its total evidence reaches TAG_THRESHOLD.
 General "(other)" sub-fields are fallbacks and are dropped when a specific
-sub-field of the same field is present.
+sub-field of the same field is present (except a declared general-ML venue).
 """
 
 from collections import defaultdict
@@ -24,7 +24,11 @@ TAG_THRESHOLD = 1.0
 TITLE_HIT = 1.0
 DESC_HIT = 0.5
 DESC_CAP = 1.0
-GENERALS = {"cosmo.general", "astro.general", "math.other", "phys.general", "ai.general"}
+GENERALS = {"cosmo.general", "astro.general", "math.other", "phys.general", "ai.general",
+            "cs.general"}
+# a venue its organisers declare as general ML (NeurIPS, ICLR ...) stays general ML
+# even when keywords also point at, say, vision
+KEEP_DECLARED = {"ai.general"}
 
 
 def keyword_hits(text):
@@ -63,8 +67,10 @@ def gather_evidence(ev, embed_result=None):
 
     # ML applied to a science: an AI signal + a physical-science signal
     sci = any(score[s] >= TAG_THRESHOLD for s in score
-              if T.parent(s) in ("cosmo", "astro", "physics"))
-    if score.get("ai.general", 0) >= TAG_THRESHOLD and sci:
+              if T.parent(s) in ("cosmo", "astro", "physics") and s != "phys.general")
+    ml = any(score[s] >= TAG_THRESHOLD for s in score
+             if T.parent(s) == "ai" and s != "ai.science")
+    if ml and sci:
         score["ai.science"] += 1.0
         why["ai.science"].add("keywords")
 
@@ -80,7 +86,8 @@ def assign(score, why):
     tagged = {sf for sf, v in score.items() if v >= TAG_THRESHOLD and sf in T.SUBFIELDS}
     for g in GENERALS:
         fam = T.parent(g)
-        if g in tagged and any(T.parent(s) == fam and s != g for s in tagged):
+        if g in tagged and any(T.parent(s) == fam and s != g for s in tagged) \
+                and not (g in KEEP_DECLARED and "declared" in why[g] and score[g] >= T.STRONG):
             tagged.discard(g)
     # INSPIRE's "Gravitation and Cosmology" gives cosmo.general a weak prior;
     # keep it only if something else points at cosmology too

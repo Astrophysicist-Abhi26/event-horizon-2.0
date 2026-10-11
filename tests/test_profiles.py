@@ -27,6 +27,9 @@ LEGACY_W = {
     "phys.gr": 40, "phys.hepth": 28, "phys.quantum": 18, "phys.condmat": 12,
     "phys.fluids": 12, "phys.general": 10,
 }
+# AI sub-fields added after Event Horizon: what it called "AI / ML (general)"
+LEGACY_AI = [s for s in T.SUBFIELDS if T.parent(s) == "ai" and s not in LEGACY_W]
+LEGACY_W.update({s: LEGACY_W["ai.general"] for s in LEGACY_AI})
 
 
 def legacy_score(subfields, region, etype, basis):
@@ -55,9 +58,10 @@ def legacy_score(subfields, region, etype, basis):
 
 
 def test_cosmology_ml_reproduces_event_horizon_exhaustively():
-    """Every combination of up to 3 sub-fields x region x type x basis."""
+    """Every combination of up to 3 sub-fields x region x type x basis (Event Horizon's
+    sub-fields, plus the finer AI ones, which it ranked as general AI)."""
     prof = PROFILES["cosmology-ml"]
-    subs = list(T.SUBFIELDS)
+    subs = list(LEGACY_W)
     combos = itertools.chain.from_iterable(itertools.combinations(subs, k) for k in (1, 2, 3))
     regions = ["bengaluru", "india", "online", "abroad", "unknown", None]
     types = ["School", "Workshop", "Conference", "Talk / Seminar", "Lecture series"]
@@ -70,6 +74,13 @@ def test_cosmology_ml_reproduces_event_horizon_exhaustively():
                 (tags, region, etype, basis)
             n += 1
     assert n > 350_000
+
+
+def test_cosmology_ml_ignores_computer_science():
+    prof = PROFILES["cosmology-ml"]
+    for s in T.SUBFIELDS:
+        if T.parent(s) == "cs":
+            assert prof.score([s], "bengaluru", "School", ["declared"]) == 0
 
 
 def test_cosmology_ml_reproduces_real_event_horizon_scores():

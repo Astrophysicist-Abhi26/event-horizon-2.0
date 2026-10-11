@@ -32,8 +32,11 @@ Tag what an event is about; do not judge who it is for — ranking is done later
 separately for each research profile."""
 
 
+_TAXONOMY = ",".join(T.SUBFIELDS)      # a new sub-field re-tags cached events once
+
+
 def _key(ev):
-    s = (ev.get("title") or "") + "|" + (ev.get("description") or "")[:300]
+    s = _TAXONOMY + "|" + (ev.get("title") or "") + "|" + (ev.get("description") or "")[:300]
     return hashlib.sha1(s.encode()).hexdigest()[:16]
 
 

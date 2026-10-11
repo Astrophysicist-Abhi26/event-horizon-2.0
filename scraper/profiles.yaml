@@ -9,7 +9,7 @@
 # Keys of a profile
 #   label, blurb   shown in the picker
 #   interests      taxonomy node -> weight 0-100 (or a level name below). A node is a
-#                  field (cosmo, astro, ai, math, physics) or a sub-field (cosmo.de,
+#                  field (cosmo, astro, ai, cs, math, physics) or a sub-field (cosmo.de,
 #                  phys.condmat, ... — see scraper/taxonomy.py). For each tag of an
 #                  event the MOST SPECIFIC node listed wins, so "physics: 30" plus
 #                  "phys.condmat: 100" means condensed matter 100, other physics 30.
@@ -35,7 +35,7 @@ profiles:
   explore:
     label: Explore everything
     blurb: Every field weighted equally. Sort by date to browse everything collected.
-    interests: {cosmo: 50, astro: 50, ai: 50, math: 50, physics: 50}
+    interests: {cosmo: 50, astro: 50, ai: 50, cs: 50, math: 50, physics: 50}
     cross_field: 0
     places: {bengaluru: 10, india: 5}
 
@@ -144,6 +144,7 @@ profiles:
       ai.science: 52
       ai.theory: 40
       ai.general: 30
+      ai: 30                    # LLMs, vision, NLP, RL ... (Event Horizon's "general AI")
       astro.he: 40
       astro.galactic: 40
       astro.stellar: 32
@@ -167,5 +168,115 @@ profiles:
       - {when: [cosmo, ai], bonus: 25, group: ml}
       - {when: [astro, ai], bonus: 18, group: ml}
       - {when: [cosmo, [math.probability, ai.theory]], bonus: 10}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 5, Workshop: 5}
+
+  # ── AI, machine learning & computer science ───────────────────────────────
+
+  machine-learning:
+    label: Machine learning & AI
+    blurb: >-
+      All of machine learning: the major ML venues, generative models and LLMs,
+      vision, language, reinforcement learning, theory and trustworthy AI; then ML
+      systems, data mining and robotics.
+    focus: [ai]
+    focus_label: machine learning
+    interests:
+      ai.general: 95
+      ai.genai: 90
+      ai.theory: 90
+      ai.vision: 85
+      ai.nlp: 85
+      ai.rl: 85
+      ai.trust: 85
+      ai.science: 80
+      math.probability: 55
+      cs.data: 55
+      cs.robotics: 50
+      cs.systems: 40            # ML systems and hardware
+      cs.theory: 40
+      math.other: 30            # optimisation, information theory
+      cs: 25
+      math.geometry: 20
+      math.analysis: 20
+      phys.condmat: 15          # statistical physics of learning
+      phys.quantum: 15          # quantum machine learning
+    cross_field: 0.15
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  ml-theory:
+    label: Theory of machine learning
+    blurb: >-
+      Learning theory, optimisation, high-dimensional probability and statistics,
+      with algorithms, the statistical physics of learning and the mathematics of
+      deep learning.
+    focus: [ai.theory]
+    focus_label: ML theory
+    interests:
+      ai.theory: 100
+      math.probability: 85
+      cs.theory: 70
+      ai.general: 60
+      math.analysis: 50
+      math.other: 50            # optimisation, information theory, dynamical systems
+      ai.rl: 50                 # bandits, control
+      ai.genai: 45
+      ai.trust: 40
+      phys.condmat: 40          # spin glasses, statistical mechanics of learning
+      math.geometry: 35
+      ai.science: 35
+      ai: 25
+      math.mathphys: 25
+      phys.quantum: 15
+    cross_field: 0.25
+    synergies:
+      - {when: [ai, [math.probability, math.analysis, math.geometry, phys.condmat]], bonus: 10}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  ai-science:
+    label: AI for science
+    blurb: >-
+      Machine learning applied to the physical sciences (simulation-based
+      inference, emulators, physics-informed and generative models), with ML
+      theory and the sciences themselves.
+    focus: [ai.science]
+    focus_label: AI for science
+    interests:
+      ai.science: 100
+      ai.theory: 60
+      ai.genai: 60
+      ai.general: 55
+      math.probability: 50
+      ai: 40
+      math.analysis: 30
+      cosmo: 30
+      astro: 30
+      physics: 30
+      cs.systems: 25            # high-performance computing
+      math: 15
+    cross_field: 0.25
+    synergies:
+      - {when: [ai, [cosmo, astro, physics]], bonus: 15}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  computer-science:
+    label: Computer science
+    blurb: >-
+      Algorithms and theory, systems and networks, security and cryptography,
+      programming languages, databases, HCI and robotics; then AI and machine
+      learning.
+    focus: [cs]
+    focus_label: computer science
+    interests:
+      cs: 85
+      cs.general: 60
+      ai: 60
+      math.other: 35            # combinatorics, logic, information theory
+      math.probability: 20
+      phys.quantum: 20          # quantum computing
+    cross_field: 0.25
     places: {bengaluru: 10, india: 5}
     types: {School: 5, Workshop: 5}

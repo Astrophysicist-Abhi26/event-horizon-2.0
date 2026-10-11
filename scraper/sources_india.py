@@ -299,7 +299,11 @@ _FIELD_KEYS = {
     "location": "location", "type": "type", "fields": "fields",
     "research fields": "fields", "notes": "notes",
 }
-_FIELD_IDS = {
+_FIELD_IDS = {     # first match wins, so specific labels come first ("fairness" contains "ai")
+    "llm": "ai.genai", "generative": "ai.genai", "nlp": "ai.nlp", "language & speech": "ai.nlp",
+    "computer vision": "ai.vision", "reinforcement": "ai.rl", "safety": "ai.trust",
+    "fairness": "ai.trust", "algorithms": "cs.theory", "computer science": "cs.general",
+    "quantum": "phys.quantum", "condensed matter": "phys.condmat",
     "dark energy": "cosmo.de", "large-scale structure": "cosmo.lss",
     "cmb": "cosmo.early", "early universe": "cosmo.early", "dark matter": "cosmo.dm",
     "cosmology": "cosmo.general", "astrophysics": "astro.general",

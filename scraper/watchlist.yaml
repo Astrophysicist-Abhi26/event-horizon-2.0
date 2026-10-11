@@ -6,6 +6,10 @@
 #
 #   - url: https://sites.google.com/view/some-conference-2027
 #
+# Only ever use the event's own page or its registration form as `url`, never an
+# institute's homepage. For an event with no web page (poster or email only), leave `url`
+# out and say how to register in `notes`: the card shows the notes instead of a link.
+#
 # Fuller entries are more reliable (no guessing):
 #
 #   - title: Cosmic Connections 2027 — AI/ML across Cosmic Scales
@@ -22,14 +26,17 @@
 # Past events drop off automatically, so you never need to clean this file.
 #
 # Sub-field ids: cosmo.de cosmo.lss cosmo.early cosmo.dm cosmo.general
-#   ai.science ai.theory ai.general  astro.he astro.galactic astro.stellar
+#   ai.science ai.theory ai.genai ai.nlp ai.vision ai.rl ai.trust ai.general
+#   cs.theory cs.systems cs.security cs.pl cs.data cs.hci cs.robotics cs.general
+#   astro.he astro.galactic astro.stellar
 #   astro.general  math.nt math.topology math.algebra math.geometry
 #   math.probability math.mathphys math.analysis math.other  phys.gr
 #   phys.hepth phys.quantum phys.condmat phys.fluids phys.general
 
 events:
   - title: Fourth Neighbourhood Cosmology Meeting (NCM-4)
-    url: https://christuniversity.in/sciences/physics-and-electronics/astronomy-and-astrophysics
+    # No public web page: registration is through the organisers' poster. Put the
+    # registration link here (e.g. the form behind the poster's QR code) once known.
     start: 2026-11-17
     end: 2026-11-17
     deadline: 2026-10-20          # last date for registration
@@ -38,4 +45,5 @@ events:
     fields: [cosmo.general]
     notes: >-
       Theoretical and observational cosmology; participating institutes IISc,
-      IIA, RRI, ICTS and CHRIST. Registration through the organisers' poster.
+      IIA, RRI, ICTS and CHRIST. Register through the organisers' poster
+      (ask your department office if you haven't seen it).

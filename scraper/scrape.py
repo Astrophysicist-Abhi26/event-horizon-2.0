@@ -43,7 +43,9 @@ GLOBAL_SOURCES = [
     ("INSPIRE seminars", G.scrape_inspire_seminars, 10),
     ("researchseminars.org talks", G.scrape_researchseminars, 30),
     ("researchseminars.org conferences", G.scrape_researchseminars_conferences, 1),
-    ("AI Deadlines", G.scrape_ai_deadlines, 3),
+    ("AI Deadlines", G.scrape_ai_deadlines, 10),
+    ("CCF Deadlines", G.scrape_ccf_deadlines, 50),
+    ("ML summer schools", G.scrape_ml_schools, 3),
 ]
 
 # Earlier source = preferred copy when the same event appears twice
@@ -195,9 +197,41 @@ def _rank(e):
             -len(e["description"] or ""), -len(e["declared"]))
 
 
+_SERIES = re.compile(r"^\s*(?:(?:IEEE|ACM|IEEE/ACM|USENIX)\s+)?((?=(?:[^A-Z]*[A-Z]){2})[A-Za-z][A-Za-z0-9&+/\-]{1,15})\s+(20\d\d)\b")
+
+
+def series_key(title):
+    """'CVPR 2027 — IEEE/CVF ...' -> 'cvpr 2027': a conference series and its year."""
+    m = _SERIES.match(title or "")
+    return f"{m.group(1).lower()} {m.group(2)}" if m else None
+
+
+def _merge(twin, e):
+    for s in e["sources"]:
+        if s not in twin["sources"]:
+            twin["sources"].append(s)
+    twin["declared"] = sorted(set(twin["declared"]) | set(e["declared"]))
+    twin["priority"] = twin["priority"] or e["priority"]
+    for f in ("deadline", "location", "speaker", "end_date"):
+        twin[f] = twin[f] or e[f]
+    if len(e["description"] or "") > len(twin["description"] or ""):
+        twin["description"] = e["description"]
+    if twin["region"] == "unknown" and e["region"] != "unknown":
+        twin.update(country=e["country"], region=e["region"])
+
+
+def _days_apart(a, b):
+    try:
+        return abs((dt.date.fromisoformat(a) - dt.date.fromisoformat(b)).days)
+    except (TypeError, ValueError):
+        return 99
+
+
 def dedupe(events):
     """Same normalised title + same start date = same event. Also merges when
-    one normalised title contains the other on the same start date."""
+    one normalised title contains the other on the same start date, and the same
+    'ACRONYM YEAR' conference ('CVPR 2027') listed by two databases with start
+    dates up to 3 days apart."""
     by_date = {}
     for e in events:
         by_date.setdefault(e["start_date"], []).append(e)
@@ -219,20 +253,21 @@ def dedupe(events):
                     break
             if twin is None:
                 kept.append(e)
-                continue
-            for s in e["sources"]:
-                if s not in twin["sources"]:
-                    twin["sources"].append(s)
-            twin["declared"] = sorted(set(twin["declared"]) | set(e["declared"]))
-            twin["priority"] = twin["priority"] or e["priority"]
-            for f in ("deadline", "location", "speaker", "end_date"):
-                twin[f] = twin[f] or e[f]
-            if len(e["description"] or "") > len(twin["description"] or ""):
-                twin["description"] = e["description"]
-            if twin["region"] == "unknown" and e["region"] != "unknown":
-                twin.update(country=e["country"], region=e["region"])
+            else:
+                _merge(twin, e)
         out.extend(kept)
-    return out
+    by_series, final = {}, []
+    for e in sorted(out, key=_rank):
+        key = series_key(e["title"])
+        twin = next((k for k in by_series.get(key, [])
+                     if _days_apart(k["start_date"], e["start_date"]) <= 3), None) if key else None
+        if twin is None:
+            final.append(e)
+            if key:
+                by_series.setdefault(key, []).append(e)
+        else:
+            _merge(twin, e)
+    return final
 
 
 def classify_all(events):

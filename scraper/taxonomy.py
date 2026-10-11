@@ -26,6 +26,7 @@ FIELDS = {
     "cosmo":   "Cosmology",
     "astro":   "Astrophysics",
     "ai":      "AI / ML",
+    "cs":      "Computer science",
     "math":    "Mathematics",
     "physics": "Physics",
 }
@@ -39,8 +40,22 @@ SUBFIELDS = {
     "cosmo.general": ("cosmo", "Cosmology (general)"),
 
     "ai.science":    ("ai", "ML for science"),
-    "ai.theory":     ("ai", "ML theory"),
+    "ai.theory":     ("ai", "ML theory & optimisation"),
+    "ai.genai":      ("ai", "Generative models & LLMs"),
+    "ai.nlp":        ("ai", "Language & speech"),
+    "ai.vision":     ("ai", "Computer vision & multimodal"),
+    "ai.rl":         ("ai", "Reinforcement learning & agents"),
+    "ai.trust":      ("ai", "Safety, fairness & interpretability"),
     "ai.general":    ("ai", "AI / ML (general)"),
+
+    "cs.theory":     ("cs", "Algorithms & theory of computation"),
+    "cs.systems":    ("cs", "Systems, networks & HPC"),
+    "cs.security":   ("cs", "Security & cryptography"),
+    "cs.pl":         ("cs", "Programming languages & software"),
+    "cs.data":       ("cs", "Databases, data mining & retrieval"),
+    "cs.hci":        ("cs", "HCI, graphics & visualisation"),
+    "cs.robotics":   ("cs", "Robotics"),
+    "cs.general":    ("cs", "Computer science (other)"),
 
     "astro.he":       ("astro", "High-energy, compact objects & GW"),
     "astro.galactic": ("astro", "Galaxies & AGN"),
@@ -109,13 +124,54 @@ RULES = {
 
     "ai.general": [
         r"machine learning", r"deep learning", r"neural networks?",
-        r"artificial intelligence", r"CS:AI", r"CS:LLMs?", r"large language models?",
-        r"transformers?(?! (?:substation|winding))", r"generative models?",
-        r"diffusion models?", r"reinforcement learning", r"computer vision",
-        r"natural language processing", r"CS:NLP", r"representation learning",
-        r"foundation models?", r"data science", r"agentic", r"graph neural",
-        r"CS:GNNs?", r"CS:ML", r"neural information processing",
-        r"learning representations", r"CS:NeurIPS", r"CS:ICML", r"CS:ICLR",
+        r"artificial intelligence", r"CS:AI", r"representation learning",
+        r"data science", r"graph neural", r"CS:GNNs?", r"CS:ML",
+        r"neural information processing", r"learning representations",
+        r"CS:NeurIPS", r"CS:ICML", r"CS:ICLR", r"CS:AAAI", r"CS:IJCAI",
+        r"pattern recognition", r"neural computation", r"geometric deep learning",
+        r"federated learning", r"continual learning", r"lifelong learning",
+        r"self-supervised", r"knowledge representation", r"automated planning",
+        r"evolutionary computation", r"genetic (?:algorithms?|programming)",
+    ],
+    "ai.genai": [
+        r"CS:LLMs?", r"large language models?", r"language models?",
+        r"transformers?(?! (?:substation|winding))", r"generative (?:models?|AI|modell?ing)",
+        r"CS:GenAI", r"diffusion models?", r"score-based", r"foundation models?",
+        r"agentic", r"(?:AI|LLM) agents?", r"prompt(?:ing| engineering)", r"in-context learning",
+        r"variational auto-?encoders?", r"CS:VAEs?", r"CS:GANs?", r"generative adversarial",
+        r"text-to-(?:image|video|speech)", r"CS:RAG", r"retrieval-augmented",
+        r"CS:GPT", r"chatbots?", r"CS:COLM",
+    ],
+    "ai.nlp": [
+        r"natural language(?: processing| understanding| generation)?", r"CS:NLP",
+        r"computational linguistics", r"machine translation", r"speech (?:recognition|processing|synthesis)",
+        r"spoken language", r"question answering", r"text (?:mining|classification|summari[sz]ation)",
+        r"sentiment analysis", r"information extraction", r"CS:ACL", r"CS:EMNLP",
+        r"CS:NAACL", r"CS:EACL", r"CS:COLING", r"CS:CoNLL", r"CS:LREC",
+        r"interspeech", r"CS:ICASSP", r"multilingual", r"low-resource languages?",
+    ],
+    "ai.vision": [
+        r"computer vision", r"image (?:recognition|segmentation|generation|analysis|processing|understanding)",
+        r"object detection", r"visual (?:recognition|understanding|computing)",
+        r"video (?:understanding|analysis|generation)", r"3-?d (?:vision|reconstruction)",
+        r"multimodal", r"multi-modal", r"vision[- ]language", r"CS:CVPR", r"CS:ICCV",
+        r"CS:ECCV", r"CS:WACV", r"CS:BMVC", r"CS:ICVGIP", r"CS:ACCV", r"CS:3DV",
+        r"medical image\w*", r"biometrics?", r"face recognition", r"document analysis",
+        r"neural radiance", r"CS:NeRFs?", r"gaussian splatting", r"remote sensing",
+    ],
+    "ai.rl": [
+        r"reinforcement learning", r"CS:RL", r"sequential decision\w*", r"decision[- ]making under uncertainty",
+        r"multi-?agent systems?", r"autonomous agents", r"Markov decision", r"CS:MDPs?",
+        r"policy (?:gradient|optimi[sz]ation|learning)", r"imitation learning",
+        r"offline RL", r"CS:AAMAS", r"CS:RLC", r"CS:ICAPS", r"game[- ]playing",
+    ],
+    "ai.trust": [
+        r"(?:AI|ML) safety", r"safe (?:AI|machine learning|reinforcement learning)",
+        r"(?:AI|value|model) alignment", r"interpretab\w*", r"explainab\w*", r"CS:XAI", r"fairness",
+        r"responsible (?:AI|machine learning)", r"trustworthy (?:AI|machine learning|ML)",
+        r"adversarial (?:examples?|attacks?|robustness)", r"CS:FAccT",
+        r"privacy-preserving", r"differential privacy", r"mechanistic interpretability", r"AI ethics",
+        r"ethics (?:of|in) (?:AI|artificial intelligence)", r"AI governance", r"AI policy",
     ],
     "ai.theory": [
         r"learning theory", r"statistical learning", r"generali[sz]ation (?:bounds?|error|theory)",
@@ -126,6 +182,9 @@ RULES = {
         r"overparameteri[sz]\w*", r"implicit bias", r"compressed sensing",
         r"sparse recovery", r"bayesian (?:deep learning|neural)", r"optimal transport",
         r"mean[- ]field (?:limit|theory) of (?:neural|deep)",
+        r"(?:non-?)?convex optimi[sz]ation", r"optimi[sz]ation (?:for|in) (?:machine|deep) learning",
+        r"CS:COLT", r"CS:ALT", r"CS:AISTATS", r"CS:UAI", r"probabilistic (?:machine learning|AI|modell?ing)",
+        r"gaussian processes?", r"neural scaling laws?", r"theory of (?:transformers|neural networks|generali[sz]ation)",
     ],
     "ai.science": [
         r"(?:machine learning|deep learning|neural networks?|CS_INLINE_AI|artificial intelligence) "
@@ -138,6 +197,79 @@ RULES = {
         r"normali[sz]ing flows?", r"differentiable (?:simulation|programming|physics)",
         r"symbolic regression", r"data-driven discovery", r"astroinformatics",
         r"astrostatistic\w*", r"cosmostatistic\w*",
+    ],
+
+    "cs.theory": [
+        r"(?:design and analysis of|theory of|efficient|graph|approximation|online|streaming|parallel|combinatorial) algorithms?",
+        r"algorithmic(?! trading)", r"(?:computational )?complexity theor\w*",
+        r"theory of computation", r"theoretical computer science", r"CS:TCS",
+        r"computability", r"randomi[sz]ed algorithms?",
+        r"data structures?", r"computational geometry",
+        r"quantum (?:algorithms?|complexity)", r"automata", r"formal languages",
+        r"CS:STOC", r"CS:FOCS", r"CS:SODA", r"CS:ICALP", r"CS:FSTTCS", r"CS:SoCG", r"CS:CCC",
+        r"CS:APPROX", r"CS:RANDOM", r"CS:ITCS", r"CS:STACS", r"CS:ESA", r"CS:MFCS",
+        r"algorithmic game theory", r"mechanism design", r"(?:P|NP)-hard\w*", r"NP-complete\w*",
+        r"pseudorandom\w*", r"property testing", r"sublinear", r"parameteri[sz]ed complexity",
+        r"distributed computing", r"CS:PODC", r"CS:DISC",
+    ],
+    "cs.systems": [
+        r"operating systems?", r"distributed systems?", r"computer systems?", r"cloud computing",
+        r"computer architecture", r"high[- ]performance computing", r"CS:HPC", r"supercomput\w*",
+        r"parallel (?:computing|programming|algorithms?)", r"CS:GPUs?", r"hardware accelerators?",
+        r"computer networks?", r"wireless (?:networks?|communications?)",
+        r"internet of things", r"CS:IoT", r"edge computing", r"embedded systems?",
+        r"storage systems?", r"datacenters?", r"data cent(?:er|re)s?", r"(?:VLSI|chip|hardware) design",
+        r"CS:VLSI", r"CS:FPGAs?", r"CS:MLSys", r"(?:ML|AI) systems", r"CS:OSDI", r"CS:SOSP",
+        r"CS:NSDI", r"CS:SIGCOMM", r"CS:INFOCOM", r"CS:MobiCom", r"CS:ASPLOS", r"CS:ISCA",
+        r"CS:MICRO", r"CS:HPCA", r"CS:EuroSys", r"CS:COMSNETS", r"CS:HiPC",
+        r"cyber-?physical", r"real-time systems?", r"CS:5G", r"CS:6G",
+    ],
+    "cs.security": [
+        r"cryptograph\w*", r"cryptolog\w*", r"(?:cyber|computer|network|information|systems?) security",
+        r"cybersecurity", r"security and privacy", r"privacy", r"malware", r"blockchains?",
+        r"zero-knowledge", r"homomorphic encryption", r"post-quantum", r"encryption",
+        r"CS:CRYPTO", r"CS:EUROCRYPT", r"CS:ASIACRYPT", r"CS:INDOCRYPT", r"CS:CCS",
+        r"CS:NDSS", r"CS:USENIX Security", r"CS:CHES", r"CS:TCC", r"CS:PETS",
+        r"formal security", r"side[- ]channels?", r"secure (?:computation|systems?)",
+    ],
+    "cs.pl": [
+        r"programming languages?", r"type (?:theory|systems?)", r"compilers?",
+        r"program (?:analysis|synthesis|verification)", r"formal (?:methods|verification)",
+        r"model checking", r"software engineering", r"software (?:testing|systems?|verification)",
+        r"functional programming", r"concurrency theory", r"semantics of programming",
+        r"CS:POPL", r"CS:PLDI", r"CS:ICFP", r"CS:OOPSLA", r"CS:CAV", r"CS:LICS",
+        r"CS:ICSE", r"CS:FSE", r"CS:ESEC", r"CS:ISSTA", r"CS:ETAPS", r"CS:TACAS",
+        r"proof assistants?", r"CS:Coq", r"CS:Rocq", r"CS:Isabelle", r"CS:Agda",
+        r"logic in computer science", r"static analysis", r"code generation",
+    ],
+    "cs.data": [
+        r"databases?", r"data management", r"data mining", r"knowledge discovery",
+        r"information retrieval", r"recommender systems?", r"recommendation systems?",
+        r"web search", r"search engines?", r"knowledge graphs?", r"big data",
+        r"CS:SIGMOD", r"CS:VLDB", r"CS:ICDE", r"CS:PODS", r"CS:KDD", r"CS:SIGKDD",
+        r"CS:SIGIR", r"CS:WSDM", r"CS:CIKM", r"CS:ICDM", r"CS:ECIR", r"CS:RecSys",
+        r"CS:CODS", r"CS:COMAD", r"semantic web", r"data engineering", r"social networks? analysis",
+        r"world wide web",
+    ],
+    "cs.hci": [
+        r"human[- ]computer interaction", r"CS:HCI", r"user interfaces?", r"user experience",
+        r"interaction design", r"ubiquitous computing", r"accessibility",
+        r"computer graphics", r"CS:SIGGRAPH", r"visuali[sz]ation", r"virtual reality",
+        r"augmented reality", r"mixed reality", r"CS:VR", r"CS:AR", r"CS:CHI", r"CS:UIST",
+        r"CS:CSCW", r"CS:IUI", r"rendering", r"geometry processing", r"animation",
+        r"computational design", r"CS:EuroVis", r"CS:Eurographics", r"video games?", r"game design",
+    ],
+    "cs.robotics": [
+        r"robot\w*", r"autonomous (?:vehicles?|systems?|driving|navigation)", r"self-driving",
+        r"drones?", r"CS:UAVs?", r"legged locomotion", r"motion planning",
+        r"CS:SLAM", r"CS:ICRA", r"CS:IROS", r"CS:RSS", r"CS:CoRL", r"control systems?",
+        r"embodied (?:AI|intelligence)", r"humanoids?",
+    ],
+    "cs.general": [
+        r"computer science", r"computational thinking", r"CS:ACM",
+        r"CS:IEEE Computer Society", r"informatics", r"research software", r"quantum computing",
+        r"signal processing", r"information systems?", r"CS:CSE", r"CS:EECS",
+        r"bioinformatics", r"computational biology",
     ],
 
     "astro.general": [
@@ -264,8 +396,8 @@ RULES = {
     "phys.fluids": [
         r"turbulen\w*", r"fluids?", r"plasmas?", r"hydrodynamic\w*",
         r"magnetohydrodynamic\w*", r"CS:MHD", r"convection",
-        r"(?<!normalizing )(?<!normalising )flows?", r"climate (?:dynamics|physics|model\w*|chaos)", r"atmospher\w*",
-        r"ocean\w*", r"stochasticity", r"diffusion(?! models?)",
+        r"(?<!normalizing )(?<!normalising )flows?(?! matching|-based| models?)", r"climate (?:dynamics|physics|model\w*|chaos)", r"atmospher\w*",
+        r"ocean\w*", r"stochasticity", r"diffusion(?! models?| and flow|-based)",
     ],
     "phys.general": [
         r"physics", r"optic(?:s|al)", r"photon\w*", r"lasers?",
@@ -295,6 +427,61 @@ _ARXIV_MATH = {
     "ds": "math.other", "co": "math.other", "lo": "math.other", "oc": "math.other",
     "it": "math.other", "gm": "math.other", "ho": "math.other",
 }
+
+
+# arXiv computer-science / EESS categories (researchseminars.org uses the same codes)
+_ARXIV_CS = {
+    "cs_lg": "ai.general", "cs_ai": "ai.general", "cs_ne": "ai.general",
+    "cs_cv": "ai.vision", "eess_iv": "ai.vision",
+    "cs_cl": "ai.nlp", "cs_sd": "ai.nlp", "eess_as": "ai.nlp",
+    "cs_ma": "ai.rl",
+    "cs_cc": "cs.theory", "cs_ds": "cs.theory", "cs_fl": "cs.theory", "cs_cg": "cs.theory",
+    "cs_dm": "cs.theory", "cs_gt": "cs.theory",
+    "cs_dc": "cs.systems", "cs_os": "cs.systems", "cs_ni": "cs.systems", "cs_ar": "cs.systems",
+    "cs_pf": "cs.systems", "cs_et": "cs.systems",
+    "cs_cr": "cs.security",
+    "cs_pl": "cs.pl", "cs_se": "cs.pl", "cs_lo": "cs.pl",
+    "cs_db": "cs.data", "cs_ir": "cs.data", "cs_dl": "cs.data", "cs_si": "cs.data",
+    "cs_hc": "cs.hci", "cs_gr": "cs.hci", "cs_mm": "cs.hci",
+    "cs_ro": "cs.robotics",
+    "cs_na": "math.analysis", "cs_it": "math.other",
+}
+
+# Topic tags of the CS aggregators: huggingface/ai-deadlines tags, ccf-deadlines
+# areas ("ccf_<area>") and awesome-mlss school topics ("mlss_<topic>").
+_CODES = {}
+for _sf, _w, _codes in [
+    ("ai.theory", STRONG, ["stat_ml", "cs_lg_theory", "optimization_methods", "learning_theory",
+                           "mlss_theory"]),
+    ("ai.general", STRONG, ["machine_learning", "deep_learning", "representation_learning",
+                            "lifelong_learning", "knowledge_representation", "reasoning",
+                            "mlss_ml", "mlss_kr", "mlss_cogsci", "mlss_neuro", "mlss_eml",
+                            "mlss_health", "mlss_econai", "mlss_ds"]),
+    ("ai.genai", STRONG, ["large_language_models", "mlss_genai"]),
+    ("ai.nlp", STRONG, ["natural_language_processing", "speech", "mlss_nlp", "mlss_sp"]),
+    ("ai.vision", STRONG, ["computer_vision", "image_processing", "pattern_recognition",
+                           "visual_information_processing", "mlss_cv"]),
+    ("ai.rl", STRONG, ["reinforcement_learning", "mlss_rl", "mlss_ap", "mlss_ai4games"]),
+    ("ai.trust", STRONG, ["fairness", "mlss_rai"]),
+    ("ai.science", STRONG, ["mlss_ml4science", "mlss_bio"]),
+    ("ai.general", MEDIUM, ["ccf_ai", "mlss_quantum"]),
+    ("phys.quantum", MEDIUM, ["mlss_quantum"]),
+    ("cs.theory", STRONG, ["ccf_ct"]),
+    ("cs.systems", STRONG, ["ccf_ds", "ccf_nw", "mlss_hw"]),
+    ("cs.security", STRONG, ["ccf_sc"]),
+    ("cs.pl", STRONG, ["ccf_se", "software_engineering"]),
+    ("cs.data", STRONG, ["ccf_db", "data_mining", "web_search", "information_retrieval",
+                         "information_systems", "knowledge_graphs", "recommendation",
+                         "retrieval", "web_mining", "content_analysis",
+                         "semantics_and_knowledge", "mlss_dm", "mlss_recsys"]),
+    ("cs.hci", STRONG, ["ccf_cg", "ccf_hi", "computer_graphics", "human_computer_interaction",
+                        "mlss_cg", "mlss_hci"]),
+    ("cs.robotics", STRONG, ["robotics", "mlss_ro"]),
+    ("cs.general", MEDIUM, ["ccf_mx", "signal_processing"]),
+    ("math.other", MEDIUM, ["mlss_log"]),
+]:
+    for _c in _codes:
+        _CODES.setdefault(_c, []).append((_sf, _w))
 
 
 def declared_codes(code):
@@ -358,17 +545,15 @@ def declared_codes(code):
     if c == "data_analysis_and_statistics":        # INSPIRE category
         return [("math.probability", WEAK)]
     # CS / stats / AI
-    if c in ("stat_ml", "cs_lg_theory", "optimization_methods", "learning_theory"):
-        return [("ai.theory", STRONG)]
-    if c in ("cs_lg", "cs_ai", "cs_ne", "machine_learning", "deep_learning",
-             "representation_learning", "reinforcement_learning",
-             "large_language_models", "lifelong_learning", "cs_cv", "cs_cl",
-             "computer_vision", "natural_language_processing"):
-        return [("ai.general", STRONG)]
+    if c in _CODES:
+        return list(_CODES[c])
+    m = re.match(r"^(?:cs|eess)_([a-z]{2})$", c)
+    if m and m.group(0) in _ARXIV_CS:
+        return [(_ARXIV_CS[m.group(0)], STRONG)]
     if c in ("stat", "stat_th", "stat_me", "stat_ap", "stat_co", "math_st"):
         return [("math.probability", STRONG)]
-    if c in ("cs_it",):
-        return [("math.other", MEDIUM)]
+    if c.startswith(("cs_", "eess_")) or c in ("cs", "computer_science"):
+        return [("cs.general", MEDIUM)]
     return out
 
 
@@ -385,7 +570,20 @@ PROTOTYPES = {
     "cosmo.general": "cosmology conference, physical cosmology, the standard cosmological model, observational cosmology",
     "ai.science": "machine learning for physics and astronomy, simulation-based inference, neural emulators, AI for science, physics-informed neural networks",
     "ai.theory": "theory of deep learning, statistical learning theory, generalization bounds, optimization, kernel methods, learning theory",
-    "ai.general": "machine learning conference, deep learning, large language models, neural networks, computer vision, natural language processing",
+    "ai.genai": "large language models, generative models, diffusion models, foundation models, transformers, LLM agents, generative AI",
+    "ai.nlp": "natural language processing, computational linguistics, machine translation, speech recognition, question answering",
+    "ai.vision": "computer vision, image recognition, object detection, video understanding, multimodal vision-language models, 3D reconstruction",
+    "ai.rl": "reinforcement learning, sequential decision making, multi-agent systems, planning, bandits and control, imitation learning",
+    "ai.trust": "AI safety, alignment, interpretability, fairness, privacy and robustness of machine learning, responsible AI",
+    "ai.general": "machine learning conference, deep learning, neural networks, representation learning, artificial intelligence research",
+    "cs.theory": "algorithms, computational complexity, theoretical computer science, approximation and randomized algorithms, data structures",
+    "cs.systems": "operating systems, distributed systems, computer architecture, networking, high-performance computing, cloud and edge computing",
+    "cs.security": "computer security, cryptography, privacy, network security, malware, blockchain, secure systems",
+    "cs.pl": "programming languages, compilers, type systems, formal verification, model checking, software engineering",
+    "cs.data": "databases, data management, data mining, information retrieval, recommender systems, web search, knowledge graphs",
+    "cs.hci": "human-computer interaction, user interfaces, computer graphics, visualization, virtual and augmented reality",
+    "cs.robotics": "robotics, autonomous vehicles, robot learning, manipulation and locomotion, motion planning, drones",
+    "cs.general": "computer science department seminar, computing research, informatics, signal processing, information systems",
     "astro.he": "black holes, neutron stars, pulsars, gravitational wave astronomy, gamma-ray bursts, high-energy astrophysics, transients",
     "astro.galactic": "galaxy formation and evolution, active galactic nuclei, interstellar medium, star formation, galaxy clusters",
     "astro.stellar": "stellar physics, the Sun, solar flares, exoplanets, planetary systems, asteroseismology, supernovae",
@@ -408,7 +606,7 @@ PROTOTYPES = {
 NEGATIVE_PROTOTYPES = {
     "neg.bio": "biology, medicine, genomics, neuroscience, cell biology, clinical research, ecology",
     "neg.chem": "chemistry, materials synthesis, catalysis, batteries, chemical engineering",
-    "neg.eng": "robotics, human-computer interaction, computer graphics, software engineering, web systems, information retrieval, electrical engineering",
+    "neg.eng": "power systems, electrical machines, civil and mechanical engineering, manufacturing, construction, automotive industry",
     "neg.admin": "committee meeting, foundation day, cultural event, open day, inauguration ceremony, administrative announcement, alumni event",
     "neg.humanities": "history, philosophy, economics, social sciences, education policy, arts and culture",
 }
