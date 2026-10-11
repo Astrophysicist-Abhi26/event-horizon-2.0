@@ -39,8 +39,11 @@ working and keeps every existing test green.
   researchseminars.org.
 - Profiles: Machine learning & AI, Theory of machine learning, AI for science, Computer
   science.
-- Still to come: Indian CS department seminars (IISc CSA's event list is rendered by
-  JavaScript; IIIT Bangalore, Microsoft Research India and others need checking).
+- India: CMI seminars (mathematics, physics, CS, data science). Checked on 2026-10-11 and
+  not usable yet: IISc CSA (its calendar data stops in 2022), Kotak-IISc AI-ML Centre
+  (API locked; news and events mixed), IIIT Bangalore and IISc ECE (events rendered by
+  JavaScript), RBCDSAI IIT Madras (nothing recent), ACM India (blocks automated visitors).
+  An "Add event" issue covers any of their talks in the meantime.
 
 ## Step 2: a finer physics taxonomy
 

@@ -56,6 +56,7 @@ Each entry picks an adapter with `kind`:
 | `ical` / `google_calendar` | any public calendar feed (preferred: it doesn't break when the page is redesigned) |
 | `indico` | an Indico server (JSON export, falling back to the public iCal feed) |
 | `wp_events` | WordPress sites using "The Events Calendar" |
+| `labelled_list` | pages listing each talk as a list item with `Date:` / `Time:` / `Venue:` lines |
 | `listing` | an HTML page that lists upcoming events (last resort) |
 
 Check a new entry against the live site before opening a pull request:

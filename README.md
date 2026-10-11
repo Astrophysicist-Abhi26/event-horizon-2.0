@@ -106,7 +106,8 @@ The Indian institutes covered today:
 
 - **Bengaluru:** ICTS, IISc (Physics calendars, conferences and schools; Mathematics; CDS;
   institute events), RRI, IIA and JNCASR.
-- **Elsewhere in India:** IUCAA, ASI, TIFR DAA and NCRA.
+- **Elsewhere in India:** IUCAA, ASI, TIFR DAA, NCRA and CMI (mathematics, physics and
+  computer-science seminars).
 
 The **Source health** panel at the bottom of the site shows which sources worked on the
 last run. You can test any institute source from your own network with
