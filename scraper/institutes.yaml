@@ -200,6 +200,13 @@ sources:
     enabled: false           # behind a Cloudflare bot challenge ("Just a moment..."): unscrapable
     checked: 2026-09-24
 
+  - name: CMI seminars
+    kind: labelled_list           # every talk is a <li> with Date: / Time: / Venue: lines
+    url: https://www.cmi.ac.in/activities/seminars.php
+    location: Chennai Mathematical Institute, Chennai, India
+    type: seminar
+    checked: 2026-10-11           # mathematics, physics, computer science, data science
+
   - name: TIFR Astronomy & Astrophysics (DAA)
     kind: listing
     url: https://www.tifr.res.in/~daa/events_list.html   # events.html is only an index page

@@ -254,3 +254,27 @@ def test_ncm4_no_longer_points_at_a_homepage():
     ncm = next(e for e in SI.scrape_watchlist() if "Neighbourhood Cosmology" in e["title"])
     assert "christuniversity.in" not in ncm["url"]
     assert "poster" in ncm["description"]
+
+
+def test_cmi_labelled_list():
+    with open(os.path.join(os.path.dirname(__file__), "fixtures", "cmi_seminars.html")) as f:
+        html = f.read()
+    cfg = {"name": "CMI seminars", "location": "Chennai Mathematical Institute, Chennai, India",
+           "type": "seminar"}
+    evs = SI.labelled_list_from_html(cfg, html, "https://www.cmi.ac.in/activities/seminars.php")
+    first = evs[0]
+    assert first["title"] == "Quantum Battery: Science Fiction or Reality? — Sibasish Ghosh"
+    assert first["start_date"] == "2026-10-12"
+    assert first["speaker"] == "Sibasish Ghosh (Institute of Mathematical Sciences, Chennai)"
+    assert first["location"] == "Lecture Hall 2, Chennai Mathematical Institute, Chennai, India"
+    assert first["description"] == "Physics Seminar"
+    no_year = next(e for e in evs if e["title"].startswith("Studying the redshift"))
+    assert no_year["start_date"] == "2026-09-30"           # from the "30-09-26" line
+    cs = evs[-1]
+    assert cs["description"] == "Computer Science Seminar"
+    assert {"ai.genai", "ai.trust"} <= set(_tags(cs["title"]))
+    assert len(evs) >= 8
+
+
+def test_cmi_registered():
+    assert "CMI seminars" in [n for n, _, _ in SI.india_sources()]
