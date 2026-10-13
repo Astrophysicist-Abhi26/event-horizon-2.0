@@ -16,12 +16,12 @@
 :root{
   --bg:#0C0A16; --panel:#15122388; --panel-solid:#151223; --line:#2A2440;
   --text:#EDEAF7; --muted:#8E89A8; --amber:#F2B544; --cyan:#74D7E4; --warn:#F28B82; --ok:#8BE9A8;
-  --cosmo:#F2B544; --astro:#F4A28C; --ai:#74D7E4; --physics:#C792EA; --math:#8BE9A8;
+  --cosmo:#F2B544; --astro:#F4A28C; --ai:#74D7E4; --cs:#8AA8FF; --physics:#C792EA; --math:#8BE9A8;
 }
 html[data-theme="light"]{
   --bg:#F7F5FB; --panel:#FFFFFFCC; --panel-solid:#FFFFFF; --line:#DCD7EA;
   --text:#1B1730; --muted:#5C5775; --amber:#B97712; --cyan:#0E7C8C; --warn:#B3261E; --ok:#1E7A4A;
-  --cosmo:#B97712; --astro:#B4533A; --ai:#0E7C8C; --physics:#7C4DA8; --math:#1E7A4A;
+  --cosmo:#B97712; --astro:#B4533A; --ai:#0E7C8C; --cs:#3556B8; --physics:#7C4DA8; --math:#1E7A4A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
@@ -98,7 +98,7 @@ button.reset:hover{border-color:var(--amber);color:var(--amber)}
 .ftree .subs{padding:2px 0 4px 18px}
 .ftree .subs label.ck{font-size:13.5px}
 .ftree details.dim summary label,.ftree details.dim .subs{opacity:.5}
-.f-cosmo{--fc:var(--cosmo)}.f-astro{--fc:var(--astro)}.f-ai{--fc:var(--ai)}.f-physics{--fc:var(--physics)}.f-math{--fc:var(--math)}
+.f-cosmo{--fc:var(--cosmo)}.f-astro{--fc:var(--astro)}.f-ai{--fc:var(--ai)}.f-cs{--fc:var(--cs)}.f-physics{--fc:var(--physics)}.f-math{--fc:var(--math)}
 
 .toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .toolbar .count{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--muted)}
@@ -157,8 +157,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
 
 <header><div class="wrap">
   <h1>Research <span class="h">Horizon</span></h1>
-  <p class="tagline">Conferences, schools, workshops and talks across physics, astronomy, mathematics
-  and AI/ML — one shared database, collected daily and classified by field.</p>
+  <p class="tagline">Conferences, schools, workshops and talks across physics, astronomy, mathematics,
+  AI/ML and computer science — one shared database, collected daily and classified by field.</p>
   <div class="profile">
     <label for="profile">Ranked for</label>
     <select id="profile" aria-describedby="profileBlurb"></select>
@@ -274,6 +274,9 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl=u=>/^https?:\/\//i.test(u||"")?u:"#";
+const MANUAL_SRC=new Set(["Watchlist","Added by you"]);
+// a watchlist event known only from a poster or email links back to the watchlist file
+const noPage=e=>/\/scraper\/watchlist\.yaml$/.test(e.url||"");
 const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"date TBA";
 const PAGE=90;
 let EVENTS=[],TAX=null,FIELD_LABEL={},SUB_LABEL={},SUB_PARENT={},shown=PAGE,WEEK_AGO="",TODAY="";
@@ -473,10 +476,11 @@ function render(resetPage){
     const place=[e.location,e.country&&e.location&&e.location.includes(e.country)?"":e.country].filter(Boolean).join(" · ");
     return `<article class="card f-${f0}">
       <div class="dt">${range}${pinned(e)?'<span class="pin">pinned</span>':""}${e.first_seen>=WEEK_AGO?'<span class="new">new</span>':""}</div>
-      <h3><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${esc(e.title)}</a></h3>
+      <h3>${noPage(e)?esc(e.title):`<a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${esc(e.title)}</a>`}</h3>
       <div class="loc">${esc(place||(e.online?"Online":"location TBA"))}</div>
       ${e.speaker?`<div class="who">${esc(e.speaker)}</div>`:""}
       ${e.reason?`<div class="why">${esc(e.reason)}</div>`:""}
+      ${MANUAL_SRC.has(e.source)&&e.description?`<div class="why">${noPage(e)?"No public web page. ":""}${esc(e.description)}</div>`:""}
       <div class="chips"><span class="chip">${esc(e.type)}</span>${subChips}${here}${onl}
         <span class="chip">${esc((e.sources||[e.source]).join(" + "))}</span></div>
       ${dl}

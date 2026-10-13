@@ -60,6 +60,15 @@ body:
         - label: Mathematics
         - label: General relativity
         - label: High-energy theory / QFT
+        - label: Quantum physics
+        - label: Condensed matter & statistical physics
+        - label: Generative models & LLMs
+        - label: Language & speech (NLP)
+        - label: Computer vision
+        - label: Reinforcement learning & agents
+        - label: AI safety, fairness & interpretability
+        - label: Algorithms & theory of computation
+        - label: Computer science (other)
   - type: textarea
     id: notes
     attributes:

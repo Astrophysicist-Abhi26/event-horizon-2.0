@@ -3,7 +3,7 @@
 **A research-event radar for every field.** Conferences, schools, workshops, seminars and
 webinars are collected every day into one shared database, tagged by subject, and ranked
 for the **research profile** you choose: condensed matter, high-energy theory, astrophysics,
-cosmology and more. It covers Bengaluru, the rest of India, online events and abroad.
+cosmology, machine learning, computer science and more. It covers Bengaluru, the rest of India, online events and abroad.
 
 Research areas differ, but the events come from the same institutes, calendars and
 aggregators. So there is **one database and many rankings**. A condensed-matter theorist
@@ -13,8 +13,8 @@ hidden from anybody.
 **Live site:** https://astrophysicist-abhi26.github.io/research-horizon/ (updated daily at
 08:00 IST)
 
-> **Status:** early development. Physics and astronomy are covered today; mathematics,
-> computer science, engineering, biology and chemistry come next (see
+> **Status:** early development. Physics, astronomy, AI/ML and computer science are covered
+> today; finer mathematics, engineering, biology and chemistry come next (see
 > [ROADMAP.md](ROADMAP.md)).
 
 ## Research profiles
@@ -30,6 +30,10 @@ you can bookmark or send to someone in that field.
 | **High-energy theory & gravitation** | strings, QFT, holography, particle physics, GR and quantum gravity, early universe |
 | **Astronomy & astrophysics** | stars, galaxies, compact objects, gravitational waves, transients |
 | **Cosmology & ML for science** | dark energy, large-scale structure, CMB, dark matter; ML for science |
+| **Machine learning & AI** | the major ML venues, generative models & LLMs, vision, language, RL, theory, trustworthy AI |
+| **Theory of machine learning** | learning theory, optimisation, high-dimensional probability, algorithms, statistical physics of learning |
+| **AI for science** | simulation-based inference, emulators, physics-informed and generative models for the physical sciences |
+| **Computer science** | algorithms & theory, systems & networks, security & cryptography, programming languages, databases, HCI, robotics |
 
 A profile never changes what is collected or how it is tagged. It only changes the
 ranking. Each profile is a short block in [`scraper/profiles.yaml`](scraper/profiles.yaml):
@@ -50,12 +54,13 @@ formula is documented at the top of [`scraper/profiles.py`](scraper/profiles.py)
 | Astrophysics | high-energy astrophysics, compact objects & GW · galaxies & AGN · stars, Sun & planets · general astronomy |
 | Cosmology | dark energy · large-scale structure · CMB & early universe · dark matter · general |
 | Mathematics | number theory · topology · algebra · geometry · probability & statistics · mathematical physics · analysis & PDE · other |
-| AI / ML | ML for science · ML theory · general |
+| AI / ML | ML for science · ML theory & optimisation · generative models & LLMs · language & speech · computer vision & multimodal · reinforcement learning & agents · safety, fairness & interpretability · general |
+| Computer science | algorithms & theory of computation · systems, networks & HPC · security & cryptography · programming languages & software · databases, data mining & retrieval · HCI, graphics & visualisation · robotics · other |
 
 Every event can carry several tags. They come from four kinds of evidence, strongest first:
 
 1. **Subject codes** declared by the organisers (arXiv, INSPIRE and researchseminars.org
-   categories).
+   categories, and the topic tags of the CS conference databases).
 2. **Keyword rules** matched on whole words in the title and abstract.
 3. **A local embedding model** that calibrates itself and costs nothing to run.
 4. **Optional:** a Claude classifier that tags topics only.
@@ -67,7 +72,7 @@ GitHub Actions (daily 08:00 IST, on every push to main, and on "Add event" issue
  ├─ tests                      offline tests; a failure stops the run, so the site
  │                             keeps its last good data
  ├─ scraper/scrape.py
- │   ├─ ~30 sources            each isolated: one broken site never stops the run;
+ │   ├─ ~35 sources            each isolated: one broken site never stops the run;
  │   │                         a source that is down keeps its last good events ("stale")
  │   ├─ normalise              drop past and undated events; detect Bengaluru / India /
  │   │                         online / abroad
@@ -87,10 +92,12 @@ track of which events are new this week.
 | Source | What it covers |
 |---|---|
 | INSPIRE conferences and seminars | HEP, GR, cosmology and astrophysics, with subject categories |
-| researchseminars.org talks and conferences | mathematics, physics and CS/statistics talks worldwide, with arXiv-style topic codes |
+| researchseminars.org talks and conferences | mathematics, physics, computer science and statistics talks worldwide, with arXiv-style topic codes |
 | CADC Astronomy Meetings | worldwide astronomy meetings |
 | DESC Cosmology Meetings | curated cosmology calendar |
-| AI Deadlines | major ML venues |
+| AI Deadlines ([huggingface/ai-deadlines](https://github.com/huggingface/ai-deadlines)) | ~70 AI venues: ML, vision, language, speech, robotics, data mining, with paper deadlines |
+| CCF Deadlines ([ccfddl/ccf-deadlines](https://github.com/ccfddl/ccf-deadlines)) | all of computer science, ~370 conferences; ranked ones are kept (CCF A/B or CORE A*/A), plus newer venues and anything held in India |
+| ML summer schools ([awesome-mlss](https://github.com/sshkhr/awesome-mlss)) | machine-learning summer and winter schools worldwide, with application deadlines |
 | Indian institutes | one entry per page or calendar in [`scraper/institutes.yaml`](scraper/institutes.yaml) |
 | Watchlist | hand-added entries in [`scraper/watchlist.yaml`](scraper/watchlist.yaml) |
 | "Add event" issue form | events known only from an email or poster; they appear within minutes, with no commits |
@@ -99,7 +106,8 @@ The Indian institutes covered today:
 
 - **Bengaluru:** ICTS, IISc (Physics calendars, conferences and schools; Mathematics; CDS;
   institute events), RRI, IIA and JNCASR.
-- **Elsewhere in India:** IUCAA, ASI, TIFR DAA and NCRA.
+- **Elsewhere in India:** IUCAA, ASI, TIFR DAA, NCRA and CMI (mathematics, physics and
+  computer-science seminars).
 
 The **Source health** panel at the bottom of the site shows which sources worked on the
 last run. You can test any institute source from your own network with

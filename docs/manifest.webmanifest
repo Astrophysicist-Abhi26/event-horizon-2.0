@@ -1,7 +1,7 @@
 {
   "name": "Research Horizon — research event radar",
   "short_name": "Research Horizon",
-  "description": "Conferences, workshops, schools and talks across physics, astronomy, mathematics and AI/ML, ranked for the research profile you choose.",
+  "description": "Conferences, workshops, schools and talks across physics, astronomy, mathematics, AI/ML and computer science, ranked for the research profile you choose.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

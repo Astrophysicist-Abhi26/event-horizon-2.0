@@ -32,66 +32,135 @@ def ev(**kw):
 
 
 # ---------------------------------------------------------------------------
-# 1. AI Deadlines (huggingface/ai-deadlines) — allow-listed venues only
+# 1. AI / CS conference databases on GitHub: huggingface/ai-deadlines (ML, vision,
+#    language, robotics, data mining ...), ccfddl/ccf-deadlines (all of computer
+#    science, with CORE/CCF ranks) and sshkhr/awesome-mlss (ML summer/winter schools).
+#    Each is a community-maintained data file, read whole from one zip/YAML download.
 # ---------------------------------------------------------------------------
 AID_ZIP = "https://codeload.github.com/huggingface/ai-deadlines/zip/refs/heads/main"
-# file stem -> extra declared codes. Venues not listed here are skipped
-# (robotics, graphics, HCI, web/IR, document analysis ... are not your field).
-AI_VENUES = {
-    # learning theory / probabilistic ML
-    "colt": ["learning_theory"], "alt": ["learning_theory"],
-    "aistats": ["stat_ml"], "uai": ["stat_ml"], "cpal": ["stat_ml"],
-    "mathai": ["stat_ml", "mathematics"],
-    # core ML
-    "neurips": ["machine_learning"], "icml": ["machine_learning"],
-    "iclr": ["machine_learning"], "aaai": ["machine_learning"],
-    "ijcai": ["machine_learning"], "rlc": ["reinforcement_learning"],
-    "collas": ["machine_learning"], "ecml_pkdd": ["machine_learning"],
-    "kdd": ["machine_learning"], "esann": ["machine_learning"],
-    # adjacent, still useful
-    "cvpr": ["computer_vision"], "iccv": ["computer_vision"],
-    "eccv": ["computer_vision"], "acl": ["natural_language_processing"],
-    "emnlp": ["natural_language_processing"], "naacl": ["natural_language_processing"],
-    "colm": ["large_language_models"],
-}
+CCF_ZIP = "https://codeload.github.com/ccfddl/ccf-deadlines/zip/refs/heads/main"
+MLSS_YML = "https://raw.githubusercontent.com/sshkhr/awesome-mlss/master/site/_data/summerschools.yml"
+
+
+def _future_deadline(dates):
+    """Earliest deadline that has not passed, from strings like '2026-11-13 23:59:59'."""
+    t, best = today().isoformat(), None
+    for d in dates:
+        dd = iso(str(d or "").strip().split(" ")[0])
+        if dd and dd >= t:
+            best = min(best or dd, dd)
+    return best
+
+
+def _is_over(start, end):
+    return (end or start or "") < today().isoformat()
+
+
+def _online(place):
+    return bool(re.search(r"\b(virtual|online)\b", str(place or ""), re.I))
+
+
+def _zip_yaml(url, folder):
+    """Yield (path, parsed YAML) for every .yml under `folder` in a GitHub zip."""
+    zf = zipfile.ZipFile(io.BytesIO(get(url, timeout=90).content))
+    for name in zf.namelist():
+        if f"/{folder}/" not in name or not name.endswith((".yml", ".yaml")):
+            continue
+        try:
+            yield name, yaml.safe_load(zf.read(name)) or []
+        except yaml.YAMLError:
+            continue
+
+
+def _aid_tags(tags):
+    """Broad venues list many areas (ICLR: vision, NLP, robotics ...); they are
+    general ML venues, and their titles tag anything more specific."""
+    tags = [str(t) for t in tags or []]
+    ml = [t for t in tags if t.replace("-", " ").lower() == "machine learning"]
+    return ml if len(tags) > 2 and ml else tags
 
 
 def scrape_ai_deadlines():
-    zf = zipfile.ZipFile(io.BytesIO(get(AID_ZIP).content))
     out = []
-    for name in zf.namelist():
-        if "/src/data/conferences/" not in name or not name.endswith((".yml", ".yaml")):
-            continue
-        stem = name.rsplit("/", 1)[-1].rsplit(".", 1)[0].lower()
-        if stem not in AI_VENUES:
-            continue
-        try:
-            data = yaml.safe_load(zf.read(name)) or []
-        except yaml.YAMLError:
-            continue
-        for c in data:
+    for _, data in _zip_yaml(AID_ZIP, "src/data/conferences"):
+        for c in data if isinstance(data, list) else []:
             start, end = iso(c.get("start")), iso(c.get("end"))
             if not start and c.get("date"):
                 start, end = parse_date_range(str(c.get("date")))
+            if _is_over(start, end):
+                continue
             title = f"{c.get('title', '')} {c.get('year', '')}".strip()
             if c.get("full_name"):
                 title = f"{title} — {c['full_name']}"
-            deadline = None
-            for d in c.get("deadlines") or []:
-                if d.get("type") in ("paper", "abstract"):
-                    dd = iso(str(d.get("date", "")).split(" ")[0])
-                    if dd and dd >= today().isoformat():
-                        deadline = min(deadline or dd, dd)
+            deadline = _future_deadline(d.get("date") for d in c.get("deadlines") or []
+                                        if d.get("type") in ("paper", "abstract"))
             parts = []
             for x in [c.get("venue") or c.get("place"), c.get("city"), c.get("country")]:
                 if x and str(x).lower() not in ", ".join(parts).lower():
                     parts.append(str(x))
-            loc = ", ".join(parts)
             out.append(ev(title=title, url=c.get("link"), start_date=start,
-                          end_date=end or start, deadline=deadline, location=loc or None,
-                          country=c.get("country"), source="AI Deadlines",
-                          raw_type="conference",
-                          declared=list(c.get("tags") or []) + AI_VENUES[stem]))
+                          end_date=end or start, deadline=deadline,
+                          location=", ".join(parts) or None, country=c.get("country"),
+                          online=_online(c.get("venue")), source="AI Deadlines",
+                          raw_type="conference", declared=_aid_tags(c.get("tags"))))
+    return out
+
+
+# ccf-deadlines lists ~370 conferences. Keep the established ones: CCF rank A/B or
+# CORE A*/A, plus a few newer venues without a rank yet, plus anything held in India.
+CCF_KEEP_UNRANKED = {"corl", "log", "mlsys", "cpal", "indocrypt", "comsnets", "hipc",
+                     "fsttcs", "icvgip", "cods-comad"}
+
+
+def _ccf_keep(conf, place):
+    r = conf.get("rank") or {}
+    return (str(r.get("ccf")) in ("A", "B") or str(r.get("core")) in ("A*", "A")
+            or str(conf.get("title", "")).lower() in CCF_KEEP_UNRANKED
+            or "india" in str(place or "").lower())
+
+
+def scrape_ccf_deadlines():
+    out = []
+    for _, data in _zip_yaml(CCF_ZIP, "conference"):
+        for conf in data if isinstance(data, list) else []:
+            if not isinstance(conf, dict) or not conf.get("title"):
+                continue
+            for y in conf.get("confs") or []:
+                start, end = parse_date_range(str(y.get("date") or ""))
+                place = clean(y.get("place"))
+                if not start or _is_over(start, end) or not _ccf_keep(conf, place):
+                    continue
+                times = y.get("timeline") or []
+                deadline = _future_deadline([t.get("abstract_deadline") for t in times] +
+                                            [t.get("deadline") for t in times])
+                title = f"{conf['title']} {y.get('year', '')}".strip()
+                if conf.get("description"):
+                    title = f"{title} — {clean(conf['description'])}"
+                out.append(ev(title=title,
+                              url=y.get("link"), start_date=start, end_date=end or start,
+                              deadline=deadline,
+                              location=None if place in ("", "TBD") else place,
+                              online=_online(place),
+                              source="CCF Deadlines", raw_type="conference",
+                              declared=[f"ccf_{str(conf.get('sub', '')).lower()}"]))
+    return out
+
+
+def scrape_ml_schools():
+    data = yaml.safe_load(get(MLSS_YML, timeout=60).text) or []
+    out = []
+    for x in data if isinstance(data, list) else []:
+        start, end = iso(x.get("start")), iso(x.get("end"))
+        if not start and x.get("date"):
+            start, end = parse_date_range(str(x.get("date")))
+        if not x.get("title") or not start or _is_over(start, end):
+            continue
+        desc = " ".join(clean(x.get(k)) for k in ("full_name", "description", "note") if x.get(k))
+        out.append(ev(title=clean(x["title"]), url=x.get("link"), start_date=start,
+                      end_date=end or start, deadline=_future_deadline([x.get("deadline")]),
+                      location=clean(x.get("place")) or None, online=_online(x.get("place")),
+                      description=desc, source="ML summer schools", raw_type="school",
+                      declared=[f"mlss_{str(t).lower()}" for t in x.get("sub") or []]))
     return out
 
 
@@ -292,8 +361,7 @@ def scrape_desc_cosmology():
 # ---------------------------------------------------------------------------
 RS = "https://researchseminars.org/api/0"
 RS_WINDOW_DAYS = 56
-RS_KEEP = re.compile(r"^(math|physics|astro|gr|hep|quant|cond|nlin|stat|cs_lg|cs_ai|"
-                     r"cs_ne|cs_it)", re.I)
+RS_KEEP = re.compile(r"^(math|physics|astro|gr|hep|quant|cond|nlin|stat|cs|eess)", re.I)
 
 
 def _rs_relevant(topics):

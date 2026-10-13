@@ -39,7 +39,7 @@ Rules worth knowing:
   type never make an off-topic event relevant.
 - Level names can replace numbers: `top` 100, `very_high` 85, `high` 70, `medium` 45,
   `low` 20, `avoid` −40.
-- The available fields and sub-fields are listed in
+- The fields are cosmo, astro, ai, cs, math and physics; all sub-fields are listed in
   [`scraper/taxonomy.py`](scraper/taxonomy.py) (`FIELDS`, `SUBFIELDS`).
 - **Profiles are named after research areas, never after people.**
 
@@ -56,6 +56,7 @@ Each entry picks an adapter with `kind`:
 | `ical` / `google_calendar` | any public calendar feed (preferred: it doesn't break when the page is redesigned) |
 | `indico` | an Indico server (JSON export, falling back to the public iCal feed) |
 | `wp_events` | WordPress sites using "The Events Calendar" |
+| `labelled_list` | pages listing each talk as a list item with `Date:` / `Time:` / `Venue:` lines |
 | `listing` | an HTML page that lists upcoming events (last resort) |
 
 Check a new entry against the live site before opening a pull request:

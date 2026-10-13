@@ -98,14 +98,41 @@ const EQUATIONS = [
   ["math.probability", String.raw`dX_t = \mu\,dt + \sigma\,dW_t`, "Itô SDE"],
   ["math.probability", String.raw`p(\theta\mid D) = \frac{p(D\mid\theta)\,p(\theta)}{p(D)}`, "Bayes"],
   ["math.probability", String.raw`\sqrt{n}\,\bigl(\bar X_n - \mu\bigr) \xrightarrow{\;d\;} \mathcal N(0,\sigma^2)`, "central limit theorem"],
-  ["ai.general", String.raw`\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V`, "attention, 2017"],
+  [["ai.genai", "ai.nlp"], String.raw`\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V`, "attention, 2017"],
   ["ai.general", String.raw`\theta_{t+1} = \theta_t - \eta\,\nabla_\theta \mathcal L(\theta_t)`, "gradient descent"],
-  ["ai.general", String.raw`V(s) = \max_a\Bigl[r(s,a) + \gamma\sum_{s'}P(s'\mid s,a)\,V(s')\Bigr]`, "Bellman equation"],
+  ["ai.general", String.raw`\mathcal L = -\sum_{i} y_i \log \hat y_i`, "cross-entropy loss"],
+  ["ai.rl", String.raw`V(s) = \max_a\Bigl[r(s,a) + \gamma\sum_{s'}P(s'\mid s,a)\,V(s')\Bigr]`, "Bellman equation"],
+  ["ai.rl", String.raw`\nabla_\theta J(\theta) = \mathbb E_{\pi_\theta}\bigl[\nabla_\theta \log \pi_\theta(a\mid s)\,Q^{\pi}(s,a)\bigr]`, "policy gradient"],
   ["ai.theory", String.raw`\log p(x) \ge \mathbb E_{q(z)}\bigl[\log p(x\mid z)\bigr] - D_{\mathrm{KL}}\bigl(q\,\|\,p\bigr)`, "evidence lower bound"],
   ["ai.theory", String.raw`H(X) = -\sum_x p(x)\log_2 p(x)`, "Shannon 1948"],
   ["ai.theory", String.raw`R(h) \le \hat R_n(h) + O\Bigl(\sqrt{d/n}\Bigr)`, "generalisation bound"],
+  ["ai.theory", String.raw`k(x,x') = \langle \varphi(x), \varphi(x') \rangle_{\mathcal H}`, "kernel trick"],
   ["ai.science", String.raw`p(\theta\mid x_{\mathrm{obs}}) \propto p(x_{\mathrm{obs}}\mid\theta)\,p(\theta)`, "simulation-based inference"],
-  ["ai.science", String.raw`d\mathbf x = \bigl[\mathbf f(\mathbf x,t) - g(t)^2\,\nabla_{\mathbf x}\log p_t(\mathbf x)\bigr]dt + g(t)\,d\bar{\mathbf w}`, "score-based diffusion"],
+  ["ai.science", String.raw`\mathcal L = \bigl\|\mathcal N[u_\theta]\bigr\|^2_{\Omega} + \bigl\|u_\theta - g\bigr\|^2_{\partial\Omega}`, "physics-informed loss"],
+  ["ai.genai", String.raw`d\mathbf x = \bigl[\mathbf f(\mathbf x,t) - g(t)^2\,\nabla_{\mathbf x}\log p_t(\mathbf x)\bigr]dt + g(t)\,d\bar{\mathbf w}`, "score-based diffusion"],
+  ["ai.genai", String.raw`p(x_{1:T}) = \prod_{t=1}^{T} p(x_t \mid x_{<t})`, "autoregressive model"],
+  ["ai.nlp", String.raw`\mathrm{PPL} = \exp\Bigl(-\frac1N\sum_{i=1}^{N}\log p(w_i \mid w_{<i})\Bigr)`, "perplexity"],
+  ["ai.vision", String.raw`(I * K)(x,y) = \sum_{u,v} I(x-u,\,y-v)\,K(u,v)`, "convolution"],
+  ["ai.vision", String.raw`\mathrm{IoU} = \frac{|A\cap B|}{|A\cup B|}`, "intersection over union"],
+  ["ai.trust", String.raw`\Pr[\mathcal M(D)\in S] \le e^{\varepsilon}\,\Pr[\mathcal M(D')\in S] + \delta`, "differential privacy"],
+  ["ai.trust", String.raw`\phi_i = \sum_{S\subseteq N\setminus\{i\}} \frac{|S|!\,(n-|S|-1)!}{n!}\bigl[v(S\cup\{i\}) - v(S)\bigr]`, "Shapley value"],
+  ["cs.theory", String.raw`T(n) = a\,T(n/b) + f(n)`, "master theorem"],
+  ["cs.theory", String.raw`\mathsf{P} \overset{?}{=} \mathsf{NP}`, "Cook 1971"],
+  ["cs.theory", String.raw`K(x) = \min\{\,|p| : U(p) = x\,\}`, "Kolmogorov complexity"],
+  ["cs.security", String.raw`c \equiv m^{e} \pmod{n}, \qquad m \equiv c^{d} \pmod{n}`, "RSA 1977"],
+  ["cs.security", String.raw`K = \bigl(g^{a}\bigr)^{b} = \bigl(g^{b}\bigr)^{a} \bmod p`, "Diffie–Hellman 1976"],
+  ["cs.systems", String.raw`S(N) = \frac{1}{(1-p) + p/N}`, "Amdahl's law"],
+  ["cs.systems", String.raw`L = \lambda W`, "Little's law"],
+  ["cs.systems", String.raw`C = B\log_2\Bigl(1 + \frac{S}{N}\Bigr)`, "Shannon–Hartley"],
+  ["cs.pl", String.raw`(\lambda x.\,M)\,N \;\to_\beta\; M[x := N]`, "β-reduction"],
+  ["cs.pl", String.raw`\dfrac{\Gamma,\, x:\sigma \vdash M : \tau}{\Gamma \vdash \lambda x.\,M : \sigma \to \tau}`, "typing rule"],
+  ["cs.pl", String.raw`\{P\}\; C\; \{Q\}`, "Hoare triple"],
+  ["cs.data", String.raw`\mathrm{PR}(u) = \frac{1-d}{N} + d\sum_{v \to u}\frac{\mathrm{PR}(v)}{L(v)}`, "PageRank"],
+  ["cs.data", String.raw`\mathrm{tfidf}(t,d) = \mathrm{tf}(t,d)\cdot\log\frac{N}{n_t}`, "tf–idf"],
+  ["cs.hci", String.raw`T = a + b\log_2\Bigl(1 + \frac{D}{W}\Bigr)`, "Fitts's law"],
+  ["cs.hci", String.raw`L_o(\mathbf x,\omega_o) = L_e + \int_{\Omega} f_r\,L_i\,(\omega_i\cdot\mathbf n)\,d\omega_i`, "rendering equation"],
+  ["cs.robotics", String.raw`\dot{\mathbf x} = J(\mathbf q)\,\dot{\mathbf q}`, "manipulator Jacobian"],
+  ["cs.robotics", String.raw`\hat x_{k\mid k} = \hat x_{k\mid k-1} + K_k\bigl(z_k - H\hat x_{k\mid k-1}\bigr)`, "Kalman filter"],
 ];
 
 // ---------------------------------------------------------------------------
@@ -260,7 +287,7 @@ const MOTIFS = [
     }
     return `<path d="${pathOf(pts)}" stroke="${P.c}" stroke-width=".8" fill="none"/>`;
   }},
-  {id: "neuralnet", tags: ["ai.general", "ai.theory", "ai.science"], op: .42, draw(R, P, r) {
+  {id: "neuralnet", tags: ["ai.general", "ai.theory", "ai.science", "ai.genai", "ai.nlp", "ai.vision", "ai.rl", "ai.trust"], op: .42, draw(R, P, r) {
     const layers = [[3, 5, 4, 2], [4, 6, 6, 3], [3, 4, 4, 4, 2]][Math.floor(r() * 3)];
     const pos = layers.map((n, li) => Array.from({length: n}, (_, i) =>
       [-R + 2 * R * li / (layers.length - 1), (i - (n - 1) / 2) * R * .34]));
@@ -269,6 +296,24 @@ const MOTIFS = [
       pos[li].forEach(a => pos[li + 1].forEach(b => { edges += `M${f(a[0])},${f(a[1])}L${f(b[0])},${f(b[1])}`; }));
     pos.flat().forEach(p => { nodes += `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="${f(R * .055)}" fill="${P.bg}" stroke="${P.c}" stroke-width="1.4"/>`; });
     return `<path d="${edges}" stroke="${P.m}" stroke-width=".7" opacity=".7" fill="none"/>${nodes}`;
+  }},
+  {id: "tree", tags: ["cs.theory", "cs.data", "cs.pl", "cs.systems", "cs.general"], op: .45, draw(R, P, r) {
+    // a binary search tree, drawn level by level; some nodes are missing
+    const depth = 4, nodes = [], edges = [];
+    const walk = (x, y, lvl, span) => {
+      nodes.push([x, y, lvl]);
+      if (lvl === depth - 1) return;
+      [-1, 1].forEach(sd => {
+        if (lvl > 0 && r() < .22) return;
+        const cx = x + sd * span, cy = y + R * .5;
+        edges.push(`M${f(x)},${f(y)}L${f(cx)},${f(cy)}`);
+        walk(cx, cy, lvl + 1, span / 2);
+      });
+    };
+    walk(0, -R * .75, 0, R * .5);
+    const nr = R * .07;
+    const circles = nodes.map(([x, y, l]) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(nr)}" fill="${P.bg}" stroke="${l ? P.c : P.a}" stroke-width="1.4"/>`).join("");
+    return `<path d="${edges.join("")}" stroke="${P.m}" stroke-width="1" fill="none"/>${circles}`;
   }},
   {id: "gaussian", tags: ["math.probability", "ai.theory"], op: .42, draw(R, P, r) {
     let bars = "";

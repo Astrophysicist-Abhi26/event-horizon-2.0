@@ -26,6 +26,25 @@ working and keeps every existing test green.
   gravitation, Astronomy & astrophysics, and Cosmology & ML for science.
 - A source that is down keeps its last good events ("stale", up to 14 days).
 
+## ✅ AI/ML and computer science (done, ahead of the original order)
+
+- AI / ML split into ML theory & optimisation, generative models & LLMs, language & speech,
+  vision & multimodal, reinforcement learning & agents, safety/fairness/interpretability,
+  ML for science and general.
+- A new **Computer science** field: algorithms & theory, systems/networks/HPC, security &
+  cryptography, programming languages & software, databases/data mining/retrieval,
+  HCI/graphics/visualisation, robotics.
+- Sources: every venue in huggingface/ai-deadlines, ranked conferences from ccf-deadlines,
+  ML summer schools from awesome-mlss, and all `cs.*` / `eess.*` topics on
+  researchseminars.org.
+- Profiles: Machine learning & AI, Theory of machine learning, AI for science, Computer
+  science.
+- India: CMI seminars (mathematics, physics, CS, data science). Checked on 2026-10-11 and
+  not usable yet: IISc CSA (its calendar data stops in 2022), Kotak-IISc AI-ML Centre
+  (API locked; news and events mixed), IIIT Bangalore and IISc ECE (events rendered by
+  JavaScript), RBCDSAI IIT Madras (nothing recent), ACM India (blocks automated visitors).
+  An "Add event" issue covers any of their talks in the meantime.
+
 ## Step 2: a finer physics taxonomy
 
 Today all of condensed matter is one sub-field, and so is all of quantum physics. The plan
@@ -69,7 +88,8 @@ matching tags.
 Each subject gets its own taxonomy branch, sources and presets, one subject at a time:
 
 - **Mathematics:** finer branches, and seminars from ISI, CMI and IISc Mathematics.
-- **Computer science & AI:** algorithms and theory, systems, ML theory, reinforcement learning.
+- **Computer science & AI:** finer branches once there are enough events, and Indian
+  department seminars (see above).
 - **Electrical & communication engineering:** information theory, communications, signal
   processing, control, optimisation, networks.
 - **Computational biology:** genomics, sequence algorithms, computational neuroscience.

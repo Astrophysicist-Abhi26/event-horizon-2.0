@@ -20,6 +20,7 @@ import os
 import re
 
 import yaml
+from bs4 import BeautifulSoup
 
 from common import (clean, first_url, get, ics_end_date, iso, parse_date_range,
                     parse_ics, today)
@@ -215,8 +216,59 @@ def _indico(cfg):
     return [e for e in out if e["title"]]
 
 
+# ---------------------------------------------------------------------------
+# labelled_list — pages listing each talk as a <li> with "Date:", "Time:",
+# "Venue:" lines, the series name above and the speaker in <strong> (CMI)
+# ---------------------------------------------------------------------------
+_LABEL = re.compile(r"^(date|time|venue|place)\s*:\s*(.*)$", re.I)
+_DMY = re.compile(r"^(\d{1,2})-(\d{1,2})-(\d{2})$")
+
+
+def labelled_list_from_html(cfg, html, page_url):
+    soup = BeautifulSoup(html, "html.parser")
+    out = []
+    for li in soup.find_all("li"):
+        for f in li.find_all("form"):
+            f.decompose()
+        lines = [clean(x) for x in li.get_text("\n").split("\n") if clean(x)]
+        labels = {m.group(1).lower(): m.group(2) for m in map(_LABEL.match, lines) if m}
+        if "date" not in labels:
+            continue
+        strong = li.find("strong")
+        speaker = clean(strong.get_text(" ")) if strong else None
+        first = next(i for i, x in enumerate(lines) if _LABEL.match(x))
+        last = max(i for i, x in enumerate(lines) if _LABEL.match(x))
+        series = next((x for x in reversed(lines[:first]) if not _DMY.match(x)), "")
+        rest = [x for x in lines[last + 1:] if x != speaker]
+        if not rest:
+            continue
+        title, affil = rest[0], " ".join(rest[1:])
+        start = parse_date_range(labels["date"])[0]
+        code = next((m for m in map(_DMY.match, lines[:first]) if m), None)
+        if code:                                    # "30-09-26": authoritative when the
+            d, mth, yy = map(int, code.groups())    # "Date:" line has no year
+            try:
+                start = start or dt.date(2000 + yy, mth, d).isoformat()
+            except ValueError:
+                pass
+        who = f"{speaker} ({affil.rstrip('.')})" if speaker and affil else speaker
+        loc = ", ".join(x for x in (labels.get("venue") or labels.get("place"),
+                                     cfg.get("location")) if x)
+        out.append(_event(cfg, f"{title} — {speaker}" if speaker else title, page_url, start,
+                          location=loc, description=series, raw_type=cfg.get("type"),
+                          speaker=who))
+    return out
+
+
+def _labelled_list(cfg):
+    out = []
+    for url in _urls(cfg):
+        out += labelled_list_from_html(cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text, url)
+    return out
+
+
 ADAPTERS = {"listing": _listing, "ical": _ical, "google_calendar": _google_calendar,
-            "wp_events": _wp_events, "indico": _indico}
+            "wp_events": _wp_events, "indico": _indico, "labelled_list": _labelled_list}
 
 
 def _registry(include_disabled=False):
@@ -299,7 +351,11 @@ _FIELD_KEYS = {
     "location": "location", "type": "type", "fields": "fields",
     "research fields": "fields", "notes": "notes",
 }
-_FIELD_IDS = {
+_FIELD_IDS = {     # first match wins, so specific labels come first ("fairness" contains "ai")
+    "llm": "ai.genai", "generative": "ai.genai", "nlp": "ai.nlp", "language & speech": "ai.nlp",
+    "computer vision": "ai.vision", "reinforcement": "ai.rl", "safety": "ai.trust",
+    "fairness": "ai.trust", "algorithms": "cs.theory", "computer science": "cs.general",
+    "quantum": "phys.quantum", "condensed matter": "phys.condmat",
     "dark energy": "cosmo.de", "large-scale structure": "cosmo.lss",
     "cmb": "cosmo.early", "early universe": "cosmo.early", "dark matter": "cosmo.dm",
     "cosmology": "cosmo.general", "astrophysics": "astro.general",
