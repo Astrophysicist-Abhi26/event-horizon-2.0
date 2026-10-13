@@ -250,10 +250,10 @@ def test_watchlist_event_without_a_page_links_to_its_entry():
     assert ev["description"] == "Register through the poster."
 
 
-def test_ncm4_no_longer_points_at_a_homepage():
+def test_ncm4_links_to_its_registration_form():
     ncm = next(e for e in SI.scrape_watchlist() if "Neighbourhood Cosmology" in e["title"])
-    assert "christuniversity.in" not in ncm["url"]
-    assert "poster" in ncm["description"]
+    assert ncm["url"].startswith("https://docs.google.com/forms/")
+    assert ncm["deadline"] == "2026-10-20"
 
 
 def test_cmi_labelled_list():
