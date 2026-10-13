@@ -1,4 +1,4 @@
-# Event Horizon 2.0 🔭
+# Research Horizon 🔭
 
 **A research-event radar for every field.** Conferences, schools, workshops, seminars and
 webinars are collected every day into one shared database, tagged by subject, and ranked
