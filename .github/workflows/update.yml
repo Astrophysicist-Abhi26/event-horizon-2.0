@@ -125,6 +125,11 @@ jobs:
             gh issue create --label "$1" --title "$2 — $d" --body-file "$3"
           }
           post health "Source health alert" notify/health.md
+          if [ -f notify/all-clear.md ]; then
+            for n in $(gh issue list --label health --state open --json number -q '.[].number'); do
+              gh issue close "$n" --comment "$(cat notify/all-clear.md)" >/dev/null || true
+            done
+          fi
 
   # Publishing is its own job so that the github-pages environment is only
   # used when Pages is switched on.

@@ -319,6 +319,14 @@ def notifications(health):
         with open(os.path.join(NOTIFY_DIR, "health.md"), "w") as f:
             f.write("These sources stopped returning events:\n\n" + "\n".join(
                 f"- **{h['name']}** — {h['status']} {h['message']}" for h in broken))
+    elif not any(h["status"] in ("error", "empty", "stale") for h in health):
+        # every source works again: the open alert can be closed
+        recovered = [h["name"] for h in health
+                     if h.get("previous") in ("error", "empty", "stale")]
+        with open(os.path.join(NOTIFY_DIR, "all-clear.md"), "w") as f:
+            f.write("All sources are returning events again"
+                    + (" (recovered: " + ", ".join(recovered) + ")" if recovered else "")
+                    + ". Closing this alert.")
 
 
 def main():
