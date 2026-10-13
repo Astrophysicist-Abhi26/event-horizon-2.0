@@ -18,6 +18,7 @@ from urllib3.util.retry import Retry
 UA = ("ResearchHorizon/1.0 (academic event aggregator; "
       "+https://github.com/Astrophysicist-Abhi26/research-horizon)")
 TIMEOUT = 30
+CONNECT_TIMEOUT = 10     # a host that does not answer at all fails in seconds, not minutes
 
 
 def session():
@@ -50,6 +51,8 @@ def get(url, insecure_ok=False, **kw):
       public pages whose servers ship an incomplete certificate chain).
     """
     kw.setdefault("timeout", TIMEOUT)
+    if isinstance(kw["timeout"], (int, float)):      # (connect, read)
+        kw["timeout"] = (min(CONNECT_TIMEOUT, kw["timeout"]), kw["timeout"])
     headers = kw.pop("headers", None) or {}
     verify = True
     try:

@@ -278,3 +278,23 @@ def test_cmi_labelled_list():
 
 def test_cmi_registered():
     assert "CMI seminars" in [n for n, _, _ in SI.india_sources()]
+
+
+def test_unreachable_hosts_fail_fast(monkeypatch):
+    import common
+    seen = {}
+
+    class R:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+    def fake(url, **kw):
+        seen.update(kw)
+        return R()
+    monkeypatch.setattr(common.HTTP, "get", fake)
+    common.get("https://example.org", timeout=90)
+    assert seen["timeout"] == (common.CONNECT_TIMEOUT, 90)
+    common.get("https://example.org")
+    assert seen["timeout"] == (common.CONNECT_TIMEOUT, common.TIMEOUT)
