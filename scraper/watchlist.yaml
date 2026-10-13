@@ -35,8 +35,7 @@
 
 events:
   - title: Fourth Neighbourhood Cosmology Meeting (NCM-4)
-    # No public web page: registration is through the organisers' poster. Put the
-    # registration link here (e.g. the form behind the poster's QR code) once known.
+    url: https://docs.google.com/forms/d/e/1FAIpQLScUg2S7sohpVbcb8-wvWcTFJj275vFcEgd8f3QH7RdXepcsig/viewform
     start: 2026-11-17
     end: 2026-11-17
     deadline: 2026-10-20          # last date for registration
@@ -45,5 +44,5 @@ events:
     fields: [cosmo.general]
     notes: >-
       Theoretical and observational cosmology; participating institutes IISc,
-      IIA, RRI, ICTS and CHRIST. Register through the organisers' poster
-      (ask your department office if you haven't seen it).
+      IIA, RRI, ICTS and CHRIST. The link is the registration form;
+      registration queries to cosmos@christuniversity.in.
