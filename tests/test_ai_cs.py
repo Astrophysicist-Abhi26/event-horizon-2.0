@@ -298,3 +298,16 @@ def test_unreachable_hosts_fail_fast(monkeypatch):
     assert seen["timeout"] == (common.CONNECT_TIMEOUT, 90)
     common.get("https://example.org")
     assert seen["timeout"] == (common.CONNECT_TIMEOUT, common.TIMEOUT)
+
+
+def test_health_alert_opens_on_break_and_closes_on_recovery(tmp_path, monkeypatch):
+    monkeypatch.setattr(S, "NOTIFY_DIR", str(tmp_path))
+    S.notifications([{"name": "A", "status": "stale", "previous": "ok", "message": "timeout"},
+                     {"name": "B", "status": "ok", "previous": "ok", "message": ""}])
+    assert sorted(os.listdir(tmp_path)) == ["health.md"]
+    S.notifications([{"name": "A", "status": "stale", "previous": "stale", "message": ""}])
+    assert os.listdir(tmp_path) == []                  # still broken: no new alert, none closed
+    S.notifications([{"name": "A", "status": "ok", "previous": "stale", "message": ""},
+                     {"name": "B", "status": "low", "previous": "ok", "message": ""}])
+    assert os.listdir(tmp_path) == ["all-clear.md"]
+    assert "recovered: A" in (tmp_path / "all-clear.md").read_text()
