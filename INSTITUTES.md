@@ -153,7 +153,8 @@ that are not science are dropped by the classifier.
 
 | Source | Status | Note |
 |---|---|---|
-| Indico Global, ICTP, DESY, French maths (CNRS) Indico servers | ✅ | whole-server feeds |
+| Indico Global, ICTP, French maths (CNRS) Indico servers | ✅ | whole-server feeds |
+| DESY Indico | ⏸ | read once, then 403 Forbidden in the scheduled run |
 | Math institutes events (mathinstitutes.org), Vakil's algebraic geometry list | ✅ | maths conferences |
 | Physics World events, Optica calendar, Perimeter Institute | ✅ | |
 | DESY hep-th conference calendar | ⏸ | took longer than 75 s |
