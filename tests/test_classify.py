@@ -69,3 +69,25 @@ def test_watchlist_fields():
     assert set(subs) == {"cosmo.de", "ai.science", "phys.cosmo"}     # cosmology is also shown under Physics
     # a bare 'math' topic from a source stays WEAK and does not tag on its own
     assert classify({"title": "x", "declared": ["math"]})[0] == []
+
+
+def test_display_tree_covers_every_tag_and_shares_branches():
+    """The site's five disciplines show every tag somewhere, and a shared branch is
+    the same branch (same id, topics and members) wherever it appears."""
+    tree = T.display_tree()
+    assert [d["id"] for d in tree] == ["physics", "astro", "math", "cs", "ai"]
+    members = {m for d in tree for b in d["branches"] for m in b["members"]}
+    assert set(T.SUBFIELDS) <= members
+    seen = {}
+    for d in tree:
+        for b in d["branches"]:
+            if b["id"] in seen:
+                assert b == seen[b["id"]]
+            seen[b["id"]] = b
+    where = {k: [d["id"] for d in tree if any(b["id"] == k for b in d["branches"])]
+             for k in T.SHARED}
+    assert where == {"@gr": ["physics", "astro"], "@cosmology": ["physics", "astro"],
+                     "@mathphys": ["physics", "math"]}
+    # the catch-all of each discipline comes last
+    for d in tree:
+        assert "general" in d["branches"][-1]["id"] or d["branches"][-1]["id"] == "math.other"

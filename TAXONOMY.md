@@ -2,6 +2,17 @@
 
 What Event Horizon 2.0 recognises, area by area. The taxonomy has three levels: **field → sub-field → topic**, with 132 topics under the physics and mathematics sub-fields (the full list is below), and a few new sub-fields carved out of the old catch-alls. Re-measured on 2026-11-04 after adding them.
 
+## How the site shows it
+
+The site groups the taxonomy into five disciplines: **Physics**, **Astronomy & Astrophysics**
+(cosmology is a branch of it), **Mathematics**, **Computer science** and **AI & machine
+learning**. Three branches are *shared*, listed under two disciplines with the same topics and the
+same count: Gravitation & GR and Cosmology (Physics and Astronomy), and Mathematical physics
+(Physics and Mathematics). Branches follow a fixed order (physics from fundamental theory through
+matter at growing scales to applied topics; mathematics roughly in MSC order), and each
+discipline's catch-all ("General … & colloquia") comes last. This grouping is presentation only
+(`DISPLAY` and `SHARED` in `scraper/taxonomy.py`); tagging and ranking use the ids below.
+
 ## How it is measured
 
 * **Area samples.** 117 areas (physics, astronomy and cosmology, and the top-level areas of the Mathematics Subject Classification), each with 1 to 3 event titles; `tests/coverage_data.py` and the audit tables below. The classifier is run on the **title alone**, the stricter case. A title is right when it gets the expected *topic*.
@@ -31,7 +42,7 @@ Gravitation & GR events are tagged **Physics → Gravitation** and also **Astron
 * **Quantum physics** (`phys.quantum`): Quantum information & computation; Quantum foundations; Open quantum systems & quantum thermodynamics; Quantum technologies, sensing & devices
 * **Condensed matter & stat mech** (`phys.condmat`): Strongly correlated systems & superconductivity; Topological matter; Magnetism & spin systems; 2D materials & low-dimensional systems; Electronic structure & computational materials physics; Soft matter & polymers; Active matter & biological physics; Statistical mechanics & phase transitions; Non-equilibrium & stochastic thermodynamics; Mesoscopic & quantum transport
 * **Fluids, plasma & climate** (`phys.fluids`): Fluid dynamics; Turbulence; Plasma physics; Fusion energy & confinement; Climate, atmosphere & ocean physics; Geophysics & solid-earth physics
-* **Physics (other)** (`phys.general`)
+* **General physics & colloquia** (`phys.general`)
 * **Particle physics: phenomenology & experiment** (`phys.hep`): Beyond the Standard Model & phenomenology; Neutrino physics; Flavour physics & CP violation; Collider physics & the Higgs; Hadron physics & QCD; Dark matter (particle physics); Accelerators & detectors; Astroparticle & cosmic rays
 * **Nuclear & heavy-ion physics** (`phys.nuclear`): Nuclear structure & reactions; Nuclear astrophysics; Heavy-ion collisions & QGP; Nuclear experiment & applications
 * **Atomic, molecular & optical physics** (`phys.amo`): Ultracold atoms & quantum gases; Atomic & molecular physics, precision measurement; Quantum optics; Photonics, nonlinear optics & metamaterials; Lasers & ultrafast science
@@ -49,7 +60,7 @@ Gravitation & GR events are tagged **Physics → Gravitation** and also **Astron
 * **Probability & statistics** (`math.probability`): Probability theory & stochastic processes; Random matrices & free probability; Mathematical statistics & data analysis
 * **Mathematical physics** (`math.mathphys`): Mathematical quantum mechanics & spectral theory; Rigorous statistical mechanics; Mathematical QFT, TQFT & vertex algebras; Integrable systems & solitons; Mathematical relativity & geometric analysis of spacetime
 * **Analysis & PDE** (`math.analysis`): Real analysis, measure theory & fractals; Complex analysis & function theory; Harmonic analysis & Fourier analysis; Functional analysis & operator theory; Operator algebras & noncommutative geometry; Ordinary differential equations; Partial differential equations; Calculus of variations & optimal transport; Approximation theory & special functions; Integral equations, transforms & inverse problems; Potential theory & pluripotential theory
-* **Other mathematics** (`math.other`)
+* **General mathematics & colloquia** (`math.other`)
 * **Logic, foundations & category theory** (`math.logic`): Mathematical logic & set theory; Category theory & higher categories
 * **Combinatorics & discrete mathematics** (`math.comb`): Algebraic combinatorics; Enumerative & analytic combinatorics; Extremal & probabilistic combinatorics, Ramsey theory; Graph theory
 * **Dynamical systems & ergodic theory** (`math.dyn`): Ergodic theory & topological dynamics; Hyperbolic dynamics & Hamiltonian systems; Complex & holomorphic dynamics; Dynamical systems (general)

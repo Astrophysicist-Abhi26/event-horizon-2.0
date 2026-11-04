@@ -22,7 +22,7 @@ import re
 import yaml
 from bs4 import BeautifulSoup
 
-from common import (clean, first_url, get, ics_end_date, iso, parse_date_range,
+from common import (check_robots, clean, first_url, get, ics_end_date, iso, parse_date_range,
                     parse_ics, today)
 from listing import extract_listing
 
@@ -140,7 +140,7 @@ def ical_events(cfg, text):
 
 def _ical(cfg):
     return _collect(cfg, lambda url: ical_events(
-        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text))
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok")), feed=True).text))
 
 
 def _google_calendar(cfg):
@@ -148,7 +148,7 @@ def _google_calendar(cfg):
     out, errors = [], []
     for cal in ids:
         try:
-            out += ical_events(cfg, get(_gcal_url(cal)).text)
+            out += ical_events(cfg, get(_gcal_url(cal), feed=True).text)
         except Exception as exc:        # one private calendar must not hide the rest
             errors.append(f"{cal[:12]}…: {exc.__class__.__name__}")
     if errors and not out:
@@ -181,7 +181,7 @@ def _wp_events(cfg):
                   "end_date": (today() + dt.timedelta(days=ICAL_HORIZON_DAYS)).isoformat()}
         out = []
         for _ in range(4):                               # at most 200 events
-            data = get(url, params=params, insecure_ok=insecure).json()
+            data = get(url, params=params, insecure_ok=insecure, feed=True).json()
             out += wp_events_from_json(cfg, data)
             url, params = data.get("next_rest_url"), None
             if not url:
@@ -210,11 +210,11 @@ def _indico(cfg):
         try:
             data = get(f"{base}/export/categ/{cat}.json",
                        params={"from": frm, "to": to, "limit": 500},
-                       insecure_ok=insecure).json()
+                       insecure_ok=insecure, feed=True).json()
             if not isinstance(data, dict) or "results" not in data:
                 raise ValueError("no results in Indico export")
         except Exception:
-            text = get(f"{base}/category/{cat}/events.ics", insecure_ok=insecure).text
+            text = get(f"{base}/category/{cat}/events.ics", insecure_ok=insecure, feed=True).text
             out += ical_events(dict(cfg, page=f"{base}/category/{cat}/"), text)
             continue
         for e in data["results"]:
@@ -387,7 +387,7 @@ def rss_events(cfg, xml_text):
 
 def _rss(cfg):
     return _collect(cfg, lambda url: rss_events(
-        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text))
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok")), feed=True).text))
 
 
 # ---------------------------------------------------------------------------
@@ -409,6 +409,7 @@ def _iiser_pune(cfg):
             payload = {"Category": None, "Pg": pg, "Departments": [], "OutreachAndTrainings": [],
                        "CalendarDate": dt.datetime.now().isoformat(), "CalendarView": "month",
                        "SelectedNav": nav}
+            check_robots(f"{base}/events?handler=search")
             r = HTTP.post(f"{base}/events?handler=search", data=json.dumps(payload),
                           headers={"content-type": "application/json",
                                    "RequestVerificationToken": token}, timeout=(10, 30))

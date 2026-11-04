@@ -1,3 +1,4 @@
+import os
 """Indian institute sources: generic listing fixes and per-source filters."""
 import datetime as dt
 
@@ -156,10 +157,14 @@ def test_ordinal_day_ranges():
 
 def test_registry_has_the_new_institutes():
     names = {n for n, _, _ in SI.india_sources()}
-    for n in ["TIFR SciTalks (Indico)", "NISER (Indico)", "IIT Bombay Mathematics seminars",
+    for n in ["TIFR SciTalks (Indico)", "NISER (Indico)",
               "IIT Delhi Physics talks", "IISER Pune events", "IISER Mohali events", "IACS events",
               "ARIES seminars"]:
         assert n in names, n
+    # parked while its host does not answer, but kept in the registry to re-test
+    import yaml
+    reg = yaml.safe_load(open(os.path.join(os.path.dirname(SI.__file__), "institutes.yaml")))["sources"]
+    assert any(s["name"] == "IIT Bombay Mathematics seminars" for s in reg)
 
 
 # ---------------------------------------------------------------------------

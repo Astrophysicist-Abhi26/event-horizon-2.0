@@ -169,7 +169,39 @@ Event Horizon 2.0 is the successor of the original
 cosmology and astrophysics at IISc Bengaluru. The original ranking lives on unchanged as the **Cosmology & ML for science**
 profile; a test checks that it reproduces the original's scores exactly.
 
+## Sources, copyright and privacy
+
+Event Horizon 2.0 is a non-commercial index of public announcements, in the way a library
+catalogue or a search engine is.
+
+* **What is taken.** For each event: its title, dates, place, type, the link to the original page,
+  the speaker's name where the page gives one, and at most 280 characters of its description
+  (used for classification and search). Images, posters, logos and full abstracts are never copied.
+  Facts such as an event's title, date and venue are not protected by copyright (in India the
+  Copyright Act 1957 protects original expression, not facts; the same holds in the US and the EU),
+  and every card sends the reader to the organiser's own page.
+* **How sites are read.** Once a day, one page at a time, by a program that names itself
+  (`EventHorizon2`, with a link to this repository). It follows each site's `robots.txt`: a web page a
+  site asks automated tools not to read is skipped (TIFR's astronomy events list is, for this reason).
+  Calendar feeds (iCal, RSS, Indico exports) are read like a calendar app subscribing to them:
+  their owners publish those addresses for exactly that, so `robots.txt`, which is about crawling
+  web pages, is not consulted for them.
+  Some institute firewalls refuse any program they do not recognise; for those, the page is
+  fetched again as an ordinary browser would, and the source is marked in *Source health*.
+* **Removal.** Organisers, speakers and site owners can ask for an event, a name or a whole
+  source to be corrected or removed with the
+  [*Remove or correct a listing*](../../issues/new?template=remove-or-correct.yml) form. Every
+  request is acted on; no reason is needed.
+* **Personal data.** Only speakers' names as published by the host institute, in a professional
+  context. Nothing about visitors is collected: preferences ("My fields", theme) stay in the
+  visitor's own browser.
+
+This is a summary of how the project behaves, not legal advice. Before announcing the site
+widely, a short review by your institute's legal or IP cell is a sensible formality.
+
 ## License
 
-[MIT](LICENSE). Event data belongs to the institutes and aggregators it comes from;
-each card links to the original announcement.
+[MIT](LICENSE) for the code in this repository. The event information shown on the site
+belongs to the institutes and aggregators it comes from, and is not covered by this licence;
+each card links to the original announcement. Bundled third-party code keeps its own licence
+(KaTeX: MIT, `docs/vendor/katex/LICENSE`).
