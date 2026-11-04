@@ -13,8 +13,15 @@ def score(ev):
 LABELS = yaml.safe_load(open(os.path.join(os.path.dirname(T.__file__), "labels.yaml")))
 
 def test_taxonomy_consistent():
-    assert set(T.RULES) == set(T.SUBFIELDS) == set(T.PROTOTYPES)
+    original = {s for s in T.SUBFIELDS if s not in T.PARENT_SF and s not in T.INHERITS and s not in T.MIRRORS}
+    assert original == set(T.PROTOTYPES)           # the embedding classifier knows only these
+    assert set(T.RULES) == original | set(T.PARENT_SF)
     assert all(T.SUBFIELDS[s][0] in T.FIELDS for s in T.SUBFIELDS)
+    # a topic sits in the same field as its sub-field, and every sub-field resolves to its field
+    for t, up in T.PARENT_SF.items():
+        assert up in T.SUBFIELDS and T.parent(t) == T.parent(up), t
+    for s in T.SUBFIELDS:
+        assert T.ancestors(s)[-1] == T.parent(s)
 
 def test_labelled_set_field_accuracy():
     ok = 0
@@ -37,7 +44,8 @@ def test_no_blanket_tags():
 
 def test_declared_codes_win():
     ev = {"title": "Modularity in genus 2", "declared": ["math_NT"]}
-    assert classify(ev)[0] == ["math.nt"]
+    tags = classify(ev)[0]
+    assert len(tags) == 1 and "math.nt" in T.ancestors(tags[0])      # a number-theory topic
     assert score(ev) >= 20                     # visible at the default threshold
 
 def test_cosmology_profile_ranks_cosmology_highest():
@@ -58,6 +66,6 @@ def test_local_bonus():
 
 def test_watchlist_fields():
     subs, _, _ = classify({"title": "Some meeting", "declared": ["field:cosmo.de", "field:ai.science"]})
-    assert set(subs) == {"cosmo.de", "ai.science"}
+    assert set(subs) == {"cosmo.de", "ai.science", "phys.cosmo"}     # cosmology is also shown under Physics
     # a bare 'math' topic from a source stays WEAK and does not tag on its own
     assert classify({"title": "x", "declared": ["math"]})[0] == []

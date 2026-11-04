@@ -25,13 +25,11 @@
 # Watchlist events are pinned near the top of the site for every profile they are relevant to.
 # Past events drop off automatically, so you never need to clean this file.
 #
-# Sub-field ids: cosmo.de cosmo.lss cosmo.early cosmo.dm cosmo.general
-#   ai.science ai.theory ai.genai ai.nlp ai.vision ai.rl ai.trust ai.general
-#   cs.theory cs.systems cs.security cs.pl cs.data cs.hci cs.robotics cs.general
-#   astro.he astro.galactic astro.stellar
-#   astro.general  math.nt math.topology math.algebra math.geometry
-#   math.probability math.mathphys math.analysis math.other  phys.gr
-#   phys.hepth phys.quantum phys.condmat phys.fluids phys.general
+# Sub-field and topic ids: every id in scraper/taxonomy.py, for example cosmo.de, astro.he,
+#   phys.hepth.string, phys.condmat.topological, math.nt.arithmetic, math.analysis.pde,
+#   ai.theory, cs.theory. List them with:
+#   python -c "import sys; sys.path.insert(0,'scraper'); import taxonomy as T; print(*T.SUBFIELDS, sep='\n')"
+# (A sub-field id such as phys.hepth covers all of its topics.)
 
 events:
   - title: Fourth Neighbourhood Cosmology Meeting (NCM-4)
@@ -59,3 +57,78 @@ events:
     notes: >-
       Gravitational waves and astrophysics; organised jointly by IIT Gandhinagar and the
       University of Lethbridge, Canada. The link is the registration form.
+
+  # ── Meetings checked against the organisers' own pages, 2026-11-04 ─────────────
+  - title: XXVII DAE-BRNS High Energy Physics Symposium
+    url: https://physics.iith.ac.in/daehep2026/
+    start: 2026-12-16
+    end: 2026-12-20
+    deadline: 2026-11-15          # early-bird registration closes
+    location: IIT Hyderabad, Hyderabad, India
+    type: conference
+    fields: [phys.hep]
+    notes: >-
+      Biennial symposium of the Department of Atomic Energy's Board of Research in
+      Nuclear Sciences, organised jointly by IIT Hyderabad and the University of
+      Hyderabad. The previous edition (2024) was at Banaras Hindu University.
+
+  - title: PHOTONICS 2026 (17th International Conference on Fiber Optics and Photonics)
+    url: https://photonics2026.iith.ac.in/
+    start: 2026-12-09
+    end: 2026-12-13
+    location: IIT Hyderabad, Hyderabad, India
+    type: conference
+    fields: [phys.amo.photonics]
+    notes: >-
+      Organised by IIT Hyderabad with the University of Hyderabad, DRDO CHESS and TIFR
+      Hyderabad; endorsed by Optica. Plenary speakers include Donna Strickland and
+      Ursula Keller.
+
+  - title: ICPP 2026 (plasma physics conference, Hyderabad)
+    url: https://icpp2026.iitd.ac.in/
+    start: 2026-12-07
+    end: 2026-12-11
+    location: Hyderabad, India
+    type: conference
+    fields: [phys.fluids.plasma]
+    notes: Held in Hyderabad and organised by IIT Delhi, according to the conference site.
+
+  - title: 6th International Conference on Symmetry (Symmetry 2027)
+    url: https://sciforum.net/event/SYMMETRY2027
+    start: 2027-06-25
+    end: 2027-06-28
+    deadline: 2027-02-26          # abstract submission
+    location: Shanghai, China
+    type: conference
+    fields: [phys.hepth.symmetries, math.algebra.group, phys.gr]
+    notes: >-
+      Organised by MDPI's Symmetry journal (co-chairs Chengping Shen, Jie Yang and
+      Sergei Odintsov). The listing gives Shanghai and 25-28 June 2027, and does not say
+      whether attendance is in person or online: ask icsymmetry@mdpi.com.
+
+  - title: ICLA 2027 (12th Indian Conference on Logic and its Applications)
+    url: https://conf.researchr.org/home/icla-2027
+    start: 2027-01-06
+    end: 2027-01-08
+    location: IISc, Bengaluru, India
+    type: conference
+    fields: [math.logic.logic]
+    notes: Biennial conference of the Association for Logic in India.
+
+  - title: Indian Mathematical Society Annual Conference 2026
+    url: https://indianmathsoc.org/pdf/IMS_Conference_2026_Brochure.pdf
+    start: 2026-12-23
+    end: 2026-12-26
+    location: South Asian University, New Delhi, India
+    type: conference
+    fields: [math.other]
+    notes: The link is the conference brochure.
+
+  - title: Iberian Strings 2027
+    url: https://sites.google.com/view/iberianstrings2027/home
+    start: 2027-01-19
+    end: 2027-01-21
+    location: Instituto Superior Técnico, Lisbon, Portugal
+    type: conference
+    fields: [phys.hepth.string]
+

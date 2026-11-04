@@ -106,3 +106,23 @@ request.
 - Keep each pull request to one change: a profile, a source, or a fix.
 - Never commit `docs/events.json`: the workflow builds it and publishes it with the site.
 - Describe what you checked (for example the `doctor.py` output for a new source).
+
+## Adding or fixing a topic
+
+Events are tagged on three levels: field, sub-field, topic (for example Physics, High-energy
+theory & QFT, String theory). The topics are defined in two plain files:
+
+* `scraper/taxonomy_physics.py` and `scraper/taxonomy_math.py`: each topic has an id, a
+  label and a list of keyword patterns. A pattern is a regular expression matched on whole
+  words, ignoring case; a `CS:` prefix makes it case-sensitive (for acronyms).
+* `tests/coverage_data.py`: titles with the topic they must get, and titles that must get no
+  science tag at all.
+
+To fix a missed event: add a pattern for its wording to the right topic, add the title to
+`HELD_OUT` in `tests/coverage_data.py`, and run `python -m pytest -q tests/test_coverage.py`.
+Keep patterns specific: a bare common word ("sensors", "mixing", "partitions") tags
+unrelated events, and `OFF_TOPIC` is there to catch that.
+
+To add a new topic, put it in the right file under its sub-field. A profile can weight a topic
+by its id in `scraper/profiles.yaml`; otherwise it takes the weight of its sub-field.
+

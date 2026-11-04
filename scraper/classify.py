@@ -26,6 +26,9 @@ DESC_HIT = 0.5
 DESC_CAP = 1.0
 GENERALS = {"cosmo.general", "astro.general", "math.other", "phys.general", "ai.general",
             "cs.general"}
+# applied and catch-all physics (acoustics, instrumentation, outreach ...) is not "a science" an
+# ML talk can be applied to, as before
+NOT_A_SCIENCE = {"phys.general", "phys.applied", "phys.meta", "phys.complex"}
 # a venue its organisers declare as general ML (NeurIPS, ICLR ...) stays general ML
 # even when keywords also point at, say, vision
 KEEP_DECLARED = {"ai.general"}
@@ -67,7 +70,7 @@ def gather_evidence(ev, embed_result=None):
 
     # ML applied to a science: an AI signal + a physical-science signal
     sci = any(score[s] >= TAG_THRESHOLD for s in score
-              if T.parent(s) in ("cosmo", "astro", "physics") and s != "phys.general")
+              if T.parent(s) in ("cosmo", "astro", "physics") and not set(T.ancestors(s)) & NOT_A_SCIENCE)
     ml = any(score[s] >= TAG_THRESHOLD for s in score
              if T.parent(s) == "ai" and s != "ai.science")
     if ml and sci:
@@ -89,11 +92,20 @@ def assign(score, why):
         if g in tagged and any(T.parent(s) == fam and s != g for s in tagged) \
                 and not (g in KEEP_DECLARED and "declared" in why[g] and score[g] >= T.STRONG):
             tagged.discard(g)
+    # a topic implies its sub-field: "String theory" is enough, "High-energy theory" is not repeated
+    for t in [t for t in tagged if t in T.PARENT_SF]:
+        tagged.discard(T.PARENT_SF[t])
     # INSPIRE's "Gravitation and Cosmology" gives cosmo.general a weak prior;
     # keep it only if something else points at cosmology too
     if tagged == {"cosmo.general"} and why["cosmo.general"] == {"declared"} \
             and score["cosmo.general"] < 1.5:
         tagged.discard("cosmo.general")
+    # gravitation is also shown under Astronomy & cosmology, and cosmology under Physics
+    for m in T.mirror_tags(tagged):
+        src = [t for t in tagged if T.mirror_key(t) == T.mirror_key(m)]
+        tagged.add(m)
+        why[m] = set().union(*(why[t] for t in src))
+        score[m] = max(score[t] for t in src)
     basis = set()
     for sf in tagged:
         basis |= why[sf]
