@@ -58,6 +58,10 @@ profiles:
       ai.science: 25
       math.probability: 25      # statistical mechanics, random systems
       phys.fluids: 20
+      phys.amo: 70              # ultracold atoms, quantum optics, photonics
+      phys.applied: 55          # semiconductors, materials, nanoscience
+      phys.complex: 35          # nonlinear dynamics, networks
+      phys.nuclear: 15
       math.geometry: 15
       math.algebra: 15
       phys.gr: 10
@@ -80,6 +84,8 @@ profiles:
     interests:
       phys.hepth: 100
       phys.gr: 95
+      phys.hep: 80              # phenomenology, colliders, neutrinos, flavour
+      phys.nuclear: 40
       math.mathphys: 75
       cosmo.early: 70
       cosmo.dm: 60
@@ -110,6 +116,9 @@ profiles:
     focus_label: astrophysics
     interests:
       astro.he: 90
+      phys.hep.astropart: 70    # cosmic rays, gamma-ray and neutrino astronomy
+      phys.nuclear.astro: 65    # nucleosynthesis, neutron-star matter
+      phys.fluids.plasma: 55    # astrophysical plasmas, MHD
       astro.galactic: 90
       astro.stellar: 85
       astro.general: 80
@@ -280,3 +289,146 @@ profiles:
     cross_field: 0.25
     places: {bengaluru: 10, india: 5}
     types: {School: 5, Workshop: 5}
+
+  # ── Mathematics and mathematical physics ───────────────────────────────────
+
+  pure-mathematics:
+    label: Pure mathematics
+    blurb: >-
+      Number theory, algebra, geometry, topology, analysis, logic and
+      combinatorics, with dynamical systems and mathematical physics.
+    focus: [math.nt, math.algebra, math.geometry, math.topology, math.analysis, math.logic, math.comb, math.dyn]
+    focus_label: pure mathematics
+    interests:
+      math.nt: 100
+      math.algebra: 100
+      math.geometry: 100
+      math.topology: 100
+      math.analysis: 100
+      math.comb: 90
+      math.logic: 85
+      math.dyn: 85
+      math.mathphys: 70
+      math.probability: 60
+      math.other: 60
+      math.edu: 35
+      math.numeric: 30
+      math.optim: 20
+      math.applied: 20
+      phys.hepth: 30            # string theory and QFT meet geometry and algebra
+      cs.theory: 35
+    cross_field: 0.2
+    synergies:
+      - {when: [math.nt, [math.algebra, math.geometry]], bonus: 6}
+      - {when: [math.geometry, [math.topology, math.mathphys]], bonus: 6}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  applied-mathematics:
+    label: Applied mathematics & probability
+    blurb: >-
+      Probability, statistics, numerical analysis, optimisation, control, modelling
+      and mathematical biology, with PDEs and dynamical systems.
+    focus: [math.probability, math.numeric, math.optim, math.applied, math.dyn]
+    focus_label: applied mathematics
+    interests:
+      math.probability: 100
+      math.numeric: 95
+      math.optim: 90
+      math.applied: 90
+      math.dyn: 75
+      math.analysis: 65         # PDEs, harmonic analysis, inverse problems
+      math.other: 45
+      math.mathphys: 40
+      ai.theory: 55
+      cs.theory: 40
+      phys.complex: 45
+      phys.fluids: 30
+      phys.condmat: 30          # statistical physics
+      math.geometry: 20
+      math.algebra: 15
+    cross_field: 0.25
+    synergies:
+      - {when: [math.probability, [math.numeric, math.optim, ai.theory]], bonus: 6}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  mathematical-physics:
+    label: Mathematical physics
+    blurb: >-
+      Where mathematics and theoretical physics meet: integrable systems, QFT and
+      strings, geometry and topology, operator algebras, statistical mechanics and
+      mathematical relativity.
+    focus: [math.mathphys, phys.hepth, phys.gr]
+    focus_label: mathematical physics
+    interests:
+      math.mathphys: 100
+      phys.hepth: 85
+      phys.gr: 70
+      math.geometry: 75
+      math.algebra: 70
+      math.analysis: 70
+      math.topology: 65
+      phys.quantum: 60
+      math.probability: 60
+      math.dyn: 55
+      phys.condmat: 45
+      cosmo: 30
+      math.nt: 25
+      math: 15
+    cross_field: 0.3
+    synergies:
+      - {when: [math.mathphys, phys.hepth], bonus: 8}
+      - {when: [phys.hepth, [math.geometry, math.topology, math.algebra]], bonus: 8}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  # ── Experimental and applied physics ───────────────────────────────────────
+
+  materials-experimental:
+    label: Experimental & materials physics
+    blurb: >-
+      Semiconductors, materials research and characterisation, nanoscience, atomic
+      and optical physics, photonics, condensed-matter experiment and instrumentation.
+    focus: [phys.applied, phys.amo, phys.condmat]
+    focus_label: experimental & materials
+    interests:
+      phys.applied: 100
+      phys.amo: 90
+      phys.condmat: 85
+      phys.quantum: 55
+      phys.nuclear: 40
+      phys.hep.accel: 40        # detectors and accelerators
+      phys.fluids: 25
+      phys.complex: 25
+      phys.meta: 15
+      ai.science: 20
+    cross_field: 0.25
+    synergies:
+      - {when: [phys.applied, [phys.condmat, phys.amo]], bonus: 8}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+
+  particle-nuclear:
+    label: Particle & nuclear physics
+    blurb: >-
+      Collider and neutrino physics, flavour, hadrons and QCD, heavy ions, nuclear
+      structure and astrophysics, accelerators and detectors, dark matter searches.
+    focus: [phys.hep, phys.nuclear]
+    focus_label: particle & nuclear
+    interests:
+      phys.hep: 100
+      phys.nuclear: 100
+      phys.hepth: 55
+      cosmo.dm: 55
+      astro.he: 40
+      cosmo.early: 35
+      phys.gr: 25
+      phys.applied.instr: 40
+      phys.quantum: 15
+    cross_field: 0.25
+    synergies:
+      - {when: [phys.hep, phys.nuclear], bonus: 8}
+    places: {bengaluru: 10, india: 5}
+    types: {School: 8, Workshop: 5}
+

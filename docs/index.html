@@ -93,10 +93,15 @@ button.reset:hover{border-color:var(--amber);color:var(--amber)}
 .ftree summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px}
 .ftree summary::-webkit-details-marker{display:none}
 .ftree summary .tw{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted);width:10px}
-.ftree details[open] summary .tw{transform:rotate(90deg)}
+.ftree details[open]>summary .tw{transform:rotate(90deg)}
 .ftree summary label{flex:1;display:flex;gap:8px;align-items:center;font-weight:500;color:var(--fc)}
 .ftree .subs{padding:2px 0 4px 18px}
 .ftree .subs label.ck{font-size:13.5px}
+.ftree details.sfd{border-left:0;padding-left:0;margin:2px 0}
+.ftree details.sfd>summary label.ck{flex:1;font-weight:400;color:var(--text);padding:3px 0}
+.ftree details.sfd>summary .n{margin-left:auto}
+.ftree .topics{padding:0 0 2px 22px;border-left:1px solid var(--line);margin-left:5px}
+.ftree .topics label.ck{font-size:12.5px;color:var(--muted)}
 .ftree details.dim summary label,.ftree details.dim .subs{opacity:.5}
 .f-cosmo{--fc:var(--cosmo)}.f-astro{--fc:var(--astro)}.f-ai{--fc:var(--ai)}.f-cs{--fc:var(--cs)}.f-physics{--fc:var(--physics)}.f-math{--fc:var(--math)}
 
@@ -279,11 +284,13 @@ const MANUAL_SRC=new Set(["Watchlist","Added by you"]);
 const noPage=e=>/\/scraper\/watchlist\.yaml$/.test(e.url||"");
 const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"date TBA";
 const PAGE=90;
-let EVENTS=[],TAX=null,FIELD_LABEL={},SUB_LABEL={},SUB_PARENT={},shown=PAGE,WEEK_AGO="",TODAY="";
+let EVENTS=[],TAX=null,FIELD_LABEL={},SUB_LABEL={},SUB_PARENT={},CHAIN={},shown=PAGE,WEEK_AGO="",TODAY="";
 let PROFILES=[],PROF=null;   // research profiles: the same events, ranked per profile
 const S=e=>e.scores?(e.scores[PROF.id]??0):(e.score??0);                  // relevance for the profile
-const W=t=>{const w=PROF.weights||{};return t in w?w[t]:(SUB_PARENT[t] in w?w[SUB_PARENT[t]]:0)};
-const inFocus=e=>(e.subfields||[]).some(t=>PROF.focus.includes(t)||PROF.focus.includes(SUB_PARENT[t]));
+// weight of a tag: the first of itself, its sub-field, what that inherits, its field that the profile lists
+const chainOf=t=>CHAIN[t]||[t,SUB_PARENT[t]];
+const W=t=>{const w=PROF.weights||{};for(const n of chainOf(t))if(n in w)return w[n];return 0};
+const inFocus=e=>(e.subfields||[]).some(t=>chainOf(t).some(n=>PROF.focus.includes(n)));
 const pinned=e=>!!e.priority&&(!(e.subfields||[]).length||S(e)>0);        // pinned where relevant
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const STORE="rh-filters";
@@ -297,19 +304,40 @@ function checkList(container,values,counts,group,labeler){
     ${esc(labeler?labeler(v):v)}<span class="n">${counts[v]||""}</span></label>`).join("");
 }
 function buildFieldTree(){
+  // an event counts for every node on its chain (topic, sub-field, ...), once
   const cnt={},fcnt={};
-  EVENTS.forEach(e=>{(e.subfields||[]).forEach(s=>cnt[s]=(cnt[s]||0)+1);(e.fields||[]).forEach(f=>fcnt[f]=(fcnt[f]||0)+1)});
+  EVENTS.forEach(e=>{const seen=new Set();(e.subfields||[]).forEach(t=>chainOf(t).forEach(n=>{if(!(n in FIELD_LABEL))seen.add(n)}));
+    seen.forEach(n=>cnt[n]=(cnt[n]||0)+1);(e.fields||[]).forEach(f=>fcnt[f]=(fcnt[f]||0)+1)});
+  const nstyle="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted)";
+  const box=(s,f,up)=>`<input type="checkbox" data-group="sub" data-parent="${f}"${up?` data-up="${up}"`:""} value="${s.id}" checked>`;
+  const subsHtml=f=>{
+    const tops=f.subfields.filter(s=>!s.parent),kids=u=>f.subfields.filter(s=>s.parent===u.id);
+    return tops.map(u=>{
+      const ks=kids(u);
+      if(!ks.length)return `<label class="ck">${box(u,f.id)} ${esc(u.label)}<span class="n">${cnt[u.id]||""}</span></label>`;
+      return `<details class="sfd"><summary><span class="tw" aria-hidden="true">›</span><label class="ck">${box(u,f.id)}
+        ${esc(u.label)}</label><span class="n" style="${nstyle}">${cnt[u.id]||""}</span></summary>
+        <div class="topics">${ks.map(k=>`<label class="ck">${box(k,f.id,u.id)} ${esc(k.label)}<span class="n">${cnt[k.id]||""}</span></label>`).join("")}</div></details>`;
+    }).join("");
+  };
   $("fField").innerHTML=TAX.fields.map(f=>`<details class="f-${f.id}" data-f="${f.id}">
     <summary><span class="tw" aria-hidden="true">›</span><label><input type="checkbox" data-field="${f.id}" checked>
-      ${esc(f.label)}</label><span class="n" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted)">${fcnt[f.id]||0}</span></summary>
-    <div class="subs">${f.subfields.map(s=>`<label class="ck"><input type="checkbox" data-group="sub" data-parent="${f.id}" value="${s.id}" checked>
-      ${esc(s.label)}<span class="n">${cnt[s.id]||""}</span></label>`).join("")}</div></details>`).join("");
+      ${esc(f.label)}</label><span class="n" style="${nstyle}">${fcnt[f.id]||0}</span></summary>
+    <div class="subs">${subsHtml(f)}</div></details>`).join("");
+  const syncField=fid=>{const subs=[...document.querySelectorAll(`[data-parent="${fid}"]`)];
+    const fb=document.querySelector(`[data-field="${fid}"]`);fb.checked=subs.some(x=>x.checked);fb.indeterminate=fb.checked&&!subs.every(x=>x.checked)};
+  const syncUp=uid=>{const kids=[...document.querySelectorAll(`[data-up="${CSS.escape(uid)}"]`)];
+    const ub=document.querySelector(`input[data-group=sub][value="${CSS.escape(uid)}"]`);
+    if(ub&&kids.length){ub.checked=kids.some(x=>x.checked);ub.indeterminate=ub.checked&&!kids.every(x=>x.checked)}};
   document.querySelectorAll("[data-field]").forEach(fb=>fb.addEventListener("change",()=>{
-    document.querySelectorAll(`[data-parent="${fb.dataset.field}"]`).forEach(c=>c.checked=fb.checked);render(true)}));
+    document.querySelectorAll(`[data-parent="${fb.dataset.field}"]`).forEach(c=>{c.checked=fb.checked;c.indeterminate=false});render(true)}));
   document.querySelectorAll("[data-group=sub]").forEach(c=>c.addEventListener("change",()=>{
-    const subs=[...document.querySelectorAll(`[data-parent="${c.dataset.parent}"]`)];
-    const fb=document.querySelector(`[data-field="${c.dataset.parent}"]`);
-    fb.checked=subs.some(x=>x.checked);fb.indeterminate=fb.checked&&!subs.every(x=>x.checked);}));
+    c.indeterminate=false;
+    document.querySelectorAll(`[data-up="${CSS.escape(c.value)}"]`).forEach(k=>k.checked=c.checked);   // a sub-field toggles its topics
+    if(c.dataset.up)syncUp(c.dataset.up);
+    syncField(c.dataset.parent);}));
+  window.__syncFilterTree=()=>{document.querySelectorAll("[data-up]").forEach(k=>syncUp(k.dataset.up));
+    document.querySelectorAll("[data-field]").forEach(fb=>syncField(fb.dataset.field))};
 }
 function checked(group){return new Set([...document.querySelectorAll(`input[data-group=${group}]:checked`)].map(c=>c.value))}
 
@@ -324,9 +352,9 @@ function loadState(){
   if(!st)return;
   $("q").value=st.q||"";$("minScore").value=st.min??20;$("sort").value=st.sort||"focus";$("showUncl").checked=!!st.uncl;
   const r=document.querySelector(`input[name=region][value="${st.region}"]`);if(r)r.checked=true;
-  (st.off||[]).forEach(k=>{const[g,v]=k.split("|");const el=document.querySelector(`input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false});
-  document.querySelectorAll("[data-field]").forEach(fb=>{const subs=[...document.querySelectorAll(`[data-parent="${fb.dataset.field}"]`)];
-    fb.checked=subs.some(x=>x.checked);fb.indeterminate=fb.checked&&!subs.every(x=>x.checked)});
+  (st.off||[]).forEach(k=>{const[g,v]=k.split("|");const el=document.querySelector(`input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false;
+    if(g==="sub")document.querySelectorAll(`[data-up="${CSS.escape(v)}"]`).forEach(c=>c.checked=false)});   // hidden before topics existed: its topics stay hidden
+  if(window.__syncFilterTree)window.__syncFilterTree();
 }
 
 function setProfile(id,chosen){   // chosen: switched by hand in the picker
@@ -346,7 +374,7 @@ function setProfile(id,chosen){   // chosen: switched by hand in the picker
     $("sFocus").textContent=EVENTS.filter(e=>(e.fields||[]).length&&inFocus(e)).length;
   }
   const ff=new Set((PROF.focus||[]).map(n=>n in FIELD_LABEL?n:SUB_PARENT[n]));
-  document.querySelectorAll("#fField details").forEach(d=>{
+  document.querySelectorAll("#fField > details").forEach(d=>{
     const f=d.dataset.f,weighted=W(f)>0||[...d.querySelectorAll("[data-group=sub]")].some(c=>W(c.value)>0);
     d.open=ff.has(f);d.classList.toggle("dim",!weighted);
     d.title=weighted?"":"Not part of this profile: its events score 0";
@@ -377,6 +405,7 @@ function init(data){
   PROF=PROFILES.find(p=>p.id===(new URLSearchParams(location.search).get("p")||lsGet("rh-profile")||dflt))
     ||PROFILES.find(p=>p.id===dflt)||PROFILES[0];
   $("profile").innerHTML=PROFILES.map(p=>`<option value="${esc(p.id)}">${esc(p.label)}</option>`).join("");
+  CHAIN=TAX.chain||{};
   TAX.fields.forEach(f=>{FIELD_LABEL[f.id]=f.label;f.subfields.forEach(s=>{SUB_LABEL[s.id]=s.label;SUB_PARENT[s.id]=f.id})});
   TODAY=new Date().toISOString().slice(0,10);
   WEEK_AGO=new Date(Date.now()-7*864e5).toISOString().slice(0,10);

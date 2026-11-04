@@ -146,6 +146,24 @@ does not tag yet. They will be added with those subjects.
 | IIIT Bangalore (only if needed) | Bengaluru | CS, AI/ML | C | ⏸ events rendered by JavaScript |
 | IIIT Delhi (only if needed) | New Delhi | CS, AI/ML | C | ⬜ |
 
+## Worldwide aggregators (physics and mathematics)
+
+Whole-server and whole-calendar feeds, checked from GitHub's runners on 2026-11-04. Titles
+that are not science are dropped by the classifier.
+
+| Source | Status | Note |
+|---|---|---|
+| Indico Global, ICTP, DESY, French maths (CNRS) Indico servers | ✅ | whole-server feeds |
+| Math institutes events (mathinstitutes.org), Vakil's algebraic geometry list | ✅ | maths conferences |
+| Physics World events, Optica calendar, Perimeter Institute | ✅ | |
+| DESY hep-th conference calendar | ⏸ | took longer than 75 s |
+| Nordita Indico, HRI Indico | ⏸ | connection timed out or refused |
+| IAS physics events, BIRS | ⏸ | 403 Forbidden |
+| ICMS Edinburgh, Mittag-Leffler | ⏸ | host not found / page moved (404) |
+| INFN agenda | ⏸ | feed carries old events (2016 to 2026); not useful |
+| IMSc Indico, Benasque, Oberwolfach, Fields, KITP, APCTP | ⏸ | page read but no events found (layout or JavaScript) |
+| MathMeetings, Newton Institute, Ramanujan Mathematical Society | ⏸ | only past events found |
+
 ## Totals
 
 | Group | Listed | ✅ | ⏸ | ⬜ |

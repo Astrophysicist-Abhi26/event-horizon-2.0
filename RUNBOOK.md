@@ -37,6 +37,7 @@ of the site · `python scraper/doctor.py "<part of a source name>"` (tests one s
 | I-10 | 2026-10-13 | The link `…github.io/event-horizon-2.0/` gave 404 | The address follows the *repository* name, which was still `research-horizon` | The repository was renamed to `event-horizon-2.0` (Settings → General → Repository name), so that address now works; the code, README and site links were updated to match | After any rename: GitHub redirects the repository's old *github.com* address, but not the old *github.io* site address; the next run starts without yesterday's "first seen" dates | README, site |
 | I-11 | 2026-10-13 | Health alert #12 never closed | No auto-close existed (PR #14); later replaced by I-3 | — | — |
 | I-12 | 2026-10-25 | Temporary probe files reached `main` | PR merged while a temporary commit was on its branch | Removed in PR #23 | Never push temporary files to a branch with an open PR; check `git diff main` before merging |
+| I-13 | 2026-11-04 | Physics and mathematics events fell into a few broad topics, so string theory, conformal field theory and amplitudes could not be told apart; about a third of sample titles got no topic | The taxonomy had 6 physics and 8 mathematics sub-fields | Three-level taxonomy (field, sub-field, topic) with 132 topics; physics and mathematics areas re-measured (TAXONOMY.md) | `tests/test_coverage.py` fails if held-out coverage drops or an off-topic title gets a science tag |
 
 ## Standing known limitations (not bugs)
 

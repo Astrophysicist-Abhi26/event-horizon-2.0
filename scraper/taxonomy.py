@@ -201,7 +201,7 @@ RULES = {
 
     "cs.theory": [
         r"(?:design and analysis of|theory of|efficient|graph|approximation|online|streaming|parallel|combinatorial) algorithms?",
-        r"algorithmic(?! trading)", r"(?:computational )?complexity theor\w*",
+        r"algorithmic(?! trading)", r"(?:computational )?complexity theor\w*", r"computational complexity", r"complexity (?:and|&) algorithms?",
         r"theory of computation", r"theoretical computer science", r"CS:TCS",
         r"computability", r"randomi[sz]ed algorithms?",
         r"data structures?", r"computational geometry",
@@ -273,7 +273,7 @@ RULES = {
     ],
 
     "astro.general": [
-        r"astronom\w*", r"astrophysic\w*", r"telescopes?", r"observator(?:y|ies)",
+        r"astronom\w*", r"astrophysic\w*", r"astro-?chemistry", r"astro-?biology", r"telescopes?", r"observator(?:y|ies)",
         r"astroparticle", r"radio astronomy", r"CS:SKA", r"sky surveys?", r"CS:IAU",
         r"space mission\w*", r"astrometr\w*", r"spectroscop\w* survey",
     ],
@@ -416,16 +416,16 @@ _ARXIV_MATH = {
     "nt": "math.nt",
     "at": "math.topology", "gt": "math.topology", "gn": "math.topology",
     "kt": "math.topology",
-    "ra": "math.algebra", "ac": "math.algebra", "rt": "math.algebra",
-    "gr": "math.algebra", "qa": "math.algebra", "ct": "math.algebra",
+    "ra": "math.algebra", "ac": "math.algebra.comm", "rt": "math.algebra.lie",
+    "gr": "math.algebra.group", "qa": "math.algebra.hopf", "ct": "math.logic.category",
     "ag": "math.geometry", "dg": "math.geometry", "mg": "math.geometry",
     "sg": "math.geometry", "cv": "math.analysis",
-    "ap": "math.analysis", "ca": "math.analysis", "fa": "math.analysis",
-    "oa": "math.analysis", "sp": "math.analysis", "na": "math.analysis",
+    "ap": "math.analysis.pde", "ca": "math.analysis.ode", "fa": "math.analysis.functional",
+    "oa": "math.analysis.opalg", "sp": "math.analysis.functional", "na": "math.numeric",
     "pr": "math.probability", "st": "math.probability",
     "mp": "math.mathphys",
-    "ds": "math.other", "co": "math.other", "lo": "math.other", "oc": "math.other",
-    "it": "math.other", "gm": "math.other", "ho": "math.other",
+    "ds": "math.dyn", "co": "math.comb", "lo": "math.logic", "oc": "math.optim",
+    "it": "math.nt.coding", "gm": "math.other", "ho": "math.edu",
 }
 
 
@@ -525,21 +525,63 @@ def declared_codes(code):
         return [("phys.gr", STRONG)]
     if c == "gravitation_and_cosmology":           # INSPIRE category
         return [("phys.gr", STRONG), ("cosmo.general", WEAK)]
-    if c in ("hep_th", "physics_hep_th", "theory_hep", "hep_ph", "physics_hep_ph",
-             "phenomenology_hep", "hep_lat", "lattice"):
+    if c in ("hep_th", "physics_hep_th", "theory_hep"):
         return [("phys.hepth", STRONG)]
-    if c in ("hep_ex", "experiment_hep", "experiment_nucl", "theory_nucl",
-             "nucl_th", "nucl_ex", "general_physics", "physics_optics",
-             "physics_atom_ph", "instrumentation", "accelerators"):
+    if c in ("hep_ph", "physics_hep_ph", "phenomenology_hep", "hep_ex", "experiment_hep"):
+        return [("phys.hep", STRONG)]
+    if c in ("hep_lat", "lattice"):
+        return [("phys.hepth.lattice", STRONG)]
+    if c in ("experiment_nucl", "theory_nucl", "nucl_th", "nucl_ex"):
+        return [("phys.nuclear", STRONG)]
+    if c in ("accelerators", "physics_acc_ph"):
+        return [("phys.hep.accel", STRONG)]
+    if c in ("instrumentation", "physics_ins_det"):
+        return [("phys.applied.instr", STRONG), ("phys.hep.accel", WEAK)]
+    if c in ("physics_atom_ph", "physics_atm_clus"):
+        return [("phys.amo.atomic", STRONG)]
+    if c == "physics_optics":
+        return [("phys.amo.photonics", STRONG)]
+    if c == "physics_med_ph":
+        return [("phys.applied.medical", STRONG)]
+    if c == "physics_comp_ph":
+        return [("phys.condmat.computational", STRONG)]
+    if c in ("physics_soc_ph",):
+        return [("phys.complex.socio", STRONG)]
+    if c in ("physics_bio_ph", "q_bio"):
+        return [("phys.condmat.active", STRONG)]
+    if c == "physics_ed_ph":
+        return [("phys.meta.education", STRONG)]
+    if c in ("physics_hist_ph", "physics_soc_ph_history"):
+        return [("phys.meta.history", STRONG)]
+    if c in ("physics_chem_ph", "physics_app_ph"):
+        return [("phys.applied.materials", MEDIUM)]
+    if c == "physics_geo_ph":
+        return [("phys.fluids.earth", STRONG)]
+    if c == "physics_ao_ph":
+        return [("phys.fluids.climate", STRONG)]
+    if c == "physics_plasm_ph":
+        return [("phys.fluids.plasma", STRONG)]
+    if c == "physics_flu_dyn":
+        return [("phys.fluids.fluids", STRONG)]
+    if c in ("general_physics", "physics_gen_ph"):
         return [("phys.general", MEDIUM)]
     if c in ("quant_ph", "physics_quant_ph", "quantum_physics"):
         return [("phys.quantum", STRONG)]
+    _cm = {"soft": "phys.condmat.soft", "stat_mech": "phys.condmat.stat", "str_el": "phys.condmat.correlated",
+           "supr_con": "phys.condmat.correlated", "mes_hall": "phys.condmat.meso",
+           "mtrl_sci": "phys.applied.materials", "dis_nn": "phys.condmat.stat",
+           "quant_gas": "phys.amo.cold", "other": "phys.condmat"}
+    m = re.match(r"^(?:physics_)?cond_mat_(\w+)$", c)
+    if m and m.group(1) in _cm:
+        return [(_cm[m.group(1)], STRONG)]
     if c.startswith(("cond_mat", "physics_cond_mat")) or c == "condensed_matter":
         return [("phys.condmat", STRONG)]
-    if c in ("physics_flu_dyn", "physics_plasm_ph", "physics_ao_ph", "nlin_cd"):
-        return [("phys.fluids", STRONG)]
+    if c == "nlin_si":
+        return [("math.mathphys.integrable", STRONG), ("phys.hepth.integrable", MEDIUM)]
+    if c in ("nlin_cd", "nlin_ps", "nlin_ao", "nlin_cg"):
+        return [("phys.complex.nonlinear", STRONG)]
     if c.startswith("nlin"):
-        return [("math.mathphys", MEDIUM)]
+        return [("phys.complex.nonlinear", MEDIUM)]
     if c in ("physics",):
         return [("phys.general", WEAK)]
     if c == "data_analysis_and_statistics":        # INSPIRE category
@@ -613,6 +655,60 @@ NEGATIVE_PROTOTYPES = {
 
 
 # ---------------------------------------------------------------------------
+# Topics: the third level (field -> sub-field -> topic)
+#
+# taxonomy_physics.py and taxonomy_math.py define about 130 topics and a few new
+# sub-fields. An event is tagged with the most specific node that matches; every
+# ancestor counts for filters and profile weights (see ancestors()). The embedding
+# classifier knows only the original sub-fields (PROTOTYPES), so adding topics
+# cannot disturb its calibration.
+# ---------------------------------------------------------------------------
+from taxonomy_math import TOPICS as _MATH_TOPICS, UMBRELLAS as _MATH_UMBRELLAS      # noqa: E402
+from taxonomy_physics import TOPICS as _PHYS_TOPICS, UMBRELLAS as _PHYS_UMBRELLAS    # noqa: E402
+
+PARENT_SF = {}      # topic id -> its sub-field
+INHERITS = {}       # new sub-field -> older sub-field whose profile weight it keeps
+MIRRORS = {         # shown under two fields on purpose (see mirror_tags)
+    "cosmo.gravity": "Gravitation & GR",
+    "phys.cosmo": "Cosmology",
+}
+
+_added = {}
+_added["cosmo.gravity"] = ("cosmo", MIRRORS["cosmo.gravity"])
+INHERITS["cosmo.gravity"] = "phys.gr"
+for _id, (_field, _label, _inh) in {**_PHYS_UMBRELLAS, **_MATH_UMBRELLAS}.items():
+    _added[_id] = (_field, _label)
+    if _inh:
+        INHERITS[_id] = _inh
+_added["phys.cosmo"] = ("physics", MIRRORS["phys.cosmo"])
+for _id, (_sf, _label, _pats) in {**_PHYS_TOPICS, **_MATH_TOPICS}.items():
+    assert _sf in SUBFIELDS or _sf in _added, (_id, _sf)
+    _added[_id] = ((SUBFIELDS.get(_sf) or _added[_sf])[0], _label)
+    PARENT_SF[_id] = _sf
+    RULES[_id] = list(_pats)
+SUBFIELDS.update(_added)
+
+
+def _display_order():
+    """Fields in their order; inside a field each sub-field is followed by its topics."""
+    out = {}
+    for f in FIELDS:
+        tops = [sf for sf, v in SUBFIELDS.items() if v[0] == f and sf not in PARENT_SF]
+        for sf in tops:
+            out[sf] = SUBFIELDS[sf]
+            for t, up in PARENT_SF.items():
+                if up == sf:
+                    out[t] = SUBFIELDS[t]
+    return out
+
+
+_ordered = _display_order()
+assert len(_ordered) == len(SUBFIELDS)
+SUBFIELDS.clear()
+SUBFIELDS.update(_ordered)
+
+
+# ---------------------------------------------------------------------------
 # Compilation helpers
 # ---------------------------------------------------------------------------
 def _compile(pattern):
@@ -626,6 +722,7 @@ COMPILED = {sf: [_compile(p) for p in pats] for sf, pats in RULES.items()}
 
 
 def parent(sf):
+    """The FIELD of a sub-field or topic."""
     return SUBFIELDS[sf][0]
 
 
@@ -634,24 +731,67 @@ def label(node):
 
 
 def is_node(node):
-    """A taxonomy node a profile may weight: a field or a sub-field."""
+    """A taxonomy node a profile may weight: a field, a sub-field or a topic."""
     return node in FIELDS or node in SUBFIELDS
 
 
 def ancestors(node):
-    """The node itself, then its ancestors up to the field (most specific first)."""
-    return [node] if node in FIELDS else [node, SUBFIELDS[node][0]]
+    """The node itself, then what it belongs to, most specific first, ending with its
+    field: topic -> sub-field -> (the older sub-field it inherits from) -> field."""
+    if node in FIELDS:
+        return [node]
+    out, seen = [node], {node}
+    nxt = PARENT_SF.get(node) or INHERITS.get(node)
+    while nxt and nxt not in seen:
+        out.append(nxt)
+        seen.add(nxt)
+        nxt = PARENT_SF.get(nxt) or INHERITS.get(nxt)
+    out.append(SUBFIELDS[node][0])
+    return out
+
+
+def mirror_key(tag):
+    """'gr' for gravitation tags, 'cosmo' for cosmology tags, else None. A tag and its
+    mirror share a key, so a profile never counts one subject as two fields."""
+    if tag == "cosmo.gravity" or "phys.gr" in ancestors(tag)[:-1] and tag not in FIELDS:
+        return "gr"
+    if tag == "phys.cosmo" or (tag in SUBFIELDS and parent(tag) == "cosmo"):
+        return "cosmo"
+    return None
+
+
+def is_mirror(tag):
+    return tag in MIRRORS
+
+
+def mirrored(a, b):
+    ka = mirror_key(a)
+    return ka is not None and ka == mirror_key(b) and parent(a) != parent(b)
+
+
+def mirror_tags(tags):
+    """Gravitation belongs to Physics and to Astronomy & cosmology; cosmology to both
+    as well, so someone who follows only one of the two still sees all of it."""
+    extra = []
+    if any(mirror_key(t) == "gr" and not is_mirror(t) for t in tags):
+        extra.append("cosmo.gravity")
+    if any(mirror_key(t) == "cosmo" and not is_mirror(t) for t in tags):
+        extra.append("phys.cosmo")
+    return [t for t in extra if t not in tags]
 
 
 ORDER = {sf: i for i, sf in enumerate(SUBFIELDS)}   # display order of sub-fields
 
 
 def export_for_frontend():
-    """The site builds its field/sub-field filter from this, so the
-    taxonomy is defined in exactly one place."""
+    """The site builds its field/sub-field/topic filter from this, so the taxonomy is
+    defined in exactly one place. `chain` gives, for every node, what to look up in a
+    profile's weights (itself, its sub-field, what that inherits, its field)."""
     return {
         "fields": [{"id": f, "label": lbl,
-                    "subfields": [{"id": sf, "label": v[1]}
+                    "subfields": [{"id": sf, "label": v[1], "parent": PARENT_SF.get(sf)}
                                   for sf, v in SUBFIELDS.items() if v[0] == f]}
                    for f, lbl in FIELDS.items()],
+        "chain": {sf: ancestors(sf) for sf in SUBFIELDS},
+        "mirrors": sorted(MIRRORS),
     }

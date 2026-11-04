@@ -87,8 +87,15 @@ def test_declared_general_ml_venue_stays_general():
 
 def test_every_subfield_has_rules_and_a_prototype():
     for sf in T.SUBFIELDS:
-        assert T.RULES.get(sf), sf
-        assert T.PROTOTYPES.get(sf), sf
+        if sf in T.PARENT_SF:                      # a topic: keyword rules only
+            assert T.RULES.get(sf), sf
+        elif sf in T.MIRRORS:                      # a mirror: filled in from the other field
+            continue
+        elif sf in T.INHERITS:                     # a newer sub-field: defined by its topics
+            assert any(up == sf for up in T.PARENT_SF.values()), sf
+        else:
+            assert T.RULES.get(sf), sf
+            assert T.PROTOTYPES.get(sf), sf
 
 
 # ---------------------------------------------------------------------------

@@ -77,14 +77,16 @@ class Profile:
     def score(self, tags, region=None, etype=None, basis=()):
         if not tags:
             return 0
-        weighted = [(self.weight(t), T.ancestors(t)[-1]) for t in tags]
-        pos = sorted((wf for wf in weighted if wf[0] > 0), reverse=True)
+        weighted = [(self.weight(t), T.ancestors(t)[-1], t) for t in tags]
+        pos = sorted((x for x in weighted if x[0] > 0), reverse=True)
         if not pos:
             return 0
-        best_w, best_field = pos[0]
-        second = next((w for w, f in pos if f != best_field), 0)
+        best_w, best_field, best_tag = pos[0]
+        # a mirror of the best tag (gravitation shown under cosmology too) is the same
+        # subject, not a second field
+        second = next((w for w, f, t in pos if f != best_field and not T.mirrored(t, best_tag)), 0)
         s = best_w + self.cross_field * second
-        present = {n for t in tags for n in T.ancestors(t)}
+        present = {n for t in tags if not T.is_mirror(t) for n in T.ancestors(t)}
         grouped = {}
         for syn in self.synergies:
             if all(any(n in present for n in alts) for alts in syn.when):
@@ -95,7 +97,7 @@ class Profile:
         s += sum(grouped.values())
         s += self.places.get(region or "unknown", 0)
         s += self.types.get(etype, 0)
-        s += min(0, min(w for w, _ in weighted))
+        s += min(0, min(w for w, _, _ in weighted))
         if set(basis) == {"embedding"}:
             s *= EMBEDDING_ONLY
         return int(round(min(100, max(0, s))))
