@@ -100,7 +100,7 @@ track of which events are new this week.
 | ML summer schools ([awesome-mlss](https://github.com/sshkhr/awesome-mlss)) | machine-learning summer and winter schools worldwide, with application deadlines |
 | Indian institutes | one entry per page or calendar in [`scraper/institutes.yaml`](scraper/institutes.yaml) |
 | Watchlist | hand-added entries in [`scraper/watchlist.yaml`](scraper/watchlist.yaml) |
-| "Add event" issue form | events known only from an email or poster; they appear within minutes, with no commits |
+| "Add event" issue form | events known only from an email or poster; they appear within minutes, with no commits (owner and collaborators only; others need the `verified` label) |
 
 The Indian institutes covered today:
 
@@ -116,6 +116,9 @@ The Indian institutes covered today:
 
 [INSTITUTES.md](INSTITUTES.md) lists the leading Indian institutes (IITs, IISERs, NISER, DAE,
 DST and space institutes, ISI, IIITs) with which ones are covered and which come next.
+
+Something broke? [RUNBOOK.md](RUNBOOK.md) lists every incident so far with its symptom,
+cause and fix.
 
 The **Source health** panel at the bottom of the site shows which sources worked on the
 last run. You can test any institute source from your own network with

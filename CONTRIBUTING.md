@@ -6,7 +6,10 @@ to know the scraper code.
 ## Quick ways to help (no code)
 
 - **An event you heard about by email or poster:** open an **Add event** issue. It appears
-  on the site within minutes and disappears when the issue is closed.
+  on the site within minutes and disappears when the issue is closed. Only issues opened by
+  the repository's owner, members or collaborators are published; a maintainer publishes
+  someone else's issue by adding the `verified` label (this keeps strangers from pinning
+  links to the site).
 - **A source we should read:** open a **Suggest a source** issue with the page or calendar
   link.
 - **A research profile for your field:** open a **Research profile** issue listing the

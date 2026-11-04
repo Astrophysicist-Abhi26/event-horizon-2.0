@@ -45,14 +45,31 @@ def _load(path):
 
 def _urls(cfg):
     """`url` or `urls`, with {year} / {next_year} filled in (for pages such as
-    .../Seminars{year}.html that move every January)."""
+    .../Seminars{year}.html that move every January). From November the next
+    year's page is tried as well. -> list of (url, optional)."""
     raw = cfg.get("urls") or [cfg["url"]]
     y = today().year
-    out = []
+    out = {}
     for u in raw:
         for yy in ([y, y + 1] if "{year}" in u and today().month >= 11 else [y]):
-            out.append(u.format(year=yy, next_year=yy + 1))
-    return list(dict.fromkeys(out))
+            out.setdefault(u.format(year=yy, next_year=yy + 1), yy > y)
+    return list(out.items())
+
+
+def _collect(cfg, one):
+    """Run `one(url)` over every page of a source and join the events. The
+    look-ahead page of next year may not exist yet (IISc Mathematics answers 404
+    for Seminars2027.html in November), so its failure is ignored; any other
+    page failing is an error, as before."""
+    out = []
+    for url, optional in _urls(cfg):
+        try:
+            out += one(url)
+        except Exception as exc:
+            if not optional:
+                raise
+            print(f"  {cfg['name']}: look-ahead page {url} skipped ({exc.__class__.__name__})")
+    return out
 
 
 def _event(cfg, title, url, start, end=None, location=None, description="",
@@ -69,13 +86,9 @@ def _event(cfg, title, url, start, end=None, location=None, description="",
 # listing — generic HTML extractor
 # ---------------------------------------------------------------------------
 def _listing(cfg):
-    out = []
-    for url in _urls(cfg):
-        out += extract_listing(url, cfg["name"], cfg.get("location", "India"),
-                               href_filter=cfg.get("href_filter"),
-                               raw_type=cfg.get("type"),
-                               insecure_ok=bool(cfg.get("insecure_ok")))
-    return out
+    return _collect(cfg, lambda url: extract_listing(
+        url, cfg["name"], cfg.get("location", "India"), href_filter=cfg.get("href_filter"),
+        raw_type=cfg.get("type"), insecure_ok=bool(cfg.get("insecure_ok"))))
 
 
 # ---------------------------------------------------------------------------
@@ -126,10 +139,8 @@ def ical_events(cfg, text):
 
 
 def _ical(cfg):
-    out = []
-    for url in _urls(cfg):
-        out += ical_events(cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text)
-    return out
+    return _collect(cfg, lambda url: ical_events(
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text))
 
 
 def _google_calendar(cfg):
@@ -261,10 +272,8 @@ def labelled_list_from_html(cfg, html, page_url):
 
 
 def _labelled_list(cfg):
-    out = []
-    for url in _urls(cfg):
-        out += labelled_list_from_html(cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text, url)
-    return out
+    return _collect(cfg, lambda url: labelled_list_from_html(
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text, url))
 
 
 # ---------------------------------------------------------------------------
@@ -341,10 +350,8 @@ def table_from_html(cfg, html, page_url):
 
 
 def _table(cfg):
-    out = []
-    for url in _urls(cfg):
-        out += table_from_html(cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text, url)
-    return out
+    return _collect(cfg, lambda url: table_from_html(
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text, url))
 
 
 # ---------------------------------------------------------------------------
@@ -379,10 +386,8 @@ def rss_events(cfg, xml_text):
 
 
 def _rss(cfg):
-    out = []
-    for url in _urls(cfg):
-        out += rss_events(cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text)
-    return out
+    return _collect(cfg, lambda url: rss_events(
+        cfg, get(url, insecure_ok=bool(cfg.get("insecure_ok"))).text))
 
 
 # ---------------------------------------------------------------------------
@@ -616,6 +621,23 @@ def parse_issue_form(title, body):
     return it
 
 
+TRUSTED_AUTHORS = {"OWNER", "MEMBER", "COLLABORATOR"}
+APPROVED_LABEL = "verified"
+
+
+def _trusted_issue(iss):
+    """Anyone with a GitHub account can open an "Add event" issue, and its event is
+    pinned near the top of the site. So only the repository's own people count,
+    or an outsider's issue that a maintainer has approved by adding the `verified`
+    label (outsiders cannot add labels). Pull requests are never events."""
+    if "pull_request" in iss:
+        return False
+    if iss.get("author_association") in TRUSTED_AUTHORS:
+        return True
+    return any((l.get("name") if isinstance(l, dict) else l) == APPROVED_LABEL
+               for l in iss.get("labels") or [])
+
+
 def scrape_issue_intake():
     repo = os.environ.get("GITHUB_REPOSITORY")
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
@@ -629,6 +651,8 @@ def scrape_issue_intake():
                  headers=headers).json()
     out = []
     for iss in issues if isinstance(issues, list) else []:
+        if not _trusted_issue(iss):
+            continue
         it = parse_issue_form(iss.get("title"), iss.get("body"))
         if not it.get("url"):
             it["url"] = iss.get("html_url")   # poster-only events: the issue holds the poster

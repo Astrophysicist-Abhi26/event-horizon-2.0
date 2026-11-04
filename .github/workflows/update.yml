@@ -107,29 +107,17 @@ jobs:
         with:
           path: docs
 
-      # Maintainer alert -> GitHub Issue -> e-mail, only when a source newly
-      # breaks. (Personal "events you should see" notices are not sent: this
-      # site serves many research profiles.) Each new alert closes the previous one.
+      # Maintainer alert -> GitHub Issue -> e-mail: when a source newly breaks, or has
+      # been broken for a week; the alert closes itself when its sources recover.
+      # (Personal "events you should see" notices are not sent: this site serves many
+      # research profiles.) An alert that cannot be posted must never stop the
+      # deploy, hence continue-on-error and a script that always exits 0.
       - name: Notify
-        if: github.event_name != 'issues'
+        if: github.event_name != 'issues' && !cancelled()
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          for l in health add-event; do gh label create "$l" --color 0E8A16 --force >/dev/null 2>&1 || true; done
-          d=$(date -u +%F)
-          post () {   # $1 label, $2 title, $3 body file
-            [ -f "$3" ] || return 0
-            for n in $(gh issue list --label "$1" --state open --json number -q '.[].number'); do
-              gh issue close "$n" --comment "Superseded by the notice of $d." >/dev/null || true
-            done
-            gh issue create --label "$1" --title "$2 — $d" --body-file "$3"
-          }
-          post health "Source health alert" notify/health.md
-          if [ -f notify/all-clear.md ]; then
-            for n in $(gh issue list --label health --state open --json number -q '.[].number'); do
-              gh issue close "$n" --comment "$(cat notify/all-clear.md)" >/dev/null || true
-            done
-          fi
+        run: python scraper/notify.py
 
   # Publishing is its own job so that the github-pages environment is only
   # used when Pages is switched on.

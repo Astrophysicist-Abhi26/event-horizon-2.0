@@ -126,6 +126,7 @@ def run_sources(prev_health, prev_events=None):
     raw, health = [], []
     prev = {h["name"]: h for h in prev_health or []}
     quiet_ok = MANUAL | empty_ok_names()
+    today_iso = dt.date.today().isoformat()
     for name, fn, min_exp in registry:
         t0 = time.time()
         p = prev.get(name, {})
@@ -149,9 +150,17 @@ def run_sources(prev_health, prev_events=None):
                 status, batch = "stale", kept
                 msg = (f"{why[:200]} — showing {len(kept)} upcoming event(s) from the last "
                        f"good run ({(last_ok or '')[:10]})")
+        # How long has this source been broken? Chronic failures are alerted once,
+        # after LONG_FAILURE_DAYS, so a source that stays broken is never forgotten.
+        bad = status in BAD
+        since = ((p.get("bad_since") if p.get("status") in BAD else None) or today_iso) if bad else None
+        due = bad and not p.get("long_alerted") \
+            and (dt.date.fromisoformat(today_iso) - dt.date.fromisoformat(since)).days >= LONG_FAILURE_DAYS
         health.append(dict(name=name, status=status, raw=len(batch), kept=0,
                            message=msg, seconds=secs, last_ok=last_ok,
-                           previous=p.get("status")))
+                           previous=p.get("status"), bad_since=since,
+                           long_alerted=bool(bad and (p.get("long_alerted") or due)),
+                           long_due=bool(due)))
         print(f"[{status:5s}] {name}: {len(batch)} raw ({secs}s) {msg}")
         for e in batch:
             e["source"] = name
@@ -307,26 +316,41 @@ def rank_all(events, profiles):
 
 
 # ---------------------------------------------------------------------------
+BAD = ("error", "empty", "stale")
+LONG_FAILURE_DAYS = 7
+
+
 def notifications(health):
-    """Maintainer alert: a source that newly stopped returning events. (No
-    personal "events you should see" notices: the site serves many profiles.)"""
+    """Maintainer alert (GitHub issue -> e-mail). Written when a source newly stops
+    returning events, or has been broken for LONG_FAILURE_DAYS. The alert lists every
+    source that is broken now, so an alert that replaces an older one loses nothing.
+    `bad.json` always lists the broken sources: scraper/notify.py closes an open alert
+    once none of the sources it names is broken any more. (No personal "events you
+    should see" notices: the site serves many profiles.)"""
     os.makedirs(NOTIFY_DIR, exist_ok=True)
     for f in os.listdir(NOTIFY_DIR):
         os.remove(os.path.join(NOTIFY_DIR, f))
-    broken = [h for h in health if h["status"] in ("error", "empty", "stale")
-              and h.get("previous") not in ("error", "empty", "stale")]
-    if broken:
+    bad = [h for h in health if h["status"] in BAD]
+    with open(os.path.join(NOTIFY_DIR, "bad.json"), "w") as f:
+        json.dump([h["name"] for h in bad], f)
+    new = [h for h in bad if h.get("previous") not in BAD]
+    chronic = [h for h in bad if h.get("long_due")]
+    if new or chronic:
+        lines = []
+        if new:
+            lines += ["These sources stopped returning events:", ""]
+            lines += [f"- **{h['name']}** — {h['status']} {h['message']}" for h in new]
+        rest = [h for h in bad if h not in new]
+        if rest:
+            lines += ["", "Still broken" + (" (**%s** for %d days or more)" % (
+                ", ".join(h["name"] for h in chronic), LONG_FAILURE_DAYS) if chronic else "") + ":", ""]
+            lines += [f"- **{h['name']}** — {h['status']} since {h.get('bad_since') or '?'}: "
+                      f"{(h['message'] or '')[:160]}" for h in rest]
+        lines += ["", "Fix the source, or park it with `enabled: false` in "
+                  "`scraper/institutes.yaml`; this alert closes itself once none of "
+                  "the sources above is broken."]
         with open(os.path.join(NOTIFY_DIR, "health.md"), "w") as f:
-            f.write("These sources stopped returning events:\n\n" + "\n".join(
-                f"- **{h['name']}** — {h['status']} {h['message']}" for h in broken))
-    elif not any(h["status"] in ("error", "empty", "stale") for h in health):
-        # every source works again: the open alert can be closed
-        recovered = [h["name"] for h in health
-                     if h.get("previous") in ("error", "empty", "stale")]
-        with open(os.path.join(NOTIFY_DIR, "all-clear.md"), "w") as f:
-            f.write("All sources are returning events again"
-                    + (" (recovered: " + ", ".join(recovered) + ")" if recovered else "")
-                    + ". Closing this alert.")
+            f.write("\n".join(lines))
 
 
 def main():

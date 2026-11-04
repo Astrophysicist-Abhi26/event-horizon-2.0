@@ -10,6 +10,7 @@ import html as _html
 import os
 import re
 import time
+from urllib.parse import urlparse
 
 import requests
 from dateutil import parser as dateparser
@@ -24,7 +25,7 @@ CONNECT_TIMEOUT = 10     # a host that does not answer at all fails in seconds, 
 
 def session():
     s = requests.Session()
-    retry = Retry(total=3, backoff_factor=1.5,
+    retry = Retry(total=3, connect=1, backoff_factor=1.5,
                   status_forcelist=(429, 500, 502, 503, 504),
                   allowed_methods=("GET",), respect_retry_after_header=True)
     s.mount("https://", HTTPAdapter(max_retries=retry))
@@ -43,6 +44,16 @@ _BROWSER_HEADERS = {"User-Agent": BROWSER_UA,
                     "Accept-Language": "en-IN,en;q=0.9"}
 
 
+# A host that did not even accept a connection is skipped for the rest of the run:
+# without this, every source on it waits out its own timeouts (IIT Bombay Maths has
+# two sources and cost ~100 s a run while its server was unreachable).
+_DEAD_HOSTS = set()
+
+
+def reset_dead_hosts():
+    _DEAD_HOSTS.clear()
+
+
 def get(url, insecure_ok=False, **kw):
     """GET with retries. Two fallbacks, both needed by Indian institute sites:
     * 403/406 with our honest bot UA -> retry once with a browser UA
@@ -56,8 +67,14 @@ def get(url, insecure_ok=False, **kw):
         kw["timeout"] = (min(CONNECT_TIMEOUT, kw["timeout"]), kw["timeout"])
     headers = kw.pop("headers", None) or {}
     verify = True
+    host = urlparse(url).netloc.lower()
+    if host in _DEAD_HOSTS:
+        raise requests.exceptions.ConnectTimeout(f"{host} did not answer earlier in this run")
     try:
         r = HTTP.get(url, headers=headers, **kw)
+    except requests.exceptions.ConnectTimeout:
+        _DEAD_HOSTS.add(host)
+        raise
     except requests.exceptions.SSLError:
         if not insecure_ok:
             raise
