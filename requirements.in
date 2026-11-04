@@ -1,0 +1,9 @@
+# The libraries this project uses directly. requirements.txt lists the exact versions
+# (these and everything they pull in) that the daily run installs.
+requests
+beautifulsoup4
+pyyaml
+python-dateutil
+numpy
+fastembed          # Option B: local embedding classifier (CPU, no API key)
+pytest

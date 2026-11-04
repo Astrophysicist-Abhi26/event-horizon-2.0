@@ -17,7 +17,7 @@ from dateutil import parser as dateparser
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-REPO = os.environ.get("GITHUB_REPOSITORY", "Astrophysicist-Abhi26/research-horizon")
+REPO = os.environ.get("GITHUB_REPOSITORY", "Astrophysicist-Abhi26/event-horizon-2.0")
 UA = f"EventHorizon2/1.0 (academic event aggregator; +https://github.com/{REPO})"
 TIMEOUT = 30
 CONNECT_TIMEOUT = 10     # a host that does not answer at all fails in seconds, not minutes
