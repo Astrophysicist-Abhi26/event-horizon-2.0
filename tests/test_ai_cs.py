@@ -1,6 +1,7 @@
 """AI / ML and computer science: finer topics, the CS conference databases, profiles."""
 import datetime as dt
 import io
+import json
 import os
 import zipfile
 
@@ -108,9 +109,24 @@ def _zip(files):
 
 
 def _date_text(a, b):
+    """A conference's dates the way the CCF database writes them. A range that
+    crosses New Year needs both years (the test broke on 30 Oct - 1 Nov: "today + 63
+    days" lands on 1-3 Jan, and "December 29 - January 1, 2026" is in the past)."""
     a, b = dt.date.fromisoformat(a), dt.date.fromisoformat(b)
+    if a.year != b.year:
+        return f"{a:%B} {a.day}, {a.year} - {b:%B} {b.day}, {b.year}"
     return f"{a:%B} {a.day}-{b.day}, {a.year}" if a.month == b.month else \
         f"{a:%B} {a.day} - {b:%B} {b.day}, {a.year}"
+
+
+def test_date_text_round_trips_every_day_of_the_year():
+    """Whatever day the tests run, the fixture's dates must read back unchanged."""
+    from common import parse_date_range
+    day = dt.date(2026, 1, 1)
+    while day.year == 2026 or day < dt.date(2027, 1, 5):
+        a, b = day.isoformat(), (day + dt.timedelta(days=3)).isoformat()
+        assert parse_date_range(_date_text(a, b)) == (a, b), (a, b)
+        day += dt.timedelta(days=1)
 
 
 def test_ai_deadlines_reads_every_venue_and_skips_past(monkeypatch):
@@ -300,14 +316,15 @@ def test_unreachable_hosts_fail_fast(monkeypatch):
     assert seen["timeout"] == (common.CONNECT_TIMEOUT, common.TIMEOUT)
 
 
-def test_health_alert_opens_on_break_and_closes_on_recovery(tmp_path, monkeypatch):
+def test_health_alert_opens_on_break_and_lists_what_is_broken(tmp_path, monkeypatch):
     monkeypatch.setattr(S, "NOTIFY_DIR", str(tmp_path))
     S.notifications([{"name": "A", "status": "stale", "previous": "ok", "message": "timeout"},
                      {"name": "B", "status": "ok", "previous": "ok", "message": ""}])
-    assert sorted(os.listdir(tmp_path)) == ["health.md"]
+    assert sorted(os.listdir(tmp_path)) == ["bad.json", "health.md"]
+    assert json.loads((tmp_path / "bad.json").read_text()) == ["A"]
+    assert "- **A** — stale timeout" in (tmp_path / "health.md").read_text()
     S.notifications([{"name": "A", "status": "stale", "previous": "stale", "message": ""}])
-    assert os.listdir(tmp_path) == []                  # still broken: no new alert, none closed
+    assert os.listdir(tmp_path) == ["bad.json"]        # still broken: no new alert
     S.notifications([{"name": "A", "status": "ok", "previous": "stale", "message": ""},
                      {"name": "B", "status": "low", "previous": "ok", "message": ""}])
-    assert os.listdir(tmp_path) == ["all-clear.md"]
-    assert "recovered: A" in (tmp_path / "all-clear.md").read_text()
+    assert json.loads((tmp_path / "bad.json").read_text()) == []
