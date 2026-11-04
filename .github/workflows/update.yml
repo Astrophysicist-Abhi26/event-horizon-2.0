@@ -38,7 +38,7 @@ jobs:
     outputs:
       pages: ${{ steps.pages.outputs.enabled }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Is GitHub Pages switched on?
         id: pages
@@ -52,19 +52,19 @@ jobs:
             echo "::notice::GitHub Pages is not switched on, so this run builds and tests the site but does not publish it. To publish: Settings -> Pages -> Source: GitHub Actions (a private repository needs a paid GitHub plan)."
           fi
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
 
       - name: Cache embedding model (Option B)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache/fastembed
           key: fastembed-bge-small-en-v1.5
 
       - name: Cache Claude labels (Option C, if enabled)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: scraper/cache
           key: llm-labels-${{ github.run_id }}
@@ -100,9 +100,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}                         # reads "Add event" issues
         run: python scraper/scrape.py
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         if: steps.pages.outputs.enabled == 'true'
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         if: steps.pages.outputs.enabled == 'true'
         with:
           path: docs
@@ -132,4 +132,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
