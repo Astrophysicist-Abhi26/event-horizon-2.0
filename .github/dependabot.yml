@@ -1,0 +1,22 @@
+# Dependabot opens a pull request when a pinned library or GitHub Action has a new version.
+# Each pull request runs the Tests check, so an update that would break the daily run
+# is visible before it is merged. One pull request per week at most per ecosystem.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      python-libraries:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns: ["*"]

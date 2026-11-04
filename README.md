@@ -10,7 +10,7 @@ aggregators. So there is **one database and many rankings**. A condensed-matter 
 and a cosmologist see the same events, each in their own order, and nobody's field is
 hidden from anybody.
 
-**Live site:** https://astrophysicist-abhi26.github.io/research-horizon/ (updated daily at
+**Live site:** https://astrophysicist-abhi26.github.io/event-horizon-2.0/ (updated daily at
 08:00 IST)
 
 > **Status:** early development. Physics, astronomy, AI/ML and computer science are covered
@@ -166,8 +166,7 @@ cd docs && python3 -m http.server           # open http://localhost:8000
 
 Event Horizon 2.0 is the successor of the original
 [Event Horizon](https://github.com/Astrophysicist-Abhi26/event-horizon), a radar built for
-cosmology and astrophysics at IISc Bengaluru. (It was called Research Horizon while it was
-being built.) The original ranking lives on unchanged as the **Cosmology & ML for science**
+cosmology and astrophysics at IISc Bengaluru. The original ranking lives on unchanged as the **Cosmology & ML for science**
 profile; a test checks that it reproduces the original's scores exactly.
 
 ## License

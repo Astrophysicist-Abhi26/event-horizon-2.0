@@ -543,7 +543,7 @@ def _manual_event(it, source):
         except Exception as exc:
             print(f"  {source}: fetch failed for {url}: {exc}")
     if not url:     # poster/email-only event: link to where it was recorded
-        repo = os.environ.get("GITHUB_REPOSITORY", "Astrophysicist-Abhi26/research-horizon")
+        repo = os.environ.get("GITHUB_REPOSITORY", "Astrophysicist-Abhi26/event-horizon-2.0")
         url = f"https://github.com/{repo}/blob/main/scraper/watchlist.yaml"
     return dict(
         title=title or url, url=url, start_date=start, end_date=end or start,
