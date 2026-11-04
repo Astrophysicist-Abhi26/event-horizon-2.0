@@ -38,7 +38,7 @@ each usually with its own seminar page.
 | Indian Institute of Astrophysics (IIA) | Bengaluru | ✅ | Indico calendar feeds |
 | Jawaharlal Nehru Centre for Advanced Scientific Research (JNCASR) | Bengaluru | ✅ | all events; Theoretical Sciences Unit |
 | Inter-University Centre for Astronomy and Astrophysics (IUCAA) | Pune | ✅ | events at and outside IUCAA |
-| Tata Institute of Fundamental Research (TIFR), Astronomy & Astrophysics | Mumbai | ✅ | DAA events list and seminar calendar. ⏸ TIFR Indico |
+| Tata Institute of Fundamental Research (TIFR), Astronomy & Astrophysics | Mumbai | ✅ | DAA seminar calendar. ⏸ DAA events list (TIFR's robots.txt asks tools not to read it), TIFR Indico |
 | National Centre for Radio Astrophysics (NCRA-TIFR) | Pune | ✅ | Indico |
 | Chennai Mathematical Institute (CMI) | Chennai | ✅ | seminars |
 | Institute of Mathematical Sciences (IMSc) | Chennai | ⏸ | site blocks automated visitors (Cloudflare) |

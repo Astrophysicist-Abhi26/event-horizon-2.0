@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import profiles as P                                      # noqa: E402
 import taxonomy as T                                      # noqa: E402
 from classify import classify                             # noqa: E402
+import common as C                                        # noqa: E402
 from common import clean, norm_title, today               # noqa: E402
 from geo import locate                                     # noqa: E402
 import sources as G                                        # noqa: E402
@@ -130,6 +131,7 @@ def run_sources(prev_health, prev_events=None):
     for name, fn, min_exp in registry:
         t0 = time.time()
         p = prev.get(name, {})
+        ua0 = set(C.BROWSER_UA_HOSTS)
         try:
             batch = fn() or []
             status = "ok" if len(batch) >= max(1, min_exp) else ("low" if batch else "empty")
@@ -160,11 +162,17 @@ def run_sources(prev_health, prev_events=None):
                            message=msg, seconds=secs, last_ok=last_ok,
                            previous=p.get("status"), bad_since=since,
                            long_alerted=bool(bad and (p.get("long_alerted") or due)),
-                           long_due=bool(due)))
+                           long_due=bool(due),
+                           # the site turned away our named agent and answered as for a browser
+                           browser_ua=sorted(set(C.BROWSER_UA_HOSTS) - ua0)))
         print(f"[{status:5s}] {name}: {len(batch)} raw ({secs}s) {msg}")
         for e in batch:
             e["source"] = name
         raw.extend(batch)
+    if C.ROBOTS_BLOCKED:
+        print(f"robots.txt: {len(C.ROBOTS_BLOCKED)} page(s) skipped or flagged: " + ", ".join(C.ROBOTS_BLOCKED[:20]))
+    if C.BROWSER_UA_HOSTS:
+        print("Answered only a browser user agent: " + ", ".join(sorted(C.BROWSER_UA_HOSTS)))
     return raw, health
 
 

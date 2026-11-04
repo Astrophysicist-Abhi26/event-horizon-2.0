@@ -37,7 +37,7 @@ SUBFIELDS = {
     "cosmo.lss":     ("cosmo", "Large-scale structure & surveys"),
     "cosmo.early":   ("cosmo", "CMB & early universe"),
     "cosmo.dm":      ("cosmo", "Dark matter"),
-    "cosmo.general": ("cosmo", "Cosmology (general)"),
+    "cosmo.general": ("cosmo", "General cosmology"),
 
     "ai.science":    ("ai", "ML for science"),
     "ai.theory":     ("ai", "ML theory & optimisation"),
@@ -46,7 +46,7 @@ SUBFIELDS = {
     "ai.vision":     ("ai", "Computer vision & multimodal"),
     "ai.rl":         ("ai", "Reinforcement learning & agents"),
     "ai.trust":      ("ai", "Safety, fairness & interpretability"),
-    "ai.general":    ("ai", "AI / ML (general)"),
+    "ai.general":    ("ai", "General AI & ML"),
 
     "cs.theory":     ("cs", "Algorithms & theory of computation"),
     "cs.systems":    ("cs", "Systems, networks & HPC"),
@@ -55,12 +55,12 @@ SUBFIELDS = {
     "cs.data":       ("cs", "Databases, data mining & retrieval"),
     "cs.hci":        ("cs", "HCI, graphics & visualisation"),
     "cs.robotics":   ("cs", "Robotics"),
-    "cs.general":    ("cs", "Computer science (other)"),
+    "cs.general":    ("cs", "General computer science"),
 
     "astro.he":       ("astro", "High-energy, compact objects & GW"),
     "astro.galactic": ("astro", "Galaxies & AGN"),
     "astro.stellar":  ("astro", "Stars, Sun & planets"),
-    "astro.general":  ("astro", "Astronomy (general)"),
+    "astro.general":  ("astro", "General astronomy & colloquia"),
 
     "math.nt":        ("math", "Number theory"),
     "math.topology":  ("math", "Topology"),
@@ -69,14 +69,14 @@ SUBFIELDS = {
     "math.probability": ("math", "Probability & statistics"),
     "math.mathphys":  ("math", "Mathematical physics"),
     "math.analysis":  ("math", "Analysis & PDE"),
-    "math.other":     ("math", "Other mathematics"),
+    "math.other":     ("math", "General mathematics & colloquia"),
 
     "phys.gr":       ("physics", "Gravitation & GR"),
     "phys.hepth":    ("physics", "High-energy theory & QFT"),
     "phys.quantum":  ("physics", "Quantum physics"),
     "phys.condmat":  ("physics", "Condensed matter & stat mech"),
     "phys.fluids":   ("physics", "Fluids, plasma & climate"),
-    "phys.general":  ("physics", "Physics (other)"),
+    "phys.general":  ("physics", "General physics & colloquia"),
 }
 
 
@@ -794,4 +794,66 @@ def export_for_frontend():
                    for f, lbl in FIELDS.items()],
         "chain": {sf: ancestors(sf) for sf in SUBFIELDS},
         "mirrors": sorted(MIRRORS),
+        "display": display_tree(),
     }
+
+
+# ---------------------------------------------------------------------------
+# What the site shows: five disciplines, each a list of branches, each with its
+# topics. This is presentation only; tagging and scoring use the ids above.
+# A shared branch ("@gr", ...) is one branch listed under two disciplines: same
+# id, same topics, same count, so ticking it in one place ticks it in the other.
+# ---------------------------------------------------------------------------
+SHARED = {
+    "@gr": {"label": "Gravitation & GR", "base": "phys.gr", "extra": ["cosmo.gravity"]},
+    "@cosmology": {"label": "Cosmology", "base": None,
+                   "topics": ["cosmo.early", "cosmo.de", "cosmo.lss", "cosmo.dm", "cosmo.general"],
+                   "extra": ["phys.cosmo"]},
+    "@mathphys": {"label": "Mathematical physics", "base": "math.mathphys", "extra": []},
+}
+DISPLAY = [
+    # Physics: fundamental theory, then matter from small scales to large, then applied
+    # and human topics; the catch-all last.
+    ("physics", "Physics", "physics",
+     ["phys.hepth", "@gr", "phys.hep", "phys.nuclear", "phys.amo", "phys.quantum",
+      "phys.condmat", "phys.applied", "phys.fluids", "phys.complex", "@mathphys",
+      "@cosmology", "phys.meta", "phys.general"]),
+    ("astro", "Astronomy & Astrophysics", "astro",
+     ["@cosmology", "@gr", "astro.he", "astro.galactic", "astro.stellar", "astro.general"]),
+    # Mathematics: roughly the order of the Mathematics Subject Classification
+    ("math", "Mathematics", "math",
+     ["math.logic", "math.comb", "math.nt", "math.algebra", "math.geometry", "math.topology",
+      "math.analysis", "math.dyn", "math.probability", "@mathphys", "math.numeric",
+      "math.optim", "math.applied", "math.edu", "math.other"]),
+    ("cs", "Computer science", "cs",
+     ["cs.theory", "cs.systems", "cs.security", "cs.pl", "cs.data", "cs.hci", "cs.robotics",
+      "cs.general"]),
+    ("ai", "AI & machine learning", "ai",
+     ["ai.science", "ai.theory", "ai.genai", "ai.nlp", "ai.vision", "ai.rl", "ai.trust",
+      "ai.general"]),
+]
+
+
+def _topics_of(sf):
+    return [t for t, p in PARENT_SF.items() if p == sf]
+
+
+def _branch(key):
+    if key in SHARED:
+        spec = SHARED[key]
+        base = spec["base"]
+        topic_ids = spec.get("topics") or _topics_of(base)
+        own = [base] if base else []
+        return {"id": key, "label": spec["label"], "shared": True,
+                "members": own + topic_ids + spec["extra"],
+                "topics": [{"id": t, "label": SUBFIELDS[t][1]} for t in topic_ids]}
+    topic_ids = _topics_of(key)
+    return {"id": key, "label": SUBFIELDS[key][1], "shared": False,
+            "members": [key] + topic_ids,
+            "topics": [{"id": t, "label": SUBFIELDS[t][1]} for t in topic_ids]}
+
+
+def display_tree():
+    """Disciplines -> branches -> topics, with the tag ids each branch stands for."""
+    return [{"id": d, "label": label, "color": color, "branches": [_branch(k) for k in keys]}
+            for d, label, color, keys in DISPLAY]

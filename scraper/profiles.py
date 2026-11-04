@@ -200,8 +200,13 @@ def export_for_frontend(profiles):
     """The site's profile picker, focus button and "why it matched" chips."""
     return {
         "default": profiles.default,
+        "embedding_only": EMBEDDING_ONLY,
         "list": [{"id": p.id, "label": p.label, "blurb": p.blurb, "focus": p.focus,
                   "focus_label": p.focus_label,
-                  "weights": {n: w for n, w in p.interests.items()}}
+                  "weights": {n: w for n, w in p.interests.items()},
+                  # the rest of the recipe, so the page can explain a score step by step
+                  "cross_field": p.cross_field, "places": p.places, "types": p.types,
+                  "synergies": [{"when": s.when, "bonus": s.bonus, "group": s.group}
+                                for s in p.synergies]}
                  for p in profiles],
     }

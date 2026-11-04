@@ -222,6 +222,7 @@ sources:
     url: https://www.tifr.res.in/~daa/events_list.html   # events.html is only an index page
     location: TIFR, Mumbai, India
     checked: 2026-09-24      # conferences / workshops / schools
+    enabled: false           # TIFR's robots.txt asks automated tools not to read /~daa/ pages (2026-11-04)
 
   - name: TIFR DAA seminars
     kind: google_calendar    # the calendar embedded on ~daa/events_scheduled.html
@@ -287,12 +288,14 @@ sources:
     type: seminar
     title_in_description: true
     checked: 2026-10-25
+    enabled: false            # host has not answered GitHub's servers since 2026-10-25 (RUNBOOK I-5)
 
   - name: IIT Bombay Mathematics events
     kind: listing
     url: https://www.math.iitb.ac.in/NewsEvents/events.php
     location: IIT Bombay, Mumbai, India
     checked: 2026-10-25       # workshops and conferences
+    enabled: false            # same host as above; re-test with `python scraper/doctor.py --all "IIT Bombay Math"`
 
   - name: IIT Madras Physics colloquium
     kind: table

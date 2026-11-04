@@ -61,6 +61,7 @@ h1 .h{color:var(--amber)}
 
 main{display:grid;grid-template-columns:284px 1fr;gap:26px;padding:26px 0 70px}
 @media(max-width:860px){main{grid-template-columns:1fr}}
+main>*{min-width:0}   /* the scrolling discipline tabs must not widen the page */
 
 aside{position:sticky;top:14px;align-self:start;max-height:calc(100vh - 28px);overflow-y:auto;
   background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;backdrop-filter:blur(6px)}
@@ -88,22 +89,102 @@ button.reset:hover{border-color:var(--amber);color:var(--amber)}
   color:var(--text);border-radius:8px;padding:10px;font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;cursor:pointer}
 @media(max-width:860px){#fToggle{display:block}aside.hide{display:none}}
 
-/* field tree: the one place with colour identity per field */
-.ftree details{border-left:2px solid var(--fc,var(--line));padding-left:8px;margin:6px 0}
-.ftree summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px}
-.ftree summary::-webkit-details-marker{display:none}
-.ftree summary .tw{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted);width:10px}
-.ftree details[open]>summary .tw{transform:rotate(90deg)}
-.ftree summary label{flex:1;display:flex;gap:8px;align-items:center;font-weight:500;color:var(--fc)}
-.ftree .subs{padding:2px 0 4px 18px}
-.ftree .subs label.ck{font-size:13.5px}
-.ftree details.sfd{border-left:0;padding-left:0;margin:2px 0}
-.ftree details.sfd>summary label.ck{flex:1;font-weight:400;color:var(--text);padding:3px 0}
-.ftree details.sfd>summary .n{margin-left:auto}
-.ftree .topics{padding:0 0 2px 22px;border-left:1px solid var(--line);margin-left:5px}
-.ftree .topics label.ck{font-size:12.5px;color:var(--muted)}
-.ftree details.dim summary label,.ftree details.dim .subs{opacity:.5}
+/* field browser: tabs, columns and map share one selection; the one place with colour identity per field */
 .f-cosmo{--fc:var(--cosmo)}.f-astro{--fc:var(--astro)}.f-ai{--fc:var(--ai)}.f-cs{--fc:var(--cs)}.f-physics{--fc:var(--physics)}.f-math{--fc:var(--math)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+.fb{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;margin-bottom:16px;backdrop-filter:blur(6px)}
+.fb-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.fb-title{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;font-weight:700}
+.fb-find{position:relative;flex:1 1 260px;min-width:0}
+.fb-find input{margin:0}
+#fqList{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;list-style:none;background:var(--panel-solid);
+  border:1px solid var(--line);border-radius:8px;max-height:min(360px,60vh);overflow:auto;box-shadow:0 12px 32px #0007;padding:4px}
+#fqList li{padding:7px 9px;cursor:pointer;display:grid;grid-template-columns:10px 1fr auto;gap:1px 9px;align-items:center;border-radius:6px}
+#fqList li[aria-selected=true],#fqList li:hover{background:var(--line)}
+#fqList li .dot{width:9px;height:9px;border-radius:50%;background:var(--fc,var(--muted));grid-row:span 2}
+#fqList li .pth{grid-column:2;font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--cyan)}
+#fqList li .n{grid-row:span 2;font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--muted)}
+#fqList li.txt{grid-template-columns:1fr;color:var(--muted);border-top:1px solid var(--line);border-radius:0 0 6px 6px}
+.fb-views{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.fb-views button{all:unset;cursor:pointer;padding:6px 13px;font-family:"Space Grotesk",system-ui,sans-serif;font-size:13px;color:var(--muted)}
+.fb-views button[aria-selected=true]{background:var(--line);color:var(--text)}
+.fb-views button:focus-visible,.dtabs button:focus-visible,.och:focus-visible,.crow .go:focus-visible,.fb-sel button:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+.fb-sel{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 4px;font-size:13px;color:var(--muted)}
+.fb-sel .x{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--fc,var(--line));color:var(--fc,var(--text));
+  border-radius:99px;padding:2px 10px;font-size:12.5px}
+.fb-sel .x b{font-weight:400;opacity:.8}
+.fb-sel .lnk{all:unset;cursor:pointer;color:var(--cyan);font-size:12.5px;text-decoration:underline;text-underline-offset:2px}
+.dtabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);margin-top:8px;scrollbar-width:thin}
+.dtabs button{all:unset;cursor:pointer;padding:8px 10px 7px;white-space:nowrap;font-family:"Space Grotesk",system-ui,sans-serif;font-size:14px;font-weight:500;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.dtabs button[aria-selected=true]{color:var(--fc,var(--text));border-bottom-color:var(--fc,var(--amber))}
+.dtabs .n,.och .n{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;margin-left:6px;opacity:.75}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chiprow.topics{padding-left:10px;border-left:2px solid var(--fc,var(--line));margin-left:2px}
+.och{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:99px;padding:4px 11px;font-size:13px;color:var(--text);line-height:1.35}
+.och:hover{border-color:var(--fc,var(--amber))}
+.och.in{border-color:var(--fc);color:var(--fc)}
+.och.on{background:var(--fc,var(--amber));border-color:var(--fc,var(--amber));color:var(--bg)}
+.och.open{box-shadow:0 0 0 1px var(--fc,var(--amber)) inset}
+.fb-hint{font-size:12px;color:var(--muted);margin-top:9px}
+.crumb{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--cyan);margin-top:10px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:8px}
+.col{max-height:320px;overflow:auto;padding:6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.col h4{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;padding:2px 6px 6px}
+.crow{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;font-size:13.5px}
+.crow input{accent-color:var(--fc,var(--amber));flex:none}
+.crow .go{all:unset;cursor:pointer;flex:1;min-width:0;color:var(--text)}
+.crow.d .go{color:var(--fc);font-weight:500}
+.crow.nav{background:var(--line)}
+.crow .n{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted)}
+.crow .ar{color:var(--muted);font-size:12px;width:8px}
+.map{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:center;margin-top:8px}
+@media(max-width:640px){.map{grid-template-columns:1fr}}
+.map svg{width:100%;height:auto;max-width:340px;display:block;margin:0 auto}
+.map svg path{cursor:pointer;stroke:var(--bg);stroke-width:1.2}
+.map svg path:hover,.map svg path:focus-visible{filter:brightness(1.18);outline:none}
+.map svg path.on{stroke:var(--text);stroke-width:2.2}
+.map svg .lbl{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;fill:var(--bg);pointer-events:none;font-weight:500}
+.map svg .ctr{cursor:pointer}
+.map svg .ctr text{font-family:"Space Grotesk",system-ui,sans-serif;fill:var(--text);pointer-events:none}
+.mapinfo{display:grid;gap:8px;align-content:start;font-size:13.5px}
+.mapinfo .big{font-family:"Space Grotesk",system-ui,sans-serif;font-size:18px;font-weight:600;color:var(--fc,var(--text))}
+.mapinfo .row{display:flex;flex-wrap:wrap;gap:8px}
+.btn{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:6px 12px;font-size:13px;color:var(--text)}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+.btn.pri{background:var(--amber);border-color:var(--amber);color:var(--bg);font-weight:600}
+.btn.pri:hover{color:var(--bg);filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* "i" buttons and the two dialogs (relevance explained, my fields) */
+.info{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--cyan);
+  color:var(--cyan);font:600 12px/1 "IBM Plex Mono",ui-monospace,monospace;flex:none}
+.info:hover{background:var(--cyan);color:var(--bg)}
+.info:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.relrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:10px;font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--muted)}
+.relrow input[type=range]{width:min(220px,46vw)}
+.relrow b{color:var(--amber);font-weight:500;min-width:2ch}
+dialog{width:min(720px,calc(100vw - 32px));max-height:calc(100vh - 48px);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);
+  border-radius:12px;padding:20px 22px;margin:auto}
+dialog::backdrop{background:#05030Bcc}
+dialog h2{font-family:"Space Grotesk",system-ui,sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+dialog h3{font-family:"Space Grotesk",system-ui,sans-serif;font-size:15px;font-weight:600;margin:16px 0 6px}
+dialog p,dialog li{font-size:14px;color:var(--text);max-width:66ch}
+dialog .mut{color:var(--muted)}
+dialog ol,dialog ul{padding-left:20px;display:grid;gap:4px}
+dialog table{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
+dialog td{padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+dialog td.num{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;text-align:right;white-space:nowrap}
+dialog tr.tot td{font-weight:600;border-bottom:0}
+dialog .x{position:absolute;top:12px;right:12px}
+dialog .foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;align-items:center;margin-top:18px}
+.mfd h3{color:var(--fc)}
+.mfd .tiles{display:flex;flex-wrap:wrap;gap:6px}
+.mfd .och[aria-pressed=true]{background:var(--fc);border-color:var(--fc);color:var(--bg)}
+.mfd select{width:auto;max-width:100%}
+.scb{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:var(--amber);font-weight:500}
+.scb .info{width:15px;height:15px;font-size:10px;border-width:1.2px}
+.scb:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
 .toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .toolbar .count{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--muted)}
@@ -167,8 +248,16 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   <div class="profile">
     <label for="profile">Ranked for</label>
     <select id="profile" aria-describedby="profileBlurb"></select>
+    <button class="info" id="relInfo" title="How relevance works" aria-label="How relevance works">i</button>
+    <button class="btn" id="myFieldsBtn" title="Choose the fields you work on">My fields</button>
   </div>
   <p class="blurb" id="profileBlurb"></p>
+  <div class="relrow">
+    <label for="minScore">Minimum relevance</label>
+    <input type="range" id="minScore" min="0" max="100" step="5" value="20" aria-describedby="relHint">
+    <b id="minScoreV">20</b>
+    <span id="relHint">events scoring lower are hidden</span>
+  </div>
   <div class="stats">
     <button id="qFocus" title="Show only this profile's focus"><b id="sFocus">–</b><span id="focusLbl">in focus</span></button>
     <button id="qBlr" title="Show only Bengaluru"><b id="sBlr">–</b><span>in Bengaluru</span></button>
@@ -186,15 +275,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
     <h2>Search</h2>
     <input type="search" id="q" placeholder="title, speaker, place, abstract…" aria-label="Search events">
 
-    <h2>Fields</h2>
-    <div class="ftree" id="fField"></div>
-    <label class="ck" style="margin-top:6px"><input type="checkbox" id="showUncl"> Include unclassified
+    <label class="ck" style="margin-top:8px"><input type="checkbox" id="showUncl"> Include events with no field yet
       <span class="n" id="nUncl"></span></label>
-
-    <h2>Minimum relevance</h2>
-    <input type="range" id="minScore" min="0" max="100" step="5" value="20" aria-label="Minimum relevance score">
-    <div class="minrel"><span>fit with the chosen profile</span><b id="minScoreV">20</b></div>
-    <p class="hint">Fields decide <em>what</em> you see; relevance only ranks and trims.</p>
 
     <h2>Where</h2>
     <label class="ck"><input type="radio" name="region" value="all" checked> Everywhere</label>
@@ -245,6 +327,26 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   </div>
 
   <section>
+    <div class="fb" id="fb">
+      <div class="fb-head">
+        <h2 class="fb-title">Fields</h2>
+        <div class="fb-find">
+          <input type="search" id="fq" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false"
+            aria-controls="fqList" aria-autocomplete="list" aria-label="Find a field or topic"
+            placeholder="Find a field or topic: string theory, dark matter, knots…">
+          <ul id="fqList" role="listbox" hidden></ul>
+        </div>
+        <div class="fb-views" role="tablist" aria-label="Browse fields as">
+          <button role="tab" data-view="tabs" aria-selected="true">Tabs</button>
+          <button role="tab" data-view="cols" aria-selected="false">Columns</button>
+          <button role="tab" data-view="map" aria-selected="false">Map</button>
+        </div>
+      </div>
+      <div class="fb-sel" id="fbSel" aria-live="polite"></div>
+      <div id="vTabs"></div>
+      <div id="vCols" hidden></div>
+      <div id="vMap" hidden></div>
+    </div>
     <div class="toolbar">
       <span class="count">showing <b id="count">0</b> of <span id="countAll">0</span></span>
       <label style="margin-left:auto">Sort by
@@ -263,6 +365,26 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   </section>
 </main></div>
 
+<dialog id="relDlg" aria-labelledby="relTitle">
+  <button class="info x" data-close aria-label="Close">✕</button>
+  <div id="relBody"></div>
+  <div class="foot"><button class="btn" data-close>Close</button></div>
+</dialog>
+
+<dialog id="mfDlg" class="mfd" aria-labelledby="mfTitle">
+  <h2 id="mfTitle">What do you work on?</h2>
+  <p class="mut">Pick the branches you follow. The page then shows them first; you can still browse every field,
+  and change this any time with <b>My fields</b> at the top. Saved on this device only.</p>
+  <div id="mfGrid"></div>
+  <h3 style="color:var(--text)">Rank events for</h3>
+  <select id="mfProf" aria-label="Research profile used for ranking"></select>
+  <p class="mut" id="mfHint" style="font-size:12.5px;margin-top:4px"></p>
+  <div class="foot">
+    <button class="btn" id="mfSkip">Skip, show everything</button>
+    <button class="btn pri" id="mfSave">Save my fields</button>
+  </div>
+</dialog>
+
 <footer><div class="wrap">
   <details id="health"><summary id="hSum">Source health</summary><div id="hBody"></div></details>
   <p style="margin-top:14px">Refreshed daily by GitHub Actions.
@@ -271,6 +393,9 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   — it appears within minutes. Institute pages live in the
   <a href="https://github.com/Astrophysicist-Abhi26/event-horizon-2.0" id="repoLink">repository</a>
   (<code>scraper/institutes.yaml</code>).</p>
+  <p style="margin-top:8px">Each card links to the organiser's own announcement; only titles, dates, places and short
+  excerpts are shown. Organisers, speakers and site owners can
+  <a href="https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/issues/new?template=remove-or-correct.yml" id="removeLink">ask for a correction or removal</a>.</p>
 </div></footer>
 
 <script src="bg.js"></script>
@@ -285,7 +410,8 @@ const noPage=e=>/\/scraper\/watchlist\.yaml$/.test(e.url||"");
 const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"date TBA";
 const PAGE=90;
 let EVENTS=[],TAX=null,FIELD_LABEL={},SUB_LABEL={},SUB_PARENT={},CHAIN={},shown=PAGE,WEEK_AGO="",TODAY="";
-let PROFILES=[],PROF=null;   // research profiles: the same events, ranked per profile
+const START_P=new URLSearchParams(location.search).get("p");   // a shared link names a profile: skip the welcome
+let PROFILES=[],PROF=null,DATA_PROFILES=null;   // research profiles: the same events, ranked per profile
 const S=e=>e.scores?(e.scores[PROF.id]??0):(e.score??0);                  // relevance for the profile
 // weight of a tag: the first of itself, its sub-field, what that inherits, its field that the profile lists
 const chainOf=t=>CHAIN[t]||[t,SUB_PARENT[t]];
@@ -297,54 +423,267 @@ const STORE="rh-filters";
 /* links follow the repository the site is served from, so forks work unchanged */
 (()=>{const m=location.hostname.match(/^([^.]+)\.github\.io$/i),seg=location.pathname.split("/").filter(Boolean)[0];
   if(!m||!seg||seg.endsWith(".html"))return;const base=`https://github.com/${m[1]}/${seg}`;
-  $("repoLink").href=base;$("addLink").href=base+"/issues/new?template=add-event.yml";})();
+  $("repoLink").href=base;$("addLink").href=base+"/issues/new?template=add-event.yml";
+  $("removeLink").href=base+"/issues/new?template=remove-or-correct.yml";})();
 
 function checkList(container,values,counts,group,labeler){
   container.innerHTML=values.map(v=>`<label class="ck"><input type="checkbox" value="${esc(v)}" data-group="${group}" checked>
     ${esc(labeler?labeler(v):v)}<span class="n">${counts[v]||""}</span></label>`).join("");
 }
-function buildFieldTree(){
-  // an event counts for every node on its chain (topic, sub-field, ...), once
-  const cnt={},fcnt={};
-  EVENTS.forEach(e=>{const seen=new Set();(e.subfields||[]).forEach(t=>chainOf(t).forEach(n=>{if(!(n in FIELD_LABEL))seen.add(n)}));
-    seen.forEach(n=>cnt[n]=(cnt[n]||0)+1);(e.fields||[]).forEach(f=>fcnt[f]=(fcnt[f]||0)+1)});
-  const nstyle="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted)";
-  const box=(s,f,up)=>`<input type="checkbox" data-group="sub" data-parent="${f}"${up?` data-up="${up}"`:""} value="${s.id}" checked>`;
-  const subsHtml=f=>{
-    const tops=f.subfields.filter(s=>!s.parent),kids=u=>f.subfields.filter(s=>s.parent===u.id);
-    return tops.map(u=>{
-      const ks=kids(u);
-      if(!ks.length)return `<label class="ck">${box(u,f.id)} ${esc(u.label)}<span class="n">${cnt[u.id]||""}</span></label>`;
-      return `<details class="sfd"><summary><span class="tw" aria-hidden="true">›</span><label class="ck">${box(u,f.id)}
-        ${esc(u.label)}</label><span class="n" style="${nstyle}">${cnt[u.id]||""}</span></summary>
-        <div class="topics">${ks.map(k=>`<label class="ck">${box(k,f.id,u.id)} ${esc(k.label)}<span class="n">${cnt[k.id]||""}</span></label>`).join("")}</div></details>`;
-    }).join("");
-  };
-  $("fField").innerHTML=TAX.fields.map(f=>`<details class="f-${f.id}" data-f="${f.id}">
-    <summary><span class="tw" aria-hidden="true">›</span><label><input type="checkbox" data-field="${f.id}" checked>
-      ${esc(f.label)}</label><span class="n" style="${nstyle}">${fcnt[f.id]||0}</span></summary>
-    <div class="subs">${subsHtml(f)}</div></details>`).join("");
-  const syncField=fid=>{const subs=[...document.querySelectorAll(`[data-parent="${fid}"]`)];
-    const fb=document.querySelector(`[data-field="${fid}"]`);fb.checked=subs.some(x=>x.checked);fb.indeterminate=fb.checked&&!subs.every(x=>x.checked)};
-  const syncUp=uid=>{const kids=[...document.querySelectorAll(`[data-up="${CSS.escape(uid)}"]`)];
-    const ub=document.querySelector(`input[data-group=sub][value="${CSS.escape(uid)}"]`);
-    if(ub&&kids.length){ub.checked=kids.some(x=>x.checked);ub.indeterminate=ub.checked&&!kids.every(x=>x.checked)}};
-  document.querySelectorAll("[data-field]").forEach(fb=>fb.addEventListener("change",()=>{
-    document.querySelectorAll(`[data-parent="${fb.dataset.field}"]`).forEach(c=>{c.checked=fb.checked;c.indeterminate=false});render(true)}));
-  document.querySelectorAll("[data-group=sub]").forEach(c=>c.addEventListener("change",()=>{
-    c.indeterminate=false;
-    document.querySelectorAll(`[data-up="${CSS.escape(c.value)}"]`).forEach(k=>k.checked=c.checked);   // a sub-field toggles its topics
-    if(c.dataset.up)syncUp(c.dataset.up);
-    syncField(c.dataset.parent);}));
-  window.__syncFilterTree=()=>{document.querySelectorAll("[data-up]").forEach(k=>syncUp(k.dataset.up));
-    document.querySelectorAll("[data-field]").forEach(fb=>syncField(fb.dataset.field))};
+/* ---------- field browser ----------
+   One selection (SEL) of display nodes: "d:" discipline, "b:" branch, "t:" topic.
+   Tabs, columns, map and search are views of it. A shared branch (Gravitation & GR,
+   Cosmology, Mathematical physics) is one node with two parent disciplines, so it has
+   one count and one state wherever it is shown. Nothing selected = every field. */
+let NODE={},DISC=[],TAG2NODES={},CNT={},SEL=new Set(),NAV={d:null,b:null},VIEW="tabs",MAPZ=null,MAPF=null,MYF=null,MIRROR=new Set();
+function buildNodes(){
+  NODE={};DISC=[];TAG2NODES={};
+  (TAX.display||[]).forEach(d=>{
+    const did="d:"+d.id,dn={id:did,kind:"d",label:d.label,color:d.color,parents:[],children:[],members:new Set()};
+    NODE[did]=dn;DISC.push(did);
+    d.branches.forEach(b=>{
+      const bid="b:"+b.id;
+      let bn=NODE[bid];
+      if(!bn){bn=NODE[bid]={id:bid,kind:"b",label:b.label,color:d.color,shared:b.shared,parents:[],children:[],members:new Set(b.members)};
+        b.topics.forEach(t=>{NODE["t:"+t.id]={id:"t:"+t.id,kind:"t",label:t.label,color:d.color,parents:[bid],children:[],members:new Set([t.id])};
+          bn.children.push("t:"+t.id)})}
+      bn.parents.push(did);dn.children.push(bid);bn.members.forEach(m=>dn.members.add(m));
+    });
+  });
+  Object.values(NODE).forEach(n=>n.members.forEach(m=>(TAG2NODES[m]=TAG2NODES[m]||[]).push(n.id)));
+  CNT={};
+  EVENTS.forEach(e=>{const s=new Set();(e.subfields||[]).forEach(t=>(TAG2NODES[t]||[]).forEach(n=>s.add(n)));
+    e._nodes=s;s.forEach(n=>CNT[n]=(CNT[n]||0)+1)});
 }
+const nodeColor=(id,ctx)=>{const n=NODE[id];if(!n)return "";if(n.kind==="d")return n.color;
+  const p=ctx&&n.parents.includes(ctx)?ctx:(n.kind==="t"?NODE[n.parents[0]].parents.includes(NAV.d)?NAV.d:NODE[n.parents[0]].parents[0]:n.parents.includes(NAV.d)?NAV.d:n.parents[0]);
+  return NODE[p].color};
+function ancestors(id){const out=[];(NODE[id]?.parents||[]).forEach(p=>{out.push(p,...ancestors(p))});return out}
+function descendants(id){const out=[];(NODE[id]?.children||[]).forEach(c=>{out.push(c,...descendants(c))});return out}
+const covered=id=>ancestors(id).some(a=>SEL.has(a));
+// selecting a narrower node inside a selected one narrows; selecting a wider one absorbs the narrower ones
+function pick(id){if(!NODE[id])return;ancestors(id).forEach(a=>SEL.delete(a));descendants(id).forEach(x=>SEL.delete(x));SEL.add(id)}
+function toggle(id){if(SEL.has(id))SEL.delete(id);else pick(id);fieldsChanged()}
+function only(id){SEL=new Set([id]);fieldsChanged()}
+function fieldsChanged(){drawBrowser();render(true)}
+const pathOf=id=>{const n=NODE[id];if(!n)return "";if(n.kind==="d")return "";
+  if(n.kind==="b")return n.parents.map(p=>NODE[p].label).join(" · ");
+  const b=NODE[n.parents[0]];return (b.parents.includes(NAV.d)?NODE[NAV.d].label:NODE[b.parents[0]].label)+" › "+b.label};
+const nOf=id=>CNT[id]||0;
+const och=(id,ctx,extra="")=>{const n=NODE[id],cls=SEL.has(id)?"on":covered(id)?"in":"";
+  return `<button class="och f-${nodeColor(id,ctx)} ${cls} ${extra}" data-n="${esc(id)}" aria-pressed="${SEL.has(id)}">${esc(n.label)}<span class="n">${nOf(id)}</span></button>`};
+
+function drawSel(){
+  const box=$("fbSel");
+  if(!SEL.size){box.innerHTML=`<span>Showing every field.</span>`+(MYF&&MYF.length?` <button class="lnk" data-act="mine">Show my fields</button>`:"");return}
+  box.innerHTML=`<span>Showing:</span>`+[...SEL].map(id=>`<button class="x f-${nodeColor(id)}" data-x="${esc(id)}" title="Remove">${esc(NODE[id].label)} <b>✕</b></button>`).join("")+
+    ` <button class="lnk" data-act="clear">Show every field</button>`+
+    (MYF&&MYF.length&&!sameSet(SEL,MYF)?` <button class="lnk" data-act="mine">My fields</button>`:"");
+}
+const sameSet=(a,b)=>a.size===b.length&&b.every(x=>a.has(x));
+
+function drawTabs(){
+  const tabs=`<div class="dtabs" role="tablist" aria-label="Disciplines">`+
+    `<button role="tab" data-d="" aria-selected="${!NAV.d}">All<span class="n">${EVENTS.filter(e=>e._nodes&&e._nodes.size).length}</span></button>`+
+    DISC.map(d=>`<button role="tab" class="f-${NODE[d].color}" data-d="${d}" aria-selected="${NAV.d===d}">${esc(NODE[d].label)}<span class="n">${nOf(d)}</span></button>`).join("")+`</div>`;
+  let rows="";
+  if(!NAV.d){rows=`<div class="chiprow">${DISC.map(d=>och(d)).join("")}</div>`}
+  else{
+    const d=NODE[NAV.d];
+    rows=`<div class="chiprow">${och(NAV.d,null,"").replace(">"+esc(d.label)+"<",">All of "+esc(d.label)+"<")}${d.children.map(b=>och(b,NAV.d,NAV.b===b?"open":"")).join("")}</div>`;
+    if(NAV.b&&d.children.includes(NAV.b)&&NODE[NAV.b].children.length)
+      rows+=`<div class="chiprow topics f-${d.color}">${NODE[NAV.b].children.map(t=>och(t,NAV.d)).join("")}</div>`;
+  }
+  $("vTabs").innerHTML=tabs+rows+`<p class="fb-hint">${NAV.d?"Pick a branch to see its topics. Pick as many as you like, in any discipline; ✕ above removes one.":"Choose a discipline above, or pick whole disciplines here."}</p>`;
+}
+
+function drawCols(){
+  const row=(id,ctx,navd)=>{const n=NODE[id],kids=n.children.length&&n.kind!=="t";
+    return `<div class="crow ${n.kind} f-${nodeColor(id,ctx)} ${navd?"nav":""}"><input type="checkbox" data-n="${esc(id)}" ${SEL.has(id)||covered(id)?"checked":""}
+      aria-label="Show ${esc(n.label)}"><button class="go" data-go="${esc(id)}">${esc(n.label)}</button><span class="n">${nOf(id)}</span><span class="ar">${kids?"›":""}</span></div>`};
+  const c1=DISC.map(d=>row(d,null,NAV.d===d)).join("");
+  const c2=NAV.d?NODE[NAV.d].children.map(b=>row(b,NAV.d,NAV.b===b)).join(""):`<p class="fb-hint" style="padding:4px 6px">Choose a discipline.</p>`;
+  const c3=NAV.b&&NODE[NAV.b].children.length?NODE[NAV.b].children.map(t=>row(t,NAV.d,false)).join(""):`<p class="fb-hint" style="padding:4px 6px">${NAV.b?"This branch has no topics yet.":"Choose a branch."}</p>`;
+  const crumb=[NAV.d&&NODE[NAV.d].label,NAV.b&&NODE[NAV.b].label].filter(Boolean).join(" › ")||"All fields";
+  $("vCols").innerHTML=`<div class="crumb">${esc(crumb)}${NAV.b?` · ${nOf(NAV.b)} events`:NAV.d?` · ${nOf(NAV.d)} events`:""}</div>
+    <div class="cols"><div class="col"><h4>Discipline</h4>${c1}</div><div class="col"><h4>Branch</h4>${c2}</div><div class="col"><h4>Topic</h4>${c3}</div></div>
+    <p class="fb-hint">Click a name to open it; tick a box to show its events.</p>`;
+}
+
+function arcPath(r0,r1,a0,a1){
+  const P=(r,a)=>[(180+r*Math.sin(a)).toFixed(2),(180-r*Math.cos(a)).toFixed(2)],l=(a1-a0)>Math.PI?1:0;
+  if(a1-a0>=2*Math.PI-1e-6)a1=a0+2*Math.PI-1e-4;
+  const A=P(r1,a0),B=P(r1,a1),C=P(r0,a1),D=P(r0,a0);
+  return `M${A} A${r1} ${r1} 0 ${l} 1 ${B} L${C} A${r0} ${r0} 0 ${l} 0 ${D}Z`;
+}
+function drawMap(){
+  const z=MAPZ,inner=z?NODE[z].children:DISC,ctxD=z?(NODE[z].kind==="d"?z:(NODE[z].parents.includes(NAV.d)?NAV.d:NODE[z].parents[0])):null;
+  const val=id=>Math.max(nOf(id),0.6);
+  const tot=inner.reduce((s,id)=>s+val(id),0)||1;
+  let a=0,out="";
+  inner.forEach(id=>{
+    const span=2*Math.PI*val(id)/tot,b=a+span,col=nodeColor(id,ctxD),n=NODE[id];
+    const on=SEL.has(id)||covered(id)?"on":"";
+    out+=`<path class="${on}" d="${arcPath(62,118,a,b)}" style="fill:var(--${col})" data-m="${esc(id)}" tabindex="0" role="button" aria-label="${esc(n.label)}, ${nOf(id)} events"><title>${esc(n.label)} · ${nOf(id)}</title></path>`;
+    if(span>0.34){const mid=(a+b)/2,r=90,x=180+r*Math.sin(mid),y=180-r*Math.cos(mid);
+      // horizontal text: along the arc near the top and bottom, across the ring (56 px) at the sides
+      const room=Math.abs(Math.cos(mid))*Math.min(span*r,150)+Math.abs(Math.sin(mid))*50,maxc=Math.floor(room/6.3);
+      if(maxc>=4){
+      const t=n.label.length>maxc?n.label.slice(0,maxc-1)+"…":n.label;
+      out+=`<text class="lbl" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${esc(t)}</text>`}}
+    const kids=n.kind==="t"?[]:n.children,kt=kids.reduce((s,k)=>s+val(k),0);
+    let c=a;
+    kids.forEach((k,j)=>{const e2=c+span*val(k)/(kt||1),kn=NODE[k],kon=SEL.has(k)||covered(k)?"on":"";
+      out+=`<path class="${kon}" d="${arcPath(121,172,c,e2)}" style="fill:var(--${col});fill-opacity:${(0.42+0.38*((j%3)/2)).toFixed(2)}" data-m="${esc(k)}" tabindex="0" role="button" aria-label="${esc(kn.label)}, ${nOf(k)} events"><title>${esc(kn.label)} · ${nOf(k)}</title></path>`;
+      c=e2});
+    a=b;
+  });
+  const cl=z?NODE[z].label:"All fields",cn=z?nOf(z):EVENTS.filter(e=>e._nodes&&e._nodes.size).length;
+  out+=`<g class="ctr" data-up="1" tabindex="0" role="button" aria-label="${z?"Zoom out":"All fields"}"><circle cx="180" cy="180" r="58" style="fill:var(--panel-solid);stroke:var(--line)"/>
+    <text x="180" y="${z?172:176}" text-anchor="middle" font-size="12.5" font-weight="600">${esc(cl.length>18?cl.slice(0,17)+"…":cl)}</text>
+    <text x="180" y="${z?190:194}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${cn} events</text>
+    ${z?`<text x="180" y="207" text-anchor="middle" font-size="10" style="fill:var(--cyan)">↑ zoom out</text>`:""}</g>`;
+  $("vMap").innerHTML=`<div class="map"><svg viewBox="0 0 360 360" role="group" aria-label="Field map">${out}</svg><div class="mapinfo">${mapInfo(MAPF&&NODE[MAPF]?MAPF:z,ctxD)}</div></div>`;
+}
+function mapInfo(f,ctxD){
+  return f?`<div class="crumb" style="margin:0">${esc(pathOf(f)||"Discipline")}</div><div class="big f-${nodeColor(f,ctxD)}">${esc(NODE[f].label)}</div>
+      <div class="mono" style="color:var(--muted);font-size:12.5px">${nOf(f)} upcoming events</div>
+      <div class="row"><button class="btn pri" data-only="${esc(f)}">Show only this</button>
+      <button class="btn" data-tog="${esc(f)}">${SEL.has(f)?"Remove from selection":"Add to selection"}</button></div>`
+    :`<div class="big">Field map</div><p>Each ring is a level: disciplines inside, branches outside. Slice size is the number of upcoming events.
+      Click a slice to zoom in and see what is inside; click the centre to zoom out.</p>`;
+}
+function mapClick(id){
+  const n=NODE[id];MAPF=id;
+  if(n.kind!=="t"&&n.children.length){MAPZ=id;if(n.kind==="d"){NAV.d=id;NAV.b=null}else{NAV.b=id;if(!n.parents.includes(NAV.d))NAV.d=n.parents[0]}}
+  drawBrowser();
+}
+function mapUp(){
+  if(!MAPZ)return;const n=NODE[MAPZ];
+  if(n.kind==="b"){MAPZ=n.parents.includes(NAV.d)?NAV.d:n.parents[0];NAV.b=null}else{MAPZ=null;NAV.d=null;NAV.b=null}
+  MAPF=MAPZ;drawBrowser();
+}
+
+function drawBrowser(){
+  drawSel();
+  document.querySelectorAll(".fb-views [role=tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===VIEW)));
+  $("vTabs").hidden=VIEW!=="tabs";$("vCols").hidden=VIEW!=="cols";$("vMap").hidden=VIEW!=="map";
+  if(VIEW==="tabs")drawTabs();else if(VIEW==="cols")drawCols();else drawMap();
+}
+
+/* search over the field list (not the events) */
+let FQI=-1,FQITEMS=[];
+function fieldSearch(){
+  const q=$("fq").value.trim().toLowerCase(),list=$("fqList");
+  if(q.length<2){list.hidden=true;$("fq").setAttribute("aria-expanded","false");return}
+  const words=q.split(/\s+/);
+  const hits=Object.values(NODE).map(n=>{const L=n.label.toLowerCase(),hay=L+" "+pathOf(n.id).toLowerCase();
+      if(!words.every(w=>hay.includes(w)))return null;
+      const sc=(L.startsWith(q)?0:new RegExp("\\b"+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).test(L)?1:L.includes(q)?2:3)*10+({t:0,b:1,d:2}[n.kind]);
+      return [sc,n]}).filter(Boolean).sort((a,b)=>a[0]-b[0]||nOf(b[1].id)-nOf(a[1].id)).slice(0,8).map(x=>x[1]);
+  FQITEMS=hits.map(n=>n.id).concat(["@text"]);FQI=hits.length?0:FQITEMS.length-1;
+  list.innerHTML=hits.map((n,i)=>`<li role="option" id="fqo${i}" data-i="${i}" class="f-${nodeColor(n.id)}"><span class="dot"></span><span>${esc(n.label)}</span>
+      <span class="n">${nOf(n.id)}</span><span class="pth">${esc(pathOf(n.id)||"Discipline")}</span></li>`).join("")+
+    `<li role="option" id="fqo${hits.length}" data-i="${hits.length}" class="txt">Search event titles for “${esc(q)}” ↵</li>`;
+  list.hidden=false;$("fq").setAttribute("aria-expanded","true");markFq();
+}
+function markFq(){[...$("fqList").children].forEach((li,i)=>li.setAttribute("aria-selected",String(i===FQI)));
+  $("fq").setAttribute("aria-activedescendant",FQI>=0?"fqo"+FQI:"");const li=$("fqList").children[FQI];if(li)li.scrollIntoView({block:"nearest"})}
+function chooseFq(i){
+  const id=FQITEMS[i];if(id===undefined)return;
+  if(id==="@text"){$("q").value=$("fq").value.trim();}
+  else{pick(id);const n=NODE[id];
+    if(n.kind==="d"){NAV.d=id;NAV.b=null}else if(n.kind==="b"){NAV.b=id;if(!n.parents.includes(NAV.d))NAV.d=n.parents[0]}
+    else{NAV.b=n.parents[0];if(!NODE[NAV.b].parents.includes(NAV.d))NAV.d=NODE[NAV.b].parents[0]}}
+  $("fq").value="";$("fqList").hidden=true;$("fq").setAttribute("aria-expanded","false");fieldsChanged();
+}
+
+/* my fields: chosen once, remembered on this device; the profile is suggested from them */
+// how central the chosen branches are to a profile: each weight relative to the profile's own highest weight
+function profileFit(P,ids){const top=Math.max(1,...Object.values(P.weights||{}));
+  return ids.reduce((s,id)=>s+Math.max(0,...[...NODE[id].members].map(m=>Wp(m,P)))/top,0)}
+function suggestProfile(ids){
+  let best=null,bs=0;PROFILES.forEach(P=>{if(P.id==="explore")return;const f=profileFit(P,ids);if(f>bs){bs=f;best=P}});
+  return best||PROFILES.find(p=>p.id==="explore")||PROFILES[0];
+}
+let MF_PICK=new Set(),MF_PROF_TOUCHED=false;
+function openMyFields(){
+  MF_PICK=new Set(MYF||[]);MF_PROF_TOUCHED=!!MYF;
+  $("mfProf").innerHTML=PROFILES.map(p=>`<option value="${esc(p.id)}">${esc(p.label)}</option>`).join("");
+  $("mfProf").value=PROF.id;drawMf();$("mfDlg").showModal();
+}
+function drawMf(){
+  $("mfGrid").innerHTML=DISC.map(d=>`<div class="f-${NODE[d].color}"><h3>${esc(NODE[d].label)}</h3><div class="tiles">`+
+    NODE[d].children.map(b=>`<button class="och f-${NODE[d].color}" data-mf="${esc(b)}" aria-pressed="${MF_PICK.has(b)}">${esc(NODE[b].label)}</button>`).join("")+`</div></div>`).join("");
+  if(!MF_PROF_TOUCHED&&MF_PICK.size){$("mfProf").value=suggestProfile([...MF_PICK]).id}
+  $("mfHint").textContent=MF_PICK.size?(MF_PROF_TOUCHED?"":"Suggested from your fields. You can change it."):"Relevance (0–100) is computed for this profile; the i button next to “Ranked for” explains how.";
+}
+function saveMyFields(){
+  MYF=[...MF_PICK];try{localStorage.setItem("eh-myfields",JSON.stringify(MYF));localStorage.setItem("eh-mf-seen","1")}catch(e){}
+  SEL=new Set(MYF);setProfile($("mfProf").value,true);$("mfDlg").close();fieldsChanged();
+}
+
+/* relevance explained: the same recipe as scraper/profiles.py, step by step */
+const Wp=(t,P)=>{const w=(P&&P.weights)||{};for(const n of chainOf(t))if(n in w)return w[n];return 0};
+const fieldOfTag=t=>{const c=chainOf(t);return c[c.length-1]};
+const mirrorKey=t=>{const c=chainOf(t);
+  if(t==="cosmo.gravity"||(c.slice(0,-1).includes("phys.gr")&&!(t in FIELD_LABEL)))return "gr";
+  if(t==="phys.cosmo"||SUB_PARENT[t]==="cosmo")return "cosmo";return null};
+const mirrored=(a,b)=>{const k=mirrorKey(a);return !!k&&k===mirrorKey(b)&&SUB_PARENT[a]!==SUB_PARENT[b]};
+function explainScore(e,P){
+  const tags=e.subfields||[],lab=t=>SUB_LABEL[t]||FIELD_LABEL[t]||t;
+  const wt=tags.map(t=>[Wp(t,P),fieldOfTag(t),t]);
+  const cmp=(x,y)=>y[0]-x[0]||(y[1]>x[1]?1:y[1]<x[1]?-1:0)||(y[2]>x[2]?1:y[2]<x[2]?-1:0);
+  const pos=wt.filter(x=>x[0]>0).sort(cmp),steps=[];
+  if(!pos.length)return {steps:[["None of this event's topics is part of this profile","",0]],total:0};
+  const [bw,bf,bt]=pos[0];steps.push(["Best topic for this profile",lab(bt),bw]);
+  const sec=pos.find(x=>x[1]!==bf&&!mirrored(x[2],bt)),cf=P.cross_field||0;
+  if(sec&&cf)steps.push([`Second field: ${Math.round(cf*100)}% of its weight`,`${lab(sec[2])} ${sec[0]}`,+(cf*sec[0]).toFixed(1)]);
+  const present=new Set();tags.forEach(t=>{if(!MIRROR.has(t))chainOf(t).forEach(n=>present.add(n))});
+  const grouped={};
+  (P.synergies||[]).forEach(s=>{if(s.when.every(g=>[].concat(g).some(n=>present.has(n)))){
+    const what=s.when.map(g=>[].concat(g).filter(n=>present.has(n)).map(lab)[0]).join(" + ");
+    if(s.group){if(!grouped[s.group]||grouped[s.group][1]<s.bonus)grouped[s.group]=[what,s.bonus]}else steps.push(["Combination bonus",what,s.bonus])}});
+  Object.values(grouped).forEach(([what,b])=>steps.push(["Combination bonus",what,b]));
+  const pl=(P.places||{})[e.region||"unknown"]||0;if(pl)steps.push(["Place",{bengaluru:"Bengaluru",india:"India",online:"online",abroad:"abroad"}[e.region]||"unknown place",pl]);
+  const ty=(P.types||{})[e.type]||0;if(ty)steps.push(["Event type",e.type,ty]);
+  const pen=Math.min(0,...wt.map(x=>x[0]));if(pen)steps.push(["Topic this profile avoids","",pen]);
+  let s=steps.reduce((a,x)=>a+x[2],0);
+  const basis=[].concat(e.basis||[]),emb=basis.length&&basis.every(b=>b==="embedding");
+  const emo=(DATA_PROFILES&&DATA_PROFILES.embedding_only)||0.85;
+  if(emb){steps.push([`Found by the language model only, not a keyword: ×${emo}`,"",null]);s*=emo}
+  return {steps,raw:s,total:Math.round(Math.min(100,Math.max(0,s)))};
+}
+const REL_GENERAL=`<p>Every visitor sees the same events. <b>Relevance</b> is a score from 0 to 100 for how well an event fits the
+  profile chosen in <b>Ranked for</b>. It orders the list, and <b>Minimum relevance</b> hides events that score lower.
+  Changing the profile changes the order, never which events were collected.</p>
+  <h3>How the score is built</h3>
+  <ol><li><b>Best topic</b>: the highest weight the profile gives any of the event's topics.</li>
+  <li><b>Second field</b>: a share of the best weight from a different field (an event joining two of your fields ranks higher).</li>
+  <li><b>Combination bonus</b>: extra points when two interests meet, such as cosmology with machine learning.</li>
+  <li><b>Place and type</b>: small bonuses some profiles give, for example Bengaluru +10, elsewhere in India +5, schools +5.</li>
+  <li><b>Avoided topics</b> subtract; topics found only by the language model (no keyword) count ×0.85.</li>
+  <li>The result is kept between 0 and 100. Pinned events (watchlist, “Add event”) score at least 60 where they fit.</li></ol>
+  <p class="mut">Tap the number on any card to see its own breakdown. Under “Explore everything” every field weighs the same,
+  so the score mostly reflects place and type.</p>`;
+function openRel(e){
+  let html=`<h2 id="relTitle">${e?"Why this score":"How relevance works"}</h2>`;
+  if(e){
+    const x=explainScore(e,PROF),shown=S(e);
+    html+=`<p><b>${esc(e.title)}</b></p><p class="mut">Ranked for: ${esc(PROF.label)}</p><table>`+
+      x.steps.map(([a,b,v])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td><td class="num">${v===null?"":(v>0?"+":"")+v}</td></tr>`).join("")+
+      `<tr class="tot"><td>Relevance</td><td>${x.raw!==undefined&&Math.round(x.raw)!==x.total?`${Math.round(x.raw)} kept within 0–100`:""}${e.priority&&shown>x.total?" · pinned: at least 60":""}</td><td class="num">${shown}</td></tr></table>`;
+    html+=`<h3>In general</h3>`+REL_GENERAL;
+  } else html+=REL_GENERAL;
+  $("relBody").innerHTML=html;$("relDlg").showModal();
+}
+
 function checked(group){return new Set([...document.querySelectorAll(`input[data-group=${group}]:checked`)].map(c=>c.value))}
 
 function saveState(){
   const st={q:$("q").value,min:$("minScore").value,region:document.querySelector("input[name=region]:checked").value,
-    sort:$("sort").value,uncl:$("showUncl").checked,off:[...document.querySelectorAll("input[data-group]:not(:checked)")]
-      .map(c=>c.dataset.group+"|"+c.value)};
+    sort:$("sort").value,uncl:$("showUncl").checked,sel:[...SEL],view:VIEW,nav:NAV,
+    off:[...document.querySelectorAll("#filters input[data-group]:not(:checked)")].map(c=>c.dataset.group+"|"+c.value)};
   try{localStorage.setItem(STORE,JSON.stringify(st))}catch(e){}
 }
 function loadState(){
@@ -352,9 +691,11 @@ function loadState(){
   if(!st)return;
   $("q").value=st.q||"";$("minScore").value=st.min??20;$("sort").value=st.sort||"focus";$("showUncl").checked=!!st.uncl;
   const r=document.querySelector(`input[name=region][value="${st.region}"]`);if(r)r.checked=true;
-  (st.off||[]).forEach(k=>{const[g,v]=k.split("|");const el=document.querySelector(`input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false;
-    if(g==="sub")document.querySelectorAll(`[data-up="${CSS.escape(v)}"]`).forEach(c=>c.checked=false)});   // hidden before topics existed: its topics stay hidden
-  if(window.__syncFilterTree)window.__syncFilterTree();
+  (st.off||[]).forEach(k=>{const[g,v]=k.split("|");if(g==="sub")return;   // the old field tree: replaced by the field browser
+    const el=document.querySelector(`#filters input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false});
+  SEL=new Set((st.sel||[]).filter(id=>NODE[id]));
+  if(["tabs","cols","map"].includes(st.view))VIEW=st.view;
+  if(st.nav&&NODE[st.nav.d]){NAV.d=st.nav.d;NAV.b=NODE[st.nav.b]&&NODE[NAV.d].children.includes(st.nav.b)?st.nav.b:null}
 }
 
 function setProfile(id,chosen){   // chosen: switched by hand in the picker
@@ -373,12 +714,6 @@ function setProfile(id,chosen){   // chosen: switched by hand in the picker
     $("optFocus").textContent=(PROF.focus_label||"focus")+" first, then date";
     $("sFocus").textContent=EVENTS.filter(e=>(e.fields||[]).length&&inFocus(e)).length;
   }
-  const ff=new Set((PROF.focus||[]).map(n=>n in FIELD_LABEL?n:SUB_PARENT[n]));
-  document.querySelectorAll("#fField > details").forEach(d=>{
-    const f=d.dataset.f,weighted=W(f)>0||[...d.querySelectorAll("[data-group=sub]")].some(c=>W(c.value)>0);
-    d.open=ff.has(f);d.classList.toggle("dim",!weighted);
-    d.title=weighted?"":"Not part of this profile: its events score 0";
-  });
   window.__bgReady=true;
   if(window.__applyBg)window.__applyBg(!!chosen);   // background follows the profile's fields
 }
@@ -389,7 +724,7 @@ function renderHealth(data){
   const C=data.classifiers||{};
   $("hSum").textContent=`Source health: ${H.length-bad.length-pend-stale} of ${H.length} sources working`+(stale?` · ${stale} down, showing last good data`:"")+(bad.length?` · ${bad.length} failing`:"")+(pend?` · ${pend} waiting for first run`:"");
   const rows=H.map(h=>`<tr><td>${esc(h.name)}</td><td><span class="st ${h.status}">${h.status}</span></td>
-    <td class="n">${h.kept} kept / ${h.raw} raw</td><td class="msg">${esc(h.message||(h.last_ok?"last ok "+new Date(h.last_ok).toLocaleDateString("en-GB"):""))}</td></tr>`).join("");
+    <td class="n">${h.kept} kept / ${h.raw} raw</td><td class="msg">${esc(h.message||(h.last_ok?"last ok "+new Date(h.last_ok).toLocaleDateString("en-GB"):""))}${(h.browser_ua||[]).length?" · answered only as a browser":""}</td></tr>`).join("");
   const cls=Object.entries(C).map(([k,v])=>`<tr><td>${k==="llm"?"Claude classifier (Option C)":"Embedding classifier (Option B)"}</td>
     <td><span class="st ${v.status}">${v.status}</span></td><td class="msg" colspan="2">${esc(v.detail)}</td></tr>`).join("");
   $("hBody").innerHTML=`<table>${rows}${cls}</table>`;
@@ -399,6 +734,7 @@ function renderHealth(data){
 function init(data){
   if(!data.taxonomy){throw new Error("events.json is from an older version — run the scraper once")}
   EVENTS=data.events||[];TAX=data.taxonomy;
+  DATA_PROFILES=data.profiles||null;MIRROR=new Set(TAX.mirrors||[]);
   PROFILES=(data.profiles&&(data.profiles.list||[]).length)?data.profiles.list
     :[{id:"default",label:"Default ranking",blurb:"",focus:[],focus_label:"",weights:{}}];
   const dflt=data.profiles&&data.profiles.default;
@@ -425,27 +761,31 @@ function init(data){
 
   const cnt=f=>EVENTS.reduce((m,e)=>{[].concat(f(e)).forEach(v=>{if(v)m[v]=(m[v]||0)+1});return m},{});
   const types=cnt(e=>e.type),countries=cnt(e=>e.country||"Unknown"),srcs=cnt(e=>e.sources||[e.source]);
-  buildFieldTree();
+  buildNodes();
+  try{MYF=JSON.parse(lsGet("eh-myfields")||"null");if(MYF)MYF=MYF.filter(id=>NODE[id])}catch(e){MYF=null}
   checkList($("fType"),Object.keys(types).sort(),types,"type");
   checkList($("fCountry"),Object.keys(countries).sort((a,b)=>a==="India"?-1:b==="India"?1:a.localeCompare(b)),countries,"country");
   checkList($("fSource"),Object.keys(srcs).sort(),srcs,"source");
   loadState();
   setProfile(PROF.id);
   $("profile").addEventListener("input",()=>{setProfile($("profile").value,true);render(true)});
+  $("minScore").addEventListener("input",()=>render(true));
+  wireBrowser();
+  drawBrowser();
+  // first visit: ask what the visitor works on (not when they arrive from a shared profile link)
+  if(!MYF&&!lsGet("eh-mf-seen")&&!START_P&&$("mfDlg").showModal)setTimeout(openMyFields,400);
 
   document.querySelectorAll("#filters input,#sort").forEach(el=>el.addEventListener("input",()=>render(true)));
   $("more").addEventListener("click",()=>{shown+=PAGE;render(false)});
   $("reset").addEventListener("click",()=>{
     $("q").value="";$("dFrom").value="";$("dTo").value="";$("minScore").value=20;
     $("onlyNew").checked=false;$("onlyDl").checked=false;$("showUncl").checked=false;
-    document.querySelectorAll("#filters input[type=checkbox][data-group],[data-field]").forEach(c=>{c.checked=true;c.indeterminate=false});
+    document.querySelectorAll("#filters input[type=checkbox][data-group]").forEach(c=>{c.checked=true});
+    SEL=new Set();drawBrowser();
     document.querySelector('input[name=region][value=all]').checked=true;render(true);
   });
   const quick=(fn)=>()=>{$("reset").click();fn();render(true);window.scrollTo({top:$("grid").offsetTop-80,behavior:"smooth"})};
-  $("qFocus").addEventListener("click",quick(()=>{
-    document.querySelectorAll("[data-group=sub]").forEach(c=>{c.checked=PROF.focus.includes(c.value)||PROF.focus.includes(c.dataset.parent)});
-    document.querySelectorAll("[data-field]").forEach(fb=>{const subs=[...document.querySelectorAll(`[data-parent="${fb.dataset.field}"]`)];
-      fb.checked=subs.some(x=>x.checked);fb.indeterminate=fb.checked&&!subs.every(x=>x.checked)})}));
+  $("qFocus").addEventListener("click",quick(()=>{focusNodes(PROF.focus||[]).forEach(pick);drawBrowser()}));
   $("qBlr").addEventListener("click",quick(()=>{document.querySelector('input[name=region][value=bengaluru]').checked=true}));
   $("qIndia").addEventListener("click",quick(()=>{document.querySelector('input[name=region][value=india]').checked=true}));
   $("qNew").addEventListener("click",quick(()=>{$("onlyNew").checked=true}));
@@ -455,16 +795,88 @@ function init(data){
   render(true);
 }
 
+// a profile's focus (taxonomy ids) as browser nodes: a field becomes the branches that mostly belong to it
+function focusNodes(ids){
+  const out=new Set();
+  ids.forEach(id=>{
+    if(id in FIELD_LABEL){
+      const bs=Object.values(NODE).filter(n=>n.kind==="b"&&[...n.members].filter(m=>SUB_PARENT[m]===id).length*2>n.members.size).map(n=>n.id);
+      const d=DISC.find(d=>NODE[d].children.length===bs.length&&NODE[d].children.every(c=>bs.includes(c)));
+      (d?[d]:bs).forEach(x=>out.add(x));
+    } else {
+      const n=(TAG2NODES[id]||[]).map(x=>NODE[x]).filter(n=>n.kind!=="d").sort((a,b)=>a.members.size-b.members.size)[0];
+      if(n)out.add(n.id);
+    }
+  });
+  return [...out];
+}
+function wireBrowser(){
+  const fb=$("fb");
+  fb.addEventListener("click",ev=>{
+    const t=ev.target.closest("button,[data-m],[data-up]");if(!t)return;
+    if(t.dataset.view){VIEW=t.dataset.view;if(VIEW==="map"){MAPZ=NAV.b||NAV.d||null;MAPF=MAPZ}drawBrowser();saveState();return}
+    if(t.dataset.d!==undefined&&t.getAttribute("role")==="tab"&&t.closest(".dtabs")){NAV.d=t.dataset.d||null;NAV.b=null;drawBrowser();saveState();return}
+    if(t.dataset.n){const id=t.dataset.n,n=NODE[id];
+      if(n.kind==="b"&&VIEW==="tabs"){const opening=NAV.b!==id&&n.children.length;NAV.b=n.children.length?id:NAV.b;
+        if(opening&&(SEL.has(id)||covered(id))){drawBrowser();return}}   // first click on a chosen branch only opens its topics
+      if(n.kind==="d"&&VIEW==="tabs"&&NAV.d!==id&&NAV.d!==null){NAV.d=id}
+      toggle(id);return}
+    if(t.dataset.go){const id=t.dataset.go,n=NODE[id];
+      if(n.kind==="d"){NAV.d=id;NAV.b=null}else if(n.kind==="b"){NAV.b=id}else{toggle(id);return}
+      drawBrowser();saveState();return}
+    if(t.dataset.x){SEL.delete(t.dataset.x);fieldsChanged();return}
+    if(t.dataset.act==="clear"){SEL=new Set();fieldsChanged();return}
+    if(t.dataset.act==="mine"){SEL=new Set(MYF||[]);fieldsChanged();return}
+    if(t.dataset.only){only(t.dataset.only);return}
+    if(t.dataset.tog){toggle(t.dataset.tog);return}
+    if(t.dataset.m){mapClick(t.dataset.m);return}
+    if(t.dataset.up){mapUp();return}
+  });
+  fb.addEventListener("change",ev=>{const c=ev.target;if(c.matches("input[type=checkbox][data-n]")){
+    const id=c.dataset.n;if(c.checked)pick(id);else if(SEL.has(id))SEL.delete(id);
+    else{const a=ancestors(id).find(x=>SEL.has(x));   // unticking inside a chosen branch: keep its other parts
+      if(a){SEL.delete(a);const keep=x=>x!==id&&!ancestors(id).includes(x);
+        const fill=(p)=>NODE[p].children.forEach(ch=>{if(ch===id)return;if(ancestors(id).includes(ch))fill(ch);else if(keep(ch))SEL.add(ch)});fill(a)}}
+    fieldsChanged()}});
+  fb.addEventListener("mouseover",ev=>{const p=ev.target.closest("#vMap path[data-m]");if(p){const box=document.querySelector("#vMap .mapinfo");
+    if(box)box.innerHTML=mapInfo(p.dataset.m,MAPZ&&NODE[MAPZ].kind==="d"?MAPZ:NAV.d)}});
+  // leaving the map shows the clicked slice again, so its buttons act on what was clicked
+  fb.addEventListener("mouseout",ev=>{const svg=ev.target.closest&&ev.target.closest("#vMap svg");
+    if(svg&&!svg.contains(ev.relatedTarget)){const box=document.querySelector("#vMap .mapinfo"),f=MAPF&&NODE[MAPF]?MAPF:MAPZ;
+      if(box)box.innerHTML=mapInfo(f,MAPZ&&NODE[MAPZ].kind==="d"?MAPZ:NAV.d)}});
+  fb.addEventListener("keydown",ev=>{const t=ev.target;if((ev.key==="Enter"||ev.key===" ")&&(t.dataset.m||t.dataset.up)){ev.preventDefault();t.dataset.m?mapClick(t.dataset.m):mapUp()}});
+  const fq=$("fq");
+  fq.addEventListener("input",fieldSearch);
+  fq.addEventListener("keydown",ev=>{const L=$("fqList");if(L.hidden)return;
+    if(ev.key==="ArrowDown"){FQI=Math.min(FQITEMS.length-1,FQI+1);markFq();ev.preventDefault()}
+    else if(ev.key==="ArrowUp"){FQI=Math.max(0,FQI-1);markFq();ev.preventDefault()}
+    else if(ev.key==="Enter"){chooseFq(FQI);ev.preventDefault()}
+    else if(ev.key==="Escape"){L.hidden=true;fq.setAttribute("aria-expanded","false")}});
+  $("fqList").addEventListener("mousedown",ev=>{const li=ev.target.closest("li");if(li){ev.preventDefault();chooseFq(+li.dataset.i)}});
+  fq.addEventListener("blur",()=>setTimeout(()=>{$("fqList").hidden=true;fq.setAttribute("aria-expanded","false")},150));
+  // dialogs
+  $("relInfo").addEventListener("click",()=>openRel(null));
+  $("grid").addEventListener("click",ev=>{const b=ev.target.closest(".scb");if(b){const e=EVENTS.find(x=>String(x.id)===b.dataset.ev);if(e)openRel(e)}});
+  document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",ev=>{if(ev.target===d||ev.target.closest("[data-close]"))d.close()})});
+  $("myFieldsBtn").addEventListener("click",openMyFields);
+  $("mfGrid").addEventListener("click",ev=>{const b=ev.target.closest("[data-mf]");if(!b)return;const id=b.dataset.mf;
+    MF_PICK.has(id)?MF_PICK.delete(id):MF_PICK.add(id);drawMf()});
+  $("mfProf").addEventListener("input",()=>{MF_PROF_TOUCHED=true;drawMf()});
+  $("mfSave").addEventListener("click",saveMyFields);
+  $("mfSkip").addEventListener("click",()=>{try{localStorage.setItem("eh-mf-seen","1")}catch(e){}$("mfDlg").close()});
+  $("mfDlg").addEventListener("cancel",()=>{try{localStorage.setItem("eh-mf-seen","1")}catch(e){}});
+}
+
 function render(resetPage){
   if(resetPage)shown=PAGE;
   $("minScoreV").textContent=$("minScore").value;
   const q=$("q").value.trim().toLowerCase(),from=$("dFrom").value,to=$("dTo").value,minS=+$("minScore").value,
     region=document.querySelector("input[name=region]:checked").value,uncl=$("showUncl").checked,
     onlyNew=$("onlyNew").checked,onlyDl=$("onlyDl").checked,
-    SUB=checked("sub"),TY=checked("type"),CO=checked("country"),SR=checked("source");
+    TY=checked("type"),CO=checked("country"),SR=checked("source");
   let rows=EVENTS.filter(e=>{
     const subs=e.subfields||[];
-    if(subs.length){ if(!subs.some(s=>SUB.has(s)))return false; if(S(e)<minS&&!pinned(e))return false; }
+    if(subs.length){ if(SEL.size&&![...SEL].some(n=>e._nodes.has(n)))return false; if(S(e)<minS&&!pinned(e))return false; }
     else if(!uncl&&!e.priority)return false;
     if(q&&!(`${e.title} ${e.location||""} ${e.speaker||""} ${e.description||""}`).toLowerCase().includes(q))return false;
     if(from&&(e.end_date||e.start_date||"9999")<from)return false;
@@ -491,10 +903,10 @@ function render(resetPage){
   $("empty").hidden=rows.length>0;
   if(!rows.length)$("empty").textContent=(region!=="all")
     ? "Nothing matches in this region with the current fields and relevance. Try lowering minimum relevance, or check Source health below — a failing institute page means fewer local events."
-    : "Nothing matches these filters. Lower the minimum relevance, re-tick a field, or choose another research profile.";
+    : "Nothing matches these filters. Lower the minimum relevance, choose more fields, or choose another research profile.";
   const soon=new Date(Date.now()+21*864e5).toISOString().slice(0,10);
   $("grid").innerHTML=rows.slice(0,shown).map(e=>{
-    const tags=(e.subfields||[]).slice().sort((x,y)=>W(y)-W(x));   // what matters to this profile first
+    const tags=(e.subfields||[]).filter(t=>!MIRROR.has(t)).sort((x,y)=>W(y)-W(x));   // what matters to this profile first
     const f0=tags.length?SUB_PARENT[tags[0]]:"",sc=S(e);
     const why=tags.filter(t=>W(t)>0).slice(0,3).map(t=>`${SUB_LABEL[t]||t} ${W(t)}`).join(" · ");
     const range=e.start_date?fmt(e.start_date)+(e.end_date&&e.end_date!==e.start_date?" → "+fmt(e.end_date):""):"date TBA";
@@ -513,7 +925,8 @@ function render(resetPage){
       <div class="chips"><span class="chip">${esc(e.type)}</span>${subChips}${here}${onl}
         <span class="chip">${esc((e.sources||[e.source]).join(" + "))}</span></div>
       ${dl}
-      <div class="spec"><div class="lab"><span>relevance${e.subfields&&e.subfields.length?"":" · unclassified"}</span><b title="${esc(PROF.label+(why?": "+why:""))}">${sc}</b></div>
+      <div class="spec"><div class="lab"><span>relevance${e.subfields&&e.subfields.length?"":" · unclassified"}</span><button class="scb" data-ev="${esc(e.id)}"
+        title="${esc(PROF.label+(why?": "+why:""))}" aria-label="Relevance ${sc}: how it is computed">${sc}<span class="info" aria-hidden="true">i</span></button></div>
         <div class="bar"><i style="--w:${sc}%"></i></div></div>
     </article>`;
   }).join("");

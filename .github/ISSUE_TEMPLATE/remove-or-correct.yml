@@ -1,0 +1,34 @@
+name: Remove or correct a listing
+description: For organisers, speakers and site owners. Ask us to correct or remove an event, a name, or a whole source.
+title: "[Remove / correct] "
+labels: ["takedown"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Event Horizon 2.0 lists public announcements of academic events and links each one to its original page.
+        If something here is wrong, or you would rather your event, your name or your site were not listed, tell us below.
+        We act on every request, usually within a few days. You do not need to give a reason.
+  - type: dropdown
+    id: what
+    attributes:
+      label: What should we do?
+      options:
+        - Correct an event (wrong date, place or title)
+        - Remove one event
+        - Remove my name from listings
+        - Stop reading my site or calendar altogether
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link to the event card or to your site
+      placeholder: https://...
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What is wrong, or what should be removed.

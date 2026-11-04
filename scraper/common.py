@@ -44,6 +44,56 @@ _BROWSER_HEADERS = {"User-Agent": BROWSER_UA,
                     "Accept-Language": "en-IN,en;q=0.9"}
 
 
+# robots.txt: a site's own published rules for automated readers. We read it once per
+# host per run and skip any page it asks tools like ours not to read (RFC 9309).
+# EH_ROBOTS=enforce (default) | report (fetch anyway, list what would be skipped) | off.
+ROBOTS_TOKEN = "EventHorizon2"
+_ROBOTS = {}
+ROBOTS_BLOCKED = []          # pages robots.txt asked us not to read, this run
+BROWSER_UA_HOSTS = set()     # hosts that refused our named agent and answered a browser's
+
+
+class RobotsDisallowed(requests.exceptions.RequestException):
+    """The site's robots.txt asks automated tools not to read this page."""
+
+
+def _robots_mode():
+    return os.environ.get("EH_ROBOTS", "enforce").lower()
+
+
+def robots_allowed(url):
+    """True unless the host's robots.txt disallows `url` for us (or for every agent).
+    No robots.txt (4xx) means no rules. When the file cannot be read at all (timeout,
+    5xx) we read the page as before rather than lose the source: the page itself will
+    usually fail the same way."""
+    from urllib import robotparser
+    p = urlparse(url)
+    root = f"{p.scheme}://{p.netloc}"
+    rp = _ROBOTS.get(root)
+    if rp is None:
+        rp = robotparser.RobotFileParser()
+        try:
+            r = HTTP.get(root + "/robots.txt", timeout=(CONNECT_TIMEOUT, 15))
+            text = r.text if r.status_code < 400 else ""
+            ctype = (getattr(r, "headers", None) or {}).get("content-type", "")
+            if "html" in ctype.lower():      # a "page not found" page served as robots.txt
+                text = ""
+            rp.parse(text.splitlines())
+        except requests.exceptions.ConnectTimeout:
+            _DEAD_HOSTS.add(p.netloc.lower())
+            rp.parse([])
+        except Exception:
+            rp.parse([])
+        _ROBOTS[root] = rp
+    return rp.can_fetch(ROBOTS_TOKEN, url)
+
+
+def reset_robots():
+    _ROBOTS.clear()
+    ROBOTS_BLOCKED.clear()
+    BROWSER_UA_HOSTS.clear()
+
+
 # A host that did not even accept a connection is skipped for the rest of the run:
 # without this, every source on it waits out its own timeouts (IIT Bombay Maths has
 # two sources and cost ~100 s a run while its server was unreachable).
@@ -66,10 +116,15 @@ def get(url, insecure_ok=False, **kw):
     if isinstance(kw["timeout"], (int, float)):      # (connect, read)
         kw["timeout"] = (min(CONNECT_TIMEOUT, kw["timeout"]), kw["timeout"])
     headers = kw.pop("headers", None) or {}
+    # A feed (iCal, RSS, Indico export, events API) is published by its owner for calendar
+    # apps to subscribe to; robots.txt governs crawling web pages, so it is not consulted.
+    feed = kw.pop("feed", False)
     verify = True
     host = urlparse(url).netloc.lower()
     if host in _DEAD_HOSTS:
         raise requests.exceptions.ConnectTimeout(f"{host} did not answer earlier in this run")
+    if not feed:
+        check_robots(url)
     try:
         r = HTTP.get(url, headers=headers, **kw)
     except requests.exceptions.ConnectTimeout:
@@ -84,6 +139,8 @@ def get(url, insecure_ok=False, **kw):
         r = HTTP.get(url, headers=headers, verify=False, **kw)
     if r.status_code in (403, 406):
         r = HTTP.get(url, headers={**headers, **_BROWSER_HEADERS}, verify=verify, **kw)
+        if r.status_code < 400:
+            BROWSER_UA_HOSTS.add(host)
     r.raise_for_status()
     # A server that names no charset gets ISO-8859-1 from requests, which turns
     # UTF-8 "It's" into "Itâs" (IIT Madras). Let the bytes decide instead.
@@ -91,6 +148,16 @@ def get(url, insecure_ok=False, **kw):
     if "charset" not in ctype.lower() and ("text" in ctype or "html" in ctype or "xml" in ctype):
         r.encoding = r.apparent_encoding or "utf-8"
     return r
+
+
+def check_robots(url):
+    """Raise RobotsDisallowed if the site's robots.txt asks us not to read `url`."""
+    mode = _robots_mode()
+    if mode == "off" or robots_allowed(url):
+        return
+    ROBOTS_BLOCKED.append(url)
+    if mode == "enforce":
+        raise RobotsDisallowed(f"the site's robots.txt asks automated tools not to read {url}")
 
 
 def polite_sleep(seconds=0.4):
