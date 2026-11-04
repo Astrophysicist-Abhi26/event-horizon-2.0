@@ -90,3 +90,14 @@ def test_published_feeds_are_subscriptions_not_crawling(site):
     assert common.get(url, feed=True).status_code == 200
     with pytest.raises(common.RobotsDisallowed):
         common.get("https://calendar.google.com/calendar/embed?src=x")
+
+
+def test_every_calendar_feed_is_fetched_as_a_feed():
+    """A Google Calendar or .ics fetch without feed=True would be skipped by robots.txt
+    (calendar.google.com disallows /calendar/): DESC was, on 2026-11-04."""
+    import os, re
+    here = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scraper")
+    for name in ("sources.py", "sources_india.py"):
+        for line in open(os.path.join(here, name)):
+            if re.search(r"\bget\((DESC_ICS|_gcal_url|f\"\{base\}/category/\{cat\}/events\.ics)", line):
+                assert "feed=True" in line, (name, line)

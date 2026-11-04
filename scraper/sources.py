@@ -218,7 +218,7 @@ def scrape_cadc():
         print(f"  CADC mirror failed: {exc}")
     for url in CADC_RSS:
         try:
-            fresh = _cadc_rss(get(url).text)
+            fresh = _cadc_rss(get(url, feed=True).text)
         except Exception as exc:
             print(f"  CADC RSS {url} failed: {exc}")
             continue
@@ -337,7 +337,7 @@ DESC_ICS = ("https://calendar.google.com/calendar/ical/"
 
 def scrape_desc_cosmology():
     out = []
-    for e in parse_ics(get(DESC_ICS).text):
+    for e in parse_ics(get(DESC_ICS, feed=True).text):
         title = clean(e.get("SUMMARY"))
         if not title:
             continue
