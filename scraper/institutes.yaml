@@ -499,8 +499,7 @@ sources:
     base: https://indico.desy.de
     category: 0
     location: DESY, Hamburg, Germany
-    min_expected: 10
-    checked: 2026-11-04
+    enabled: false          # worked in a probe, then 403 Forbidden in the scheduled run (2026-11-04)
 
   - name: Math institutes events
     kind: listing
