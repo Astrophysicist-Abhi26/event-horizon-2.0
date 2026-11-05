@@ -60,6 +60,14 @@ TYPE_RULES = [
     (r"conference|symposium|congress|meeting|\bforum\b|\bdays\b|summit|\bfest\b", "Conference"),
     (r"colloqui|seminar|\btalks?\b|webinar|journal club|lecture\b", "Talk / Seminar"),
 ]
+# Placeholders and housekeeping that calendar feeds carry (seen on 2026-11-05: "TBA", "vacant",
+# "-Férié", "HE215 final exam", "*** CANCELLED *** ..."). They are not events a visitor can attend.
+JUNK_TITLE = re.compile(
+    r"^\W*(?:tba|tbd|tbc|vacant|none|n/?a|no (?:seminar|talk|session)s?|seminars?|talks?|colloquium|"
+    r"meetings?|bi-?weekly meetings?|pause\b.*|f[ée]ri[ée]|jour f[ée]ri[ée].*|public holiday|holiday|closed)\W*$"
+    r"|(?:^|[:,\-–—]\s*)[\"“”«»'‘’]?\s*(?:tba|tbd|tbc|to be (?:announced|confirmed|determined)|à confirmer|à préciser)"
+    r"\s*[\"“”«»'‘’]?\s*\.?\s*$"
+    r"|\bcancel+ed\b|\bannul[ée]e?\b|\bpostponed\b|\bexams?\b", re.I)
 NOT_EVENTS = re.compile(
     r"^(programs?|past programs?|program committee|lectures?|events?|current (&|and) upcoming|"
     r"special (events|lectures)|summer courses?|archives?|home|news|load more)$", re.I)
@@ -182,7 +190,7 @@ def normalise(raw):
     out = []
     for e in raw:
         title = clean(e.get("title"))
-        if not title or not e.get("url") or NOT_EVENTS.match(title):
+        if not title or not e.get("url") or NOT_EVENTS.match(title) or JUNK_TITLE.search(title):
             continue
         start = e.get("start_date")
         end = e.get("end_date") or start
@@ -287,6 +295,12 @@ def dedupe(events):
     return final
 
 
+def too_little_text(e):
+    """True for a title of three words or fewer with next to no description: typically a
+    speaker's name ("Massyle Dendene") or a holiday. Keywords may still tag it."""
+    return len(clean(e.get("title")).split()) <= 3 and len(clean(e.get("description"))) < 40
+
+
 def classify_all(events):
     status = {}
     embed_results = [None] * len(events)
@@ -306,6 +320,8 @@ def classify_all(events):
     except Exception as exc:
         llm_results, status["llm"] = [None] * len(events), {"status": "off", "detail": f"{exc}"[:200]}
     for e, emb, llm in zip(events, embed_results, llm_results):
+        if emb and too_little_text(e):
+            emb = None         # a name or one word gives the language model nothing to judge by
         subs, fields, basis = classify(e, emb if emb and emb[0] != "neg" else None, llm)
         e.update(subfields=subs, fields=fields, basis=basis)
         if llm and llm.get("reason"):

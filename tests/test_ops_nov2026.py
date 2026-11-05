@@ -193,3 +193,36 @@ def test_unreliable_sources_never_raise_alerts(tmp_path, monkeypatch):
 def test_empty_ok_marks_a_listing_as_allowed_to_be_empty():
     import sources_india as SI
     assert "ARIES seminars" in SI.empty_ok_names()
+
+
+def test_placeholders_holidays_exams_and_cancelled_events_are_dropped():
+    import scrape as S
+    junk = ["TBA", "TBD", "vacant", "Seminar", "-Férié", "Pause pédagogique", 'Laurent Bourgeois: "TBA"',
+            "Adrien Abgrall, \"TBA\"", "HE215 final exam (Chep office)", "*** CANCELLED *** 1st Joint Kuwait University-ICTP Science Symposium",
+            "Workshop postponed", "exam for Math Methods"]
+    keep = ["Workshop on Black Holes", "Examining dark matter with lensing", "Seminar on TBA-free methods",
+            "Introduction to the TBA equations of integrable models", "Exact WKB and Seminars in Algebra"]
+    for t in junk:
+        assert S.JUNK_TITLE.search(t), t
+    for t in keep:
+        assert not S.JUNK_TITLE.search(t), t
+
+
+def test_too_little_text_blocks_language_model_guesses():
+    import scrape as S
+    assert S.too_little_text({"title": "Massyle Dendene", "description": ""})
+    assert S.too_little_text({"title": "-Férié", "description": ""})
+    assert not S.too_little_text({"title": "Workshop on gravitational wave astronomy", "description": ""})
+    assert not S.too_little_text({"title": "Joe Formaggio (MIT)", "description": "Neutrino mass measurement with Project 8 and KATRIN at MIT"})
+
+
+def test_indico_seminar_slot_titled_with_a_name_gets_its_series(monkeypatch):
+    import sources_india as SI
+    data = {"results": [
+        {"title": "Paolo Bellingeri", "category": "Séminaire de Probabilités", "url": "https://x/e/1", "startDate": {"date": "2099-01-05", "time": "10:00:00"}, "endDate": {"date": "2099-01-05", "time": "11:00:00"}},
+        {"title": "Algebra Down Under", "category": "Conferences", "url": "https://x/e/2", "startDate": {"date": "2099-01-06", "time": "10:00:00"}, "endDate": {"date": "2099-01-06", "time": "11:00:00"}}]}
+    monkeypatch.setattr(SI, "get", lambda url, **kw: type("R", (), {"json": lambda self: data, "text": ""})())
+    out = SI._indico({"name": "x", "base": "https://x", "category": 0})
+    assert out[0]["title"] == "Séminaire de Probabilités: Paolo Bellingeri" and out[0]["speaker"] == "Paolo Bellingeri"
+    assert out[1]["title"] == "Algebra Down Under"
+    assert "Séminaire de Probabilités" in out[0]["description"]

@@ -197,6 +197,21 @@ def _wp_events(cfg):
 # ---------------------------------------------------------------------------
 # indico
 # ---------------------------------------------------------------------------
+_EVENTISH = re.compile(r"seminar|s[ée]minaire|colloqu|workshop|school|conference|symposium|meeting|lecture|course|"
+                       r"program|summer|winter|session|journ[ée]e|s[ée]ance|expos[ée]|cours|congress|forum|club|series|"
+                       r"talk|day|party|retreat|exam", re.I)
+
+
+_SERIES = re.compile(r"seminar|s[ée]minaire|colloqu|club|talks?|lectures?|series|expos[ée]|working group|groupe de travail", re.I)
+
+
+def speaker_only(title):
+    """"Paolo Bellingeri": one to four capitalised words, nothing that names an event."""
+    words = (title or "").replace("(", " ").replace(")", " ").split()
+    return (1 <= len(words) <= 4 and not _EVENTISH.search(title) and not re.search(r"\d", title)
+            and all(w[:1].isupper() for w in words if w[:1].isalpha()))
+
+
 def _indico(cfg):
     """JSON export first; many servers (IIA, since 2026) now demand an API key
     for it, so fall back to the category's public iCal feed, which does not."""
@@ -219,11 +234,16 @@ def _indico(cfg):
             continue
         for e in data["results"]:
             start = iso(e.get("startDate"))
-            out.append(_event(cfg, e.get("title"), e.get("url") or base, start,
+            title, series = clean(e.get("title")), e.get("category")
+            series = clean(series.get("title") if isinstance(series, dict) else series)
+            who = None
+            if series and _SERIES.search(series) and speaker_only(title):   # a seminar slot titled with just the speaker
+                who, title = title, f"{series}: {title}"
+            out.append(_event(cfg, title, e.get("url") or base, start,
                               iso(e.get("endDate")),
                               clean(e.get("location") or e.get("room") or ""),
-                              description=e.get("description") or "",
-                              raw_type=e.get("type"), tz=e.get("timezone")))
+                              description=" · ".join(x for x in (series, e.get("description") or "") if x),
+                              raw_type=e.get("type"), tz=e.get("timezone"), speaker=who))
     return [e for e in out if e["title"]]
 
 
