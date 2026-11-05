@@ -41,6 +41,9 @@ of the site · `python scraper/doctor.py "<part of a source name>"` (tests one s
 
 ## Standing known limitations (not bugs)
 
+* *researchseminars.org* (talks and conferences) does not answer GitHub's runners (three timeouts in a row on 2026-11-05). It stays in *Source health* with its last good events but never raises an alert (`UNRELIABLE` in `scraper/scrape.py`).
+* A page that loads and lists nothing because nothing is scheduled (ARIES seminars) is marked `empty_ok: true` in `institutes.yaml`; it then counts as healthy.
+
 * Pages a site's `robots.txt` asks automated tools not to read are skipped (status *error*,
   message "the site's robots.txt asks automated tools not to read …"). That is the site's
   choice; do not work around it. `EH_ROBOTS=report` lists what would be skipped without skipping.

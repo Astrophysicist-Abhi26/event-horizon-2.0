@@ -176,3 +176,20 @@ def test_notify_keeps_old_alerts_when_the_new_one_cannot_be_posted(tmp_path, mon
                         if a[:2] == ("issue", "list") else (None if a[:2] == ("issue", "create") else "ok"))
     notify.main()                                  # must not raise
     assert not any(a[:2] == ("issue", "close") for a in log)
+
+
+def test_unreliable_sources_never_raise_alerts(tmp_path, monkeypatch):
+    """researchseminars.org does not answer GitHub's runners: shown in health, never alerted."""
+    import json, os
+    import scrape as S
+    monkeypatch.setattr(S, "NOTIFY_DIR", str(tmp_path))
+    health = [dict(name="researchseminars.org talks", status="stale", message="ConnectTimeout", previous="ok", long_due=True),
+              dict(name="Some institute", status="error", message="HTTP 500", previous="ok", long_due=False)]
+    S.notifications(health)
+    assert json.load(open(tmp_path / "bad.json")) == ["Some institute"]
+    assert "researchseminars" not in open(tmp_path / "health.md").read()
+
+
+def test_empty_ok_marks_a_listing_as_allowed_to_be_empty():
+    import sources_india as SI
+    assert "ARIES seminars" in SI.empty_ok_names()

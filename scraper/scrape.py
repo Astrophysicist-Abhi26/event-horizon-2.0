@@ -326,6 +326,10 @@ def rank_all(events, profiles):
 # ---------------------------------------------------------------------------
 BAD = ("error", "empty", "stale")
 LONG_FAILURE_DAYS = 7
+# Extra sources whose server often does not answer GitHub's runners (researchseminars.org
+# timed out on every try on 2026-11-05). They stay in the Source health panel, with the
+# last good events kept, but never open or hold open a maintainer alert.
+UNRELIABLE = {"researchseminars.org talks", "researchseminars.org conferences"}
 
 
 def notifications(health):
@@ -338,7 +342,7 @@ def notifications(health):
     os.makedirs(NOTIFY_DIR, exist_ok=True)
     for f in os.listdir(NOTIFY_DIR):
         os.remove(os.path.join(NOTIFY_DIR, f))
-    bad = [h for h in health if h["status"] in BAD]
+    bad = [h for h in health if h["status"] in BAD and h["name"] not in UNRELIABLE]
     with open(os.path.join(NOTIFY_DIR, "bad.json"), "w") as f:
         json.dump([h["name"] for h in bad], f)
     new = [h for h in bad if h.get("previous") not in BAD]
