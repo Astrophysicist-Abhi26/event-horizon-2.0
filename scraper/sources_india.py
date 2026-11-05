@@ -457,7 +457,8 @@ FEED_KINDS = {"ical", "google_calendar", "wp_events", "indico", "rss", "iiser_pu
 def empty_ok_names():
     """Structured feeds answer authoritatively: zero upcoming events from a feed
     that responded means "nothing announced", not "scraper broken"."""
-    return {e["name"] for e in _registry(True) if e.get("kind", "listing") in FEED_KINDS}
+    return {e["name"] for e in _registry(True)
+            if e.get("kind", "listing") in FEED_KINDS or e.get("empty_ok")}
 
 
 _DESC_TITLE = re.compile(r"\bTitle\s*:\s*(.+?)\s*(?=\b(?:Time|Venue|Abstract|Speaker|Host|"

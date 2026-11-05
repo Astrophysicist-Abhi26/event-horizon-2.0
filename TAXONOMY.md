@@ -10,7 +10,7 @@ learning**. Three branches are *shared*, listed under two disciplines with the s
 same count: Gravitation & GR and Cosmology (Physics and Astronomy), and Mathematical physics
 (Physics and Mathematics). Branches follow a fixed order (physics from fundamental theory through
 matter at growing scales to applied topics; mathematics roughly in MSC order), and each
-discipline's catch-all ("General … & colloquia") comes last. This grouping is presentation only
+discipline's catch-all ("General … & colloquia") comes first. This grouping is presentation only
 (`DISPLAY` and `SHARED` in `scraper/taxonomy.py`); tagging and ranking use the ids below.
 
 ## How it is measured

@@ -28,6 +28,7 @@
 #   calendar names an entry after its speaker; the real title is the "Title:"
 #   line of its description), title_label (the headings are generic, e.g.
 #   "International Conference"; the full name follows "<label>:" in the item),
+#   empty_ok: true (a page that loads and lists nothing means "nothing scheduled", not "broken"),
 #   enabled: false (parked; `python scraper/doctor.py --all` still tests it),
 #   checked: when a human last confirmed the page layout.
 #
@@ -378,6 +379,7 @@ sources:
     location: ARIES, Nainital, India
     type: seminar
     checked: 2026-10-25
+    empty_ok: true            # the page loads and lists no seminars when none are scheduled (2026-11-05)
 
   - name: ARIES meetings
     kind: listing

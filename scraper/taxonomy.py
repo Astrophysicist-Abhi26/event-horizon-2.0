@@ -812,25 +812,26 @@ SHARED = {
     "@mathphys": {"label": "Mathematical physics", "base": "math.mathphys", "extra": []},
 }
 DISPLAY = [
-    # Physics: fundamental theory, then matter from small scales to large, then applied
-    # and human topics; the catch-all last.
+    # Each discipline starts with its catch-all ("0": colloquia and broad talks), then the
+    # branches. Physics: fundamental theory, then matter from small scales to large, then
+    # applied and human topics. Mathematics: roughly the order of the Mathematics Subject
+    # Classification.
     ("physics", "Physics", "physics",
-     ["phys.hepth", "@gr", "phys.hep", "phys.nuclear", "phys.amo", "phys.quantum",
+     ["phys.general", "phys.hepth", "@gr", "phys.hep", "phys.nuclear", "phys.amo", "phys.quantum",
       "phys.condmat", "phys.applied", "phys.fluids", "phys.complex", "@mathphys",
-      "@cosmology", "phys.meta", "phys.general"]),
+      "@cosmology", "phys.meta"]),
     ("astro", "Astronomy & Astrophysics", "astro",
-     ["@cosmology", "@gr", "astro.he", "astro.galactic", "astro.stellar", "astro.general"]),
-    # Mathematics: roughly the order of the Mathematics Subject Classification
+     ["astro.general", "@cosmology", "@gr", "astro.he", "astro.galactic", "astro.stellar"]),
     ("math", "Mathematics", "math",
-     ["math.logic", "math.comb", "math.nt", "math.algebra", "math.geometry", "math.topology",
-      "math.analysis", "math.dyn", "math.probability", "@mathphys", "math.numeric",
-      "math.optim", "math.applied", "math.edu", "math.other"]),
+     ["math.other", "math.logic", "math.comb", "math.nt", "math.algebra", "math.geometry",
+      "math.topology", "math.analysis", "math.dyn", "math.probability", "@mathphys",
+      "math.numeric", "math.optim", "math.applied", "math.edu"]),
     ("cs", "Computer science", "cs",
-     ["cs.theory", "cs.systems", "cs.security", "cs.pl", "cs.data", "cs.hci", "cs.robotics",
-      "cs.general"]),
+     ["cs.general", "cs.theory", "cs.systems", "cs.security", "cs.pl", "cs.data", "cs.hci",
+      "cs.robotics"]),
     ("ai", "AI & machine learning", "ai",
-     ["ai.science", "ai.theory", "ai.genai", "ai.nlp", "ai.vision", "ai.rl", "ai.trust",
-      "ai.general"]),
+     ["ai.general", "ai.science", "ai.theory", "ai.genai", "ai.nlp", "ai.vision", "ai.rl",
+      "ai.trust"]),
 ]
 
 

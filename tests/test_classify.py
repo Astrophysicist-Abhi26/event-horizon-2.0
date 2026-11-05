@@ -88,6 +88,6 @@ def test_display_tree_covers_every_tag_and_shares_branches():
              for k in T.SHARED}
     assert where == {"@gr": ["physics", "astro"], "@cosmology": ["physics", "astro"],
                      "@mathphys": ["physics", "math"]}
-    # the catch-all of each discipline comes last
+    # the catch-all ("0") of each discipline comes first
     for d in tree:
-        assert "general" in d["branches"][-1]["id"] or d["branches"][-1]["id"] == "math.other"
+        assert "general" in d["branches"][0]["id"] or d["branches"][0]["id"] == "math.other"
