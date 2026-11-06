@@ -40,10 +40,7 @@ events:
     location: CHRIST (Deemed to be University), Bengaluru, India
     type: conference
     fields: [cosmo.general]
-    notes: >-
-      Theoretical and observational cosmology; participating institutes IISc,
-      IIA, RRI, ICTS and CHRIST. The link is the registration form;
-      registration queries to cosmos@christuniversity.in.
+    notes: Cosmology meeting of IISc, IIA, RRI, ICTS and CHRIST. The link is the registration form.
 
   - title: Testing Aspects of General Relativity – V (online workshop)
     url: https://docs.google.com/forms/d/e/1FAIpQLSdNYMODckfyRUhdfdWzBf5U-fGXirEugyxBaqtb2ndfWGF4Ag/viewform
@@ -54,9 +51,7 @@ events:
     online: true
     type: workshop
     fields: [phys.gr, astro.he]
-    notes: >-
-      Gravitational waves and astrophysics; organised jointly by IIT Gandhinagar and the
-      University of Lethbridge, Canada. The link is the registration form.
+    notes: Online. Gravitational waves and astrophysics; IIT Gandhinagar with the University of Lethbridge.
 
   # ── Meetings checked against the organisers' own pages, 2026-11-04 ─────────────
   - title: XXVII DAE-BRNS High Energy Physics Symposium
@@ -67,10 +62,7 @@ events:
     location: IIT Hyderabad, Hyderabad, India
     type: conference
     fields: [phys.hep]
-    notes: >-
-      Biennial symposium of the Department of Atomic Energy's Board of Research in
-      Nuclear Sciences, organised jointly by IIT Hyderabad and the University of
-      Hyderabad. The previous edition (2024) was at Banaras Hindu University.
+    notes: Biennial DAE-BRNS symposium, hosted by IIT Hyderabad and the University of Hyderabad.
 
   - title: PHOTONICS 2026 (17th International Conference on Fiber Optics and Photonics)
     url: https://photonics2026.iith.ac.in/
@@ -79,10 +71,7 @@ events:
     location: IIT Hyderabad, Hyderabad, India
     type: conference
     fields: [phys.amo.photonics]
-    notes: >-
-      Organised by IIT Hyderabad with the University of Hyderabad, DRDO CHESS and TIFR
-      Hyderabad; endorsed by Optica. Plenary speakers include Donna Strickland and
-      Ursula Keller.
+    notes: Hosted by IIT Hyderabad; plenary talks by Donna Strickland and Ursula Keller.
 
   - title: ICPP 2026 (plasma physics conference, Hyderabad)
     url: https://icpp2026.iitd.ac.in/
@@ -91,7 +80,7 @@ events:
     location: Hyderabad, India
     type: conference
     fields: [phys.fluids.plasma]
-    notes: Held in Hyderabad and organised by IIT Delhi, according to the conference site.
+    notes: Organised by IIT Delhi.
 
   - title: 6th International Conference on Symmetry (Symmetry 2027)
     url: https://sciforum.net/event/SYMMETRY2027
@@ -101,10 +90,7 @@ events:
     location: Shanghai, China
     type: conference
     fields: [phys.hepth.symmetries, math.algebra.group, phys.gr]
-    notes: >-
-      Organised by MDPI's Symmetry journal (co-chairs Chengping Shen, Jie Yang and
-      Sergei Odintsov). The listing gives Shanghai and 25-28 June 2027, and does not say
-      whether attendance is in person or online: ask icsymmetry@mdpi.com.
+    notes: In person (likely), as the organisers said at Symmetry 2026. Run by MDPI's Symmetry journal.
 
   - title: ICLA 2027 (12th Indian Conference on Logic and its Applications)
     url: https://conf.researchr.org/home/icla-2027
