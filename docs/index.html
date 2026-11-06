@@ -6,8 +6,9 @@
 <title>Event Horizon 2.0 — research event radar</title>
 <meta name="theme-color" content="#0C0A16">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
@@ -45,6 +46,9 @@ header{padding:42px 0 26px;border-bottom:1px solid var(--line);
 html[data-theme="light"] header{background:radial-gradient(1100px 320px at 18% -40%,#C9B9F022,transparent 70%)}
 h1{font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700;font-size:clamp(28px,5vw,44px);letter-spacing:-.02em;line-height:1.05}
 h1 .h{color:var(--amber)}
+.card h3 .katex{font-size:1.02em}
+h1{display:flex;align-items:center;gap:.28em;flex-wrap:wrap}
+h1 .mark{width:1.35em;height:1.35em;flex:none;margin-left:-.1em}
 .tagline{color:var(--muted);margin-top:8px;max-width:60ch}
 .stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:18px;font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .stats button{all:unset;cursor:pointer;display:block}
@@ -261,7 +265,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
 <canvas id="sky" aria-hidden="true"></canvas>
 
 <header><div class="wrap">
-  <h1>Event <span class="h">Horizon</span> 2.0</h1>
+  <h1><img class="mark" src="logo.svg" alt="" width="64" height="64">Event <span class="h">Horizon</span> 2.0</h1>
   <p class="tagline">Conferences, schools, workshops and talks across physics, astronomy, mathematics,
   AI/ML and computer science — one shared database, collected daily and classified by field.</p>
   <div class="profile">
@@ -311,6 +315,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
     </div>
     <label class="ck" style="margin-top:6px"><input type="checkbox" id="onlyNew"> Only found this week</label>
     <label class="ck"><input type="checkbox" id="onlyDl"> Only with an open deadline</label>
+
+    <h2>Language</h2>
+    <label class="ck"><input type="checkbox" id="showOther"> Include titles in other scripts
+      <span class="n" id="nOther"></span></label>
+    <p class="hint">Greek, Russian, Chinese, Japanese, Korean, Arabic and similar. Titles in Hindi are always shown.</p>
 
     <h2>Event type</h2>
     <div id="fType"></div>
@@ -423,6 +432,29 @@ const safeUrl=u=>/^https?:\/\//i.test(u||"")?u:"#";
 const MANUAL_SRC=new Set(["Watchlist","Added by you"]);
 // a watchlist event known only from a poster or email links back to the watchlist file
 const noPage=e=>/\/scraper\/watchlist\.yaml$/.test(e.url||"");
+/* a title's maths, written $...$ by the organisers, is typeset with KaTeX (as in the background);
+   everything else stays escaped text */
+function richTitle(t){
+  const parts=String(t??"").split(/(\$[^$\n]{1,120}\$)/);
+  return parts.map(p=>{
+    const m=p.length>2&&p[0]==="$"&&p[p.length-1]==="$"?p.slice(1,-1):null;
+    // TeX's own convention: no space just inside the dollars, and something mathematical inside
+    // ("$G_2$", "$\mu$", "$C^0$", "$G$"), so prices such as "$5 and $10" stay as text
+    if(m!==null&&window.katex&&!/^\s|\s$/.test(m)&&(/[\\^_{}]/.test(m)||/^[A-Za-z][A-Za-z0-9]?$/.test(m))){
+      try{return window.katex.renderToString(m,{throwOnError:false,output:"html",trust:false,strict:"ignore"})}catch(e){}
+    }
+    return esc(p);
+  }).join("");
+}
+/* the script most of a title's letters are written in, when it is one most visitors cannot read */
+const OTHER_SCRIPTS=[["Greek",/\p{Script=Greek}/u],["Cyrillic",/\p{Script=Cyrillic}/u],["Chinese / Japanese",/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u],
+  ["Korean",/\p{Script=Hangul}/u],["Arabic",/\p{Script=Arabic}/u],["Hebrew",/\p{Script=Hebrew}/u],["Thai",/\p{Script=Thai}/u]];
+function otherScript(t){
+  const letters=[...String(t||"").replace(/\$[^$]*\$/g,"")].filter(c=>/\p{L}/u.test(c));
+  if(!letters.length)return null;
+  for(const [name,re] of OTHER_SCRIPTS){if(letters.filter(c=>re.test(c)).length*2>letters.length)return name}
+  return null;
+}
 const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"date TBA";
 const PAGE=90;
 let EVENTS=[],TAX=null,FIELD_LABEL={},SUB_LABEL={},SUB_PARENT={},CHAIN={},shown=PAGE,WEEK_AGO="",TODAY="";
@@ -757,14 +789,14 @@ function checked(group){return new Set([...document.querySelectorAll(`input[data
 
 function saveState(){
   const st={q:$("q").value,min:$("minScore").value,region:document.querySelector("input[name=region]:checked").value,
-    sort:$("sort").value,uncl:$("showUncl").checked,sel:[...SEL],view:VIEW,nav:NAV,
+    sort:$("sort").value,uncl:$("showUncl").checked,other:$("showOther").checked,sel:[...SEL],view:VIEW,nav:NAV,
     off:[...document.querySelectorAll("#filters input[data-group]:not(:checked)")].map(c=>c.dataset.group+"|"+c.value)};
   try{localStorage.setItem(STORE,JSON.stringify(st))}catch(e){}
 }
 function loadState(){
   let st;try{st=JSON.parse(localStorage.getItem(STORE)||"null")}catch(e){}
   if(!st)return;
-  $("q").value=st.q||"";$("minScore").value=st.min??20;$("sort").value=st.sort||"focus";$("showUncl").checked=!!st.uncl;
+  $("q").value=st.q||"";$("minScore").value=st.min??20;$("sort").value=st.sort||"focus";$("showUncl").checked=!!st.uncl;$("showOther").checked=!!st.other;
   const r=document.querySelector(`input[name=region][value="${st.region}"]`);if(r)r.checked=true;
   (st.off||[]).forEach(k=>{const[g,v]=k.split("|");if(g==="sub")return;   // the old field tree: replaced by the field browser
     const el=document.querySelector(`#filters input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false});
@@ -832,6 +864,8 @@ function init(data){
   $("nOnl").textContent=cls.filter(e=>e.region==="online"||e.online).length;
   $("nAbr").textContent=cls.filter(e=>e.region==="abroad").length;
   $("nUncl").textContent=EVENTS.length-cls.length;
+  EVENTS.forEach(e=>{e._script=otherScript(e.title)});
+  $("nOther").textContent=EVENTS.filter(e=>e._script).length;
   $("countAll").textContent=EVENTS.length;
 
   const cnt=f=>EVENTS.reduce((m,e)=>{[].concat(f(e)).forEach(v=>{if(v)m[v]=(m[v]||0)+1});return m},{});
@@ -846,6 +880,7 @@ function init(data){
   $("minScore").addEventListener("input",()=>render(true));
   wireBrowser();
   drawBrowser();
+  if(window.__applyBg)window.__applyBg(false);   // the Fields panel moved the toolbar: keep the poster's formulas clear of it
   // first visit: ask what the visitor works on (not when they arrive from a shared profile link)
   if(!MYF&&!lsGet("eh-mf-seen")&&!START_P&&$("mfDlg").showModal)setTimeout(openMyFields,400);
 
@@ -853,7 +888,7 @@ function init(data){
   $("more").addEventListener("click",()=>{shown+=PAGE;render(false)});
   $("reset").addEventListener("click",()=>{
     $("q").value="";$("dFrom").value="";$("dTo").value="";$("minScore").value=20;
-    $("onlyNew").checked=false;$("onlyDl").checked=false;$("showUncl").checked=false;
+    $("onlyNew").checked=false;$("onlyDl").checked=false;$("showUncl").checked=false;$("showOther").checked=false;
     document.querySelectorAll("#filters input[type=checkbox][data-group]").forEach(c=>{c.checked=true});
     SEL=new Set();drawBrowser();
     document.querySelector('input[name=region][value=all]').checked=true;render(true);
@@ -867,6 +902,7 @@ function init(data){
   $("fToggle").addEventListener("click",()=>{const a=$("filters");a.classList.toggle("hide");
     $("fToggle").setAttribute("aria-expanded",String(!a.classList.contains("hide")))});
   render(true);
+  if(!window.katex)window.addEventListener("load",()=>{if(window.katex)render(false)},{once:true});
 }
 
 // a profile's focus (taxonomy ids) as browser nodes: a field becomes the branches that mostly belong to it
@@ -952,6 +988,7 @@ function render(resetPage){
     const subs=e.subfields||[];
     if(subs.length){ if(SEL.size&&![...SEL].some(n=>e._nodes.has(n)))return false; if(S(e)<minS&&!pinned(e))return false; }
     else if(!uncl&&!e.priority)return false;
+    if(e._script&&!$("showOther").checked)return false;
     if(q&&!(`${e.title} ${e.location||""} ${e.speaker||""} ${e.description||""}`).toLowerCase().includes(q))return false;
     if(from&&(e.end_date||e.start_date||"9999")<from)return false;
     if(to&&(!e.start_date||e.start_date>to))return false;
@@ -991,12 +1028,12 @@ function render(resetPage){
     const place=[e.location,e.country&&e.location&&e.location.includes(e.country)?"":e.country].filter(Boolean).join(" · ");
     return `<article class="card f-${f0}">
       <div class="dt">${range}${pinned(e)?'<span class="pin" title="Pinned by the site owner: added by hand to the watchlist, or through the Add event form. Pinned events are always shown where they fit your fields, and score at least 60.">pinned</span>':""}${e.first_seen>=WEEK_AGO?'<span class="new">new</span>':""}</div>
-      <h3>${noPage(e)?esc(e.title):`<a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${esc(e.title)}</a>`}</h3>
+      <h3>${noPage(e)?richTitle(e.title):`<a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${richTitle(e.title)}</a>`}</h3>
       <div class="loc">${esc(place||(e.online?"Online":"location TBA"))}</div>
       ${e.speaker?`<div class="who">${esc(e.speaker)}</div>`:""}
       ${e.reason?`<div class="why">${esc(e.reason)}</div>`:""}
       ${MANUAL_SRC.has(e.source)&&e.description?`<div class="why">${noPage(e)?"No public web page. ":""}${esc(e.description)}</div>`:""}
-      <div class="chips"><span class="chip">${esc(e.type)}</span>${subChips}${here}${onl}
+      <div class="chips"><span class="chip">${esc(e.type)}</span>${e._script?`<span class="chip">title in ${esc(e._script)}</span>`:""}${subChips}${here}${onl}
         <span class="chip">${esc((e.sources||[e.source]).join(" + "))}</span></div>
       ${dl}
       <div class="spec"><div class="lab"><span>relevance${e.subfields&&e.subfields.length?"":" · unclassified"}</span><button class="scb" data-ev="${esc(e.id)}"
