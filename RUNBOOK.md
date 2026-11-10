@@ -52,11 +52,10 @@ of the site · `python scraper/doctor.py "<part of a source name>"` (tests one s
 
 * Sources whose pages are built by JavaScript, protected by Cloudflare, or have no dates cannot
   be read. They are listed with reasons in [INSTITUTES.md](INSTITUTES.md).
-* *researchseminars.org* times out from time to time; its last good events are kept ("stale").
 * Several servers (IIA, TIFR, IIT Jodhpur) send incomplete certificate chains, so certificate
   checking is relaxed for exactly those sources (`insecure_ok: true`). The data is public.
-* `requirements.txt` is not pinned: a new library version can break a run (the tests catch it
-  and the site keeps its last data).
+* Library versions are pinned in `requirements.txt` (since PR #31). Dependabot proposes updates
+  as pull requests once a week, and each one runs the tests before it can be merged.
 * The scan takes 8–9 minutes because sources run one after another.
 
 ## How to add a row

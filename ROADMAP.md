@@ -88,7 +88,9 @@ matching tags.
 
 Each subject gets its own taxonomy branch, sources and presets, one subject at a time:
 
-- **Mathematics:** finer branches, and seminars from ISI, CMI and IISc Mathematics.
+- **Mathematics (in progress, November 2026):** precision fixes, French keywords, a Statistics
+  branch with about 33 new topics, then new sources (NCM, ATM, TIFR, ISI, AMS, EMS, institutes).
+  Pull requests M1–M4; progress in [PROJECT_LOG.md](PROJECT_LOG.md).
 - **Computer science & AI:** finer branches once there are enough events, and Indian
   department seminars (see above).
 - **Electrical & communication engineering:** information theory, communications, signal
