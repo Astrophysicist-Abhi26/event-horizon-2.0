@@ -184,3 +184,33 @@ def test_maths_titles_that_had_no_topic():
     assert "math.probability.geometry" in tags("Limits of uniform spanning trees")
     assert "math.geometry.discrete" in tags("The Santaló inequality and its functional forms")
     assert "math.dyn.ergodic" in tags("Surjonctivité des sous-décalages")
+
+
+def test_live_titles_that_had_no_topic():
+    # found by the M3c live probe among informative maths titles without a topic
+    cases = [
+        ("New Linear Codes via Restricted Evaluation Codes — Selcen Sayıcı", "math.nt.coding"),
+        ("Depth-0 supercuspidal L-packets of tame covers — Yifei Zhao", "math.nt.modular"),
+        ("Skein Kerler-Lyubashenko functors on 4-dimensional relative handlebodies", "math.topology.low"),
+        ("Representability of Generalized Multicategories — Matt Earnshaw", "math.logic.category"),
+        ("The Cauchy problem for Manton’s Chern-Simons-Schrödinger equation — Jason Zhao", "math.analysis.waves"),
+        ("Sharp Quantitative Stability of Heisenberg Uncertainty Principles", "math.analysis.harmonic"),
+        ("Some geometric questions arising from holomorphic approximation", "math.analysis.complex"),
+        ("Analyse spectrale semiclassique des opérateurs de Bloch-Torrey", "math.mathphys.qm"),
+        ("Waves and bubbles: The mathematics of ultrasound imaging", "math.applied.imaging"),
+        ("Bayesian neutrino oscillation analysis", "math.stat.bayes"),
+    ]
+    for title, sf in cases:
+        assert sf in tags(title), (title, tags(title))
+    # an economics call for papers co-organised with Institut Louis Bachelier is not mathematical finance
+    assert not any(t.startswith("math.") for t in tags("Call for Papers - Green Finance Research Advances",
+                                                       "Organised with Institut Louis Bachelier"))
+    assert "math.optim.finance" in tags("Bachelier Finance Society World Congress")
+
+
+def test_a_typographic_apostrophe_matches_too():
+    assert "math.nt.additive" in tags("A proof of Fraenkel’s conjecture — Hu Tan")
+    assert "math.analysis.waves" in tags("Mathematical Analysis and Modeling of Maxwell’s Equations in Complex Media")
+    assert "math.algebra.ggt" in tags("Thompson’s groups F and T")
+    assert "math.logic.sets" in tags("Martin’s axiom")
+    assert "phys.hepth.symmetries" in tags("’t Hooft anomalies")

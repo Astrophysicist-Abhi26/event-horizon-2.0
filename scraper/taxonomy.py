@@ -755,7 +755,16 @@ class _Unless:
         return None if m is None or self.unless.search(text) else m
 
 
+_APOS = re.compile(r"(?<!\[)'")
+
+
+def _apostrophes(pattern):
+    """An apostrophe in a pattern also matches the typographic one: "Fraenkel’s conjecture"."""
+    return _APOS.sub("['’]", pattern)
+
+
 def _compile(pattern):
+    pattern = _apostrophes(pattern)
     if " ||| " in pattern:
         word, unless = pattern.split(" ||| ", 1)
         return _Unless(_compile(word), re.compile(W + "(?:" + unless + ")" + W, re.I))
@@ -776,7 +785,7 @@ COMPILED = {sf: [_compile(p) for p in pats] for sf, pats in RULES.items()}
 
 def _prefilter_part(pattern):
     """The same match as _compile(pattern), ignoring case and any ||| context: a superset."""
-    word = pattern.split(" ||| ", 1)[0]
+    word = _apostrophes(pattern).split(" ||| ", 1)[0]
     if word.startswith("CS:"):
         return "(?:" + W + word[3:] + W + ")"
     return "(?:" + W + "(?:" + word.replace("CS_INLINE_AI", "AI") + ")" + W + ")"

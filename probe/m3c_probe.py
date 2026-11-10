@@ -1,4 +1,4 @@
-"""Temporary (removed before merge): before/after for PR M3c on the live site's events (run 2)."""
+"""Temporary (removed before merge): before/after for PR M3c on the live site's events (run 3, final)."""
 import collections, json, os, re, subprocess, sys, urllib.request
 ROOT = os.getcwd()
 OLD = os.path.join(ROOT, "_old_scraper"); os.makedirs(OLD, exist_ok=True)

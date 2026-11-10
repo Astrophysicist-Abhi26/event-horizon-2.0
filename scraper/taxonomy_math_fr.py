@@ -130,6 +130,7 @@ FRENCH = {
     "math.stat.bio": [r"biostatistiques?", r"essais cliniques", r"épidémiologie statistique"],
     # -- mathematical physics, dynamics -----------------------------------------------------
     "math.mathphys": [r"physique mathématique", r"mathématiques?[- ]physique", r"maths?[- ]physique"],
+    "math.mathphys.qm": [r"analyse (?:spectrale|semi-?classique)", r"opérateurs de Schrödinger"],
     "math.mathphys.integrable": [r"systèmes intégrables", r"probabilités intégrables"],
     "math.mathphys.qft": [r"théorie (?:quantique )?des champs"],
     "math.mathphys.statmech": [r"mécanique statistique"],
