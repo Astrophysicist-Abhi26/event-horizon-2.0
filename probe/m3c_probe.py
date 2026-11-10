@@ -1,4 +1,4 @@
-"""Temporary (removed before merge): before/after for PR M3c on the live site's events."""
+"""Temporary (removed before merge): before/after for PR M3c on the live site's events (run 2)."""
 import collections, json, os, re, subprocess, sys, urllib.request
 ROOT = os.getcwd()
 OLD = os.path.join(ROOT, "_old_scraper"); os.makedirs(OLD, exist_ok=True)
@@ -91,3 +91,31 @@ for e, o, n in zip(ev, old, new):
 print(f"   {len(rows)} events changed")
 for r in rows[:400]:
     print(r)
+
+import classify as CL                          # noqa: E402
+def mhits(e):
+    out = {}
+    for part in ("title", "series", "description"):
+        for sf, hs in CL.keyword_hits(e.get(part) or "").items():
+            if fam(sf) == "math":
+                out.setdefault(sf, set()).update(h.lower() for h in hs)
+    return {k: sorted(v)[:4] for k, v in out.items()}
+
+print("\n## which words put an event in a new topic (one line per event)")
+seen = set()
+for e, o, n in zip(ev, old, new):
+    add = [t for t in n["subs"] if t in new_ids and t not in o["subs"]]
+    if add and e["title"] not in seen:
+        seen.add(e["title"])
+        h = mhits(e)
+        print(f"    {e['title'][:70]:70} | " + "; ".join(f"{t}: {h.get(t, '(none)')}" for t in add))
+
+print("\n## informative maths titles with no topic (new code)")
+k = 0
+for e, r in zip(ev, new):
+    if r["junk"] or not r["info"]:
+        continue
+    if any(fam(t) == "math" for t in r["subs"]) and not any(fam(t) == "math" and t in T.PARENT_SF for t in r["subs"]):
+        k += 1
+        print(f"    {e['title'][:95]:95} | {','.join(r['subs'])} | {e.get('source','')[:25]}")
+print("   total", k)

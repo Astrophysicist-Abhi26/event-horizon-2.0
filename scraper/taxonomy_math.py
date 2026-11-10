@@ -200,7 +200,7 @@ TOPICS = {
         r"holomorphic (?:and|&) (?:meromorphic|analytic)"]),
     "math.geometry.discrete": ("math.geometry", "Convex & discrete geometry", [
         r"convex (?:geometry|bodies|sets?|polytopes?|analysis|hulls?|and discrete)", r"discrete (?:geometry|and computational geometry|differential geometry|and convex)", r"polytopes?", r"polyhedr\w+", r"lattice (?:packings?|points|geometry|polytopes?|tilings?|coverings?)", r"sphere (?:packings?|coverings?)", r"tilings?", r"tessellations?",
-        r"combinatorial geometry", r"computational geometry", r"minkowski", r"helly", r"brunn-minkowski", r"zonotopes?", r"oriented matroids?", r"arrangements? of (?:hyperplanes|lines|curves|pseudolines)", r"hyperplane arrangements?", r"euclidean (?:geometry|distance|space|Ramsey)", r"packing (?:and|&) covering", r"origami", r"rigidity (?:theory|of frameworks|and flexibility)", r"voronoi", r"triangulations?",
+        r"combinatorial geometry", r"computational geometry", r"minkowski", r"helly", r"brunn-minkowski", r"Santal(?:ó|o)", r"zonotopes?", r"oriented matroids?", r"arrangements? of (?:hyperplanes|lines|curves|pseudolines)", r"hyperplane arrangements?", r"euclidean (?:geometry|distance|space|Ramsey)", r"packing (?:and|&) covering", r"origami", r"rigidity (?:theory|of frameworks|and flexibility)", r"voronoi", r"triangulations?",
         r"geometric (?:graph|combinatorics|probability|inequalit\w+)", r"erd(?:ő|o)s (?:distance|unit distance)", r"incidence (?:geometry|problems?|bounds?)", r"projective geometry", r"finite geometr\w+", r"steiner", r"convex (?:optimization and|and) geometry", r"isoperimetric (?:inequalit\w+|problems?)", r"mixed volumes?", r"Ehrhart", r"geometric tomography", r"Banach-Mazur",
         r"Reuleaux", r"kissing numbers?", r"stochastic geometry", r"integral geometry", r"valuations on convex"]),
     "math.geometry.lie": ("math.geometry", "Lie groups & homogeneous spaces", [
@@ -305,7 +305,7 @@ TOPICS = {
         r"wave equations?", r"kdv", r"conservation laws?", r"schr(?:ö|o)dinger (?:evolution|flow)",
         r"scattering theory", r"strichartz", r"maxwell equations",
         r"einstein (?:equations?|constraint) (?:as|in) PDE", r"shock waves?", r"riemann problem",
-        r"Hamiltonian PDEs?", r"nonlinear waves?", r"solitary waves?", r"Zakharov", r"Klein-Gordon",
+        r"Hamiltonian PDEs?", r"nonlinear waves?", r"solitary waves?", r"Zakharov (?:systems?|equations?)", r"Klein-Gordon",
         r"Dirac equations?", r"Hartree(?![- ]Fock)", r"Gross-Pitaevskii", r"Schr(?:ö|o)dinger-Poisson",
         r"Benjamin-Ono", r"Camassa-Holm", r"Burgers", r"Korteweg", r"wave maps?",
         r"nonlinear (?:dispersive|Klein-Gordon|wave) equations?", r"soliton resolution", r"modified scattering",
@@ -359,7 +359,7 @@ TOPICS = {
 
     # ── Probability & statistics ───────────────────────────────────────────────
     "math.probability.theory": ("math.probability", "Probability theory & stochastic processes (general)", [
-        r'probability (?:theory|measures?|distributions?|and statistics|limit theorems?|inequalit\\w+|and (?:combinatorics|analysis|geometry)|seminar|colloquium|school)', r'stochastic (?:processes?|control|dynamics|models?|geometry|systems?|methods)', r'random (?:graphs?|media|processes|permutations?|polynomials?|fields?|sets?|measures?|dynamics)', r'brownian (?:motion|sheet|bridge|excursions?|sheets?)', r'martingales?', r'markov (?:decision|random fields?|models?)', r'gaussian (?:processes?|fields?|measures?|analysis)', r'large deviations?', r'limit theorems?', r'poisson (?:processes?|point|random)', r'branching (?:processes?|Brownian)', r'interacting particle systems?', r'exclusion process', r'l(?:é|e)vy processes?', r'heavy[- ]tailed', r'concentration (?:of measure|inequalit\\w+)', r"stein'?s method", r'extreme value', r'point processes?', r'hydrodynamic limits?', r'metastability', r'random (?:schr(?:ö|o)dinger|operators?)', r'anderson (?:localization|model)', r'disordered (?:systems?|media)', r'Gibbs (?:measures?|states?|point processes?)', r'universality (?:in|of) (?:random|probability)', r'probabilistic (?:methods?|analysis|techniques)', r'stochastic (?:optimi[sz]ation|approximation|games?)', r'mathematical (?:finance|statistical physics)']),
+        r'probability (?:theory|measures?|distributions?|and statistics|limit theorems?|inequalit\w+|and (?:combinatorics|analysis|geometry)|seminar|colloquium|school)', r'stochastic (?:processes?|control|dynamics|models?|geometry|systems?|methods)', r'random (?:graphs?|media|processes|permutations?|polynomials?|fields?|sets?|measures?|dynamics)', r'brownian (?:motion|sheet|bridge|excursions?|sheets?)', r'martingales?', r'markov (?:decision|random fields?|models?)', r'gaussian (?:processes?|fields?|measures?|analysis)', r'large deviations?', r'limit theorems?', r'poisson (?:processes?|point|random)', r'branching (?:processes?|Brownian)', r'interacting particle systems?', r'exclusion process', r'l(?:é|e)vy processes?', r'jump (?:processes|diffusions|Markov processes)', r'heavy[- ]tailed', r'concentration (?:of measure|inequalit\w+)', r"stein'?s method", r'extreme value', r'point processes?', r'hydrodynamic limits?', r'metastability', r'random (?:schr(?:ö|o)dinger|operators?)', r'anderson (?:localization|model)', r'disordered (?:systems?|media)', r'Gibbs (?:measures?|states?|point processes?)', r'universality (?:in|of) (?:random|probability)', r'probabilistic (?:methods?|analysis|techniques)', r'stochastic (?:optimi[sz]ation|approximation|games?)', r'mathematical (?:finance|statistical physics)']),
     "math.probability.stochastic": ("math.probability", "Stochastic analysis, SDEs & SPDEs", [
         r'stochastic (?:analysis|calculus|differential equations?|partial differential|PDEs?|integration|quantization)', r'stochastic (?:filtering|volatility)', r'it(?:ô|o)', r'malliavin', r'rough paths?', r'regularity structures?', r'CS:SPDEs?', r'SDEs?', r'CS:SDE', r'stochastic (?:Navier|Burgers|heat|wave)', r'BSDEs?', r'backward stochastic', r'mckean-vlasov', r'propagation of chaos', r'diffusions', r'diffusion (?:processes|approximation)', r'nonlinear (?:filtering|expectations?)', r'mean[- ]field (?:limits?|models?|interacting)']),
     "math.probability.walks": ("math.probability", "Random walks, Markov chains & mixing", [
@@ -374,11 +374,11 @@ TOPICS = {
     "math.stat.bayes": ("math.stat", "Bayesian statistics & computation", [
         r'bayesian (?:statistics|inference|nonparametrics?|modell?ing|optimi[sz]ation)', r'CS:MCMC', r'CS:ISBA', r'approximate bayesian', r'CS:ABC', r'variational inference', r'gaussian process (?:regression|models?)', r'simulation[- ]based inference', r'CS:SBI', r'bayesian (?:computation|methods?|analysis|hierarchical|model selection)', r'variational bayes', r'markov chain monte carlo', r'hamiltonian monte carlo', r'sequential monte carlo', r'posterior (?:sampling|inference|contraction|distributions?)', r'prior (?:elicitation|distributions?|specification)', r'likelihood-free']),
     "math.stat.highdim": ("math.stat", "High-dimensional & nonparametric statistics", [
-        r'high[- ]dimensional (?:statistics|inference|regression)', r'non-?parametric (?:statistics|estimation|regression|inference|methods?|testing)', r'(?:linear|logistic|quantile|ridge|lasso) regression', r'empirical process\\w*', r'minimax', r'sparse (?:regression|estimation|models?|learning)', r'high[- ]dimensional data', r'lasso', r'density estimation', r'kernel (?:density|smoothing)', r'covariance (?:matrix )?estimation', r'model selection', r'shrinkage (?:estimat\\w+|priors?)', r'statistical (?:optimal transport|learning in high dimensions)']),
+        r'high[- ]dimensional (?:statistics|inference|regression)', r'non-?parametric (?:statistics|estimation|regression|inference|methods?|testing)', r'(?:linear|logistic|quantile|ridge|lasso) regression', r'empirical process\w*', r'minimax', r'sparse (?:regression|estimation|models?|learning)', r'high[- ]dimensional data', r'lasso', r'density estimation', r'kernel (?:density|smoothing)', r'covariance (?:matrix )?estimation', r'model selection', r'shrinkage (?:estimat\w+|priors?)', r'statistical (?:optimal transport|learning in high dimensions)']),
     "math.stat.timeseries": ("math.stat", "Time series, spatial & spatio-temporal statistics", [
         r'time series (?:analysis|models?)', r'spatial statistics', r'change[- ]?point', r'time series (?:methods|forecasting|econometrics)', r'spatio-?temporal (?:statistics|models?|data|modell?ing)', r'geostatistics', r'kriging', r'state[- ]space models?', r'CS:ARIMA', r'statistical forecasting', r'functional time series', r'point pattern analysis']),
     "math.stat.causal": ("math.stat", "Causal inference & design of experiments", [
-        r'causal inference', r'experimental design', r'design of experiments', r'causal (?:discovery|effects?|models?|machine learning)', r'treatment effects?', r'instrumental variables?', r'randomi[sz]ed (?:controlled )?(?:trials?|experiments?)', r'potential outcomes', r'propensity scores?', r'observational studies', r'CS:A/B test\\w*']),
+        r'causal inference', r'experimental design', r'design of experiments', r'causal (?:discovery|effects?|models?|machine learning)', r'treatment effects?', r'instrumental variables?', r'randomi[sz]ed (?:controlled )?(?:trials?|experiments?)', r'potential outcomes', r'propensity scores?', r'observational studies', r'CS:A/B test\w*']),
     "math.stat.bio": ("math.stat", "Biostatistics & epidemiological methods", [
         r'bio-?statistics', r'survival analysis', r'clinical trials? statistics', r'statistical (?:design|analysis) of clinical trials', r'statistical (?:genetics?|genomics|epidemiology)', r'genome-wide association', r'CS:GWAS', r'epidemiological (?:methods|statistics)', r'medical statistics', r'pharmacometrics', r'statistics (?:for|in) (?:biology|genomics|medicine)']),
     "math.stat.physical": ("math.stat", "Statistics in the physical sciences & astrostatistics", [
@@ -403,7 +403,7 @@ TOPICS = {
         r"measure[- ]preserving", r"invariant measures?", r"furstenberg",
         r"entropy (?:theory|of|in) (?:dynamical|ergodic|systems|measure)",
         r"bernoulli (?:shifts?|systems?|processes)", r"unique ergodicity",
-        r"mixing (?:properties|systems?|rates?|flows?)", r"subshifts?", r"symbolic dynamics",
+        r"mixing (?:properties|systems?|rates?|flows?)", r"subshifts?", r"surjunctiv\w+", r"symbolic dynamics",
         r"shifts? of finite type", r"topological dynamics", r"minimal (?:systems?|flows?|sets?|homeomorphisms?)",
         r"billiards?", r"Zd[- ]actions?", r"group actions? (?:and|on) (?:measure|dynamical)", r"orbit equivalence",
         r"measurable dynamics", r"Kakutani", r"cutting and stacking", r"substitution (?:systems?|dynamical|tilings?)",
@@ -595,11 +595,10 @@ TOPICS = {
         r"mathematical finance", r"financial mathematics", r"stochastic finance", r"option pricing",
         r"derivatives pricing", r"risk (?:measures?|theory)", r"portfolio (?:theory|optimi[sz]ation|selection)",
         r"actuarial", r"insurance mathematics", r"quantitative finance", r"stochastic calculus (?:and|in) finance",
-        r"volatility", r"arbitrage", r"credit risk", r"(?:quantitative|mathematical) risk management", r"hedging",
+        r"volatility", r"arbitrage", r"credit risk", r"(?:quantitative|mathematical) risk management",
         r"XVA", r"market microstructure", r"(?:insurance|actuarial) (?:science|risk|and finance)", r"ruin theory",
         r"longevity risk", r"CS:Bachelier", r"financial (?:engineering|econometrics|derivatives)",
-        r"(?:term structure|interest rate) models?", r"Black-Scholes", r"(?:stochastic|optimal) portfolio",
-        r"algorithmic trading", r"systemic risk"]),
+        r"(?:term structure|interest rate) models?", r"Black-Scholes", r"(?:stochastic|optimal) portfolio"]),
 
     # ── Applied & interdisciplinary mathematics ───────────────────────────────
     "math.applied.biology": ("math.applied", "Mathematical biology & medicine", [

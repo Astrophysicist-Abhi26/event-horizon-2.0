@@ -88,6 +88,9 @@ def test_every_general_topic_says_so_in_its_label():
 
 def test_precision_fixes_made_while_moving():
     assert not any(t.startswith("math.") for t in tags("Hartree-Fock methods for nuclei"))
+    # a speaker called Zakharov is not the Zakharov system (seen on the live site)
+    assert not any(t.startswith("math.") for t in tags("GIT and quantization of Chern-Simons — Alexander Zakharov"))
+    assert "math.analysis.waves" in tags("The Zakharov system")
     assert "math.algebra.ggt" not in tags("Kazhdan-Lusztig polynomials")
     assert "math.algebra.ggt" not in tags("Cubical type theory")
     assert "math.logic.formal" in tags("Cubical type theory")
@@ -164,3 +167,20 @@ def test_migration_versions_increase_so_each_applies_once():
     for m in T.MIGRATIONS[1:]:
         for old, new in m["map"].items():
             assert old in new, old
+
+
+def test_no_pattern_has_a_doubled_backslash():
+    # r"\\w" in a raw string is a literal backslash: "probability inequalities" never matched (M3b, fixed here)
+    bad = [(sf, p) for sf, pats in T.RULES.items() for p in pats if "\\\\" in p]
+    assert not bad, bad
+    assert "math.probability.theory" in tags("Probability inequalities")
+    assert "math.stat.highdim" in tags("Empirical processes and VC classes")
+
+
+def test_maths_titles_that_had_no_topic():
+    # Q-6 / Q-16 in PROJECT_LOG.md
+    assert "math.probability.theory" in tags("Sharp Survival Estimates for Jump Processes")
+    assert "math.probability.walks" in tags("Intersection local times of random walks")
+    assert "math.probability.geometry" in tags("Limits of uniform spanning trees")
+    assert "math.geometry.discrete" in tags("The Santaló inequality and its functional forms")
+    assert "math.dyn.ergodic" in tags("Surjonctivité des sous-décalages")
