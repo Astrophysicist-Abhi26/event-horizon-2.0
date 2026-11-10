@@ -32,6 +32,17 @@ NOT_A_SCIENCE = {"phys.general", "phys.applied", "phys.meta", "phys.complex"}
 # a venue its organisers declare as general ML (NeurIPS, ICLR ...) stays general ML
 # even when keywords also point at, say, vision
 KEEP_DECLARED = {"ai.general"}
+GENERAL_OF = {T.parent(g): g for g in GENERALS}
+# The series a talk belongs to ("Séminaire de Géométrie Complexe") is the organisers' own label,
+# as strong as the title. A series naming many branches of one field ("Géométrie, Algèbre,
+# Dynamique et Topologie") only says which field: more than SERIES_MAX_BRANCHES branches count
+# for that field's general bucket instead (decision D-5, 2026-11-10).
+SERIES_HIT = TITLE_HIT
+SERIES_MAX_BRANCHES = 3
+
+
+def _branch(sf):
+    return T.PARENT_SF.get(sf, sf)
 
 
 def keyword_hits(text):
@@ -56,11 +67,28 @@ def gather_evidence(ev, embed_result=None):
         score[sf] += w
         why[sf].add("declared")
 
-    for sf, hs in keyword_hits(ev.get("title", "")).items():
+    title = ev.get("title") or ""
+    for sf, hs in keyword_hits(title).items():
         score[sf] += TITLE_HIT
         why[sf].add("keywords")
 
-    desc_hits = keyword_hits((ev.get("description") or "")[:3000])
+    series = ev.get("series") or ""
+    desc = ev.get("description") or ""
+    if series and desc.startswith(series):
+        desc = desc[len(series):].lstrip(" ·")      # the series is counted once, below
+    if series and series.lower() not in title.lower():
+        sh = keyword_hits(series)
+        branches = defaultdict(set)
+        for sf in sh:
+            branches[T.parent(sf)].add(_branch(sf))
+        for sf in sh:
+            f = T.parent(sf)
+            target = sf if len(branches[f]) <= SERIES_MAX_BRANCHES else GENERAL_OF.get(f, sf)
+            if "keywords" not in why[target]:
+                score[target] += SERIES_HIT
+                why[target].add("keywords")
+
+    desc_hits = keyword_hits(desc[:3000])
     for sf, hs in desc_hits.items():
         if "keywords" in why[sf]:
             continue  # title already counted

@@ -13,6 +13,19 @@ matter at growing scales to applied topics; mathematics roughly in MSC order), a
 discipline's catch-all ("General … & colloquia") comes first. This grouping is presentation only
 (`DISPLAY` and `SHARED` in `scraper/taxonomy.py`); tagging and ranking use the ids below.
 
+## Beyond the title (since 2026-11-10)
+
+* **French.** `scraper/taxonomy_math_fr.py` holds French terms for the mathematics branches and
+  topics (and a few for physics and AI), so French seminar series and talks on the French maths
+  Indico are recognised.
+* **Seminar series.** The series a talk belongs to counts like its title. A series naming more
+  than three branches of one field ("Géométrie, Algèbre, Dynamique et Topologie") only says which
+  field, and files the talk under that field's general bucket.
+* **Single-subject sources.** A source that lists only mathematics files an event that nothing
+  else tags under General mathematics (`default_field` in `scraper/institutes.yaml`).
+* **No guessing on what the embedding model cannot read.** French, non-Latin and speaker-name
+  titles get no embedding guess; keywords, series and declared codes still apply.
+
 ## How it is measured
 
 * **Area samples.** 117 areas (physics, astronomy and cosmology, and the top-level areas of the Mathematics Subject Classification), each with 1 to 3 event titles; `tests/coverage_data.py` and the audit tables below. The classifier is run on the **title alone**, the stricter case. A title is right when it gets the expected *topic*.

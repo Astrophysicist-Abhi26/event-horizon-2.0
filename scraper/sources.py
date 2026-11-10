@@ -321,7 +321,7 @@ def scrape_inspire_seminars():
             start_date=start, end_date=start, location=loc, country=cc,
             online=bool(md.get("join_urls")) and not loc, tz=md.get("timezone"),
             description=" ".join(x for x in [series, clean((md.get("abstract") or {}).get("value"))] if x),
-            speaker=f"{sp} ({aff})" if aff else sp or None,
+            speaker=f"{sp} ({aff})" if aff else sp or None, series=series or None,
             source="INSPIRE seminars", raw_type="seminar",
             declared=[c.get("term") for c in md.get("inspire_categories") or []]))
     return out
