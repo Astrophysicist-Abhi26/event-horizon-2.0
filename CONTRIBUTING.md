@@ -144,3 +144,11 @@ only for that field's general bucket.
 To add a new topic, put it in the right file under its sub-field. A profile can weight a topic
 by its id in `scraper/profiles.yaml`; otherwise it takes the weight of its sub-field.
 
+To split a topic, move its keywords to the new topics and add an entry to `MIGRATIONS` in
+`scraper/taxonomy.py` (a new, later version string) mapping the old topic to itself plus the
+new ones, so visitors who had picked it keep seeing the same events. If the old topic stays
+as the catch-all, label it "(general)" and list it in `NARROWER` in `scraper/taxonomy_math.py`:
+it is then dropped whenever one of its narrower topics applies. Profiles weight sub-fields, so
+a keyword that moves to a topic under a *different* sub-field changes rankings; keep it in both
+places unless the old place was wrong.
+

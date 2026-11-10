@@ -112,8 +112,8 @@ STILL_MATHS = [
     ("Diffusions on manifolds", "math.probability.stochastic"), ("Perfect matchings in hypergraphs", "math.comb.graph"),
     ("Markov chain Monte Carlo methods", "math.probability"), ("Stochastic processes and SPDEs", "math.probability.stochastic"),
     ("Statistics for high-energy physics", "math.stat"), ("Low-dimensional topology and knot theory", "math.topology.low"),
-    ("Topological data analysis", "math.topology"), ("Ricci curvature and optimal transport", "math.geometry.diff"),
-    ("Mean curvature flow", "math.geometry.diff"), ("Moduli spaces of curves", "math.geometry.algebraic"),
+    ("Topological data analysis", "math.topology"), ("Ricci curvature and optimal transport", "math.geometry.analysis"),
+    ("Mean curvature flow", "math.geometry.analysis"), ("Moduli spaces of curves", "math.geometry.moduli"),   # M3c topics
     ("Tensors and tensor rank", "math.algebra.linear"), ("Riemannian geometry", "math.geometry"),
     ("Multiresolution analysis and wavelets", "math.analysis.harmonic"),
 ]

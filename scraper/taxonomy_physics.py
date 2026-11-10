@@ -340,7 +340,7 @@ TOPICS = {
 
     # ── Nonlinear dynamics & complex systems ───────────────────────────────────
     "phys.complex.nonlinear": ("phys.complex", "Nonlinear dynamics & chaos", [
-        r"nonlinear (?:dynamics|science|physics|phenomena|systems?|oscillat\w+|waves?|dynamical|processes)", r"chaos", r"chaotic", r"bifurcations?", r"synchroni[sz]ation", r"attractors?", r"lyapunov", r"limit cycles?", r"pattern formation", r"excitable",
+        r"nonlinear (?:dynamics|science|physics|phenomena|systems?|oscillat\w+|waves?|dynamical|processes)", r"(?<!polynomial )(?<!propagation of )chaos", r"chaotic", r"bifurcations?", r"synchroni[sz]ation", r"attractors?", r"lyapunov", r"limit cycles?", r"pattern formation", r"excitable",
         r"coupled oscillators?", r"time[- ]series (?:analysis|and)", r"strange attractors?", r"reservoir computing", r"nonlinear (?:and|&) (?:complex|statistical)", r"dynamics (?:of|in) (?:complex|nonlinear)", r"spatio-?temporal (?:chaos|patterns?|dynamics)", r"turing patterns?",
         r"breathers?", r"chimera states?", r"delay (?:systems?|dynamics|differential)", r"noise[- ]induced", r"stochastic resonance", r"tipping points?", r"critical transitions?", r"early warning (?:signals?|indicators?)", r"multistability", r"hysteresis", r"intermittency", r"Hamiltonian chaos",
         r"quantum chaos", r"dynamical systems (?:in|and) physics", r"nonlinear (?:optics|lattices|Schr(?:ö|o)dinger)", r"solitons? (?:and|&)"]),

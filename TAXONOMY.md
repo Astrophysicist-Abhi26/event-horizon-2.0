@@ -1,6 +1,6 @@
 # Subject coverage: physics and mathematics
 
-What Event Horizon 2.0 recognises, area by area. The taxonomy has three levels: **field → sub-field → topic**, with 141 topics under the physics and mathematics sub-fields (the full list is below), and a few new sub-fields carved out of the old catch-alls. Re-measured on 2026-11-04 after adding them; Statistics became its own mathematics branch on 2026-11-10.
+What Event Horizon 2.0 recognises, area by area. The taxonomy has three levels: **field → sub-field → topic**, with 165 topics under the physics and mathematics sub-fields (the full list is below), and a few new sub-fields carved out of the old catch-alls. Re-measured on 2026-11-04 after adding them; Statistics became its own mathematics branch on 2026-11-10, and 24 more mathematics topics were added the same day (M3c).
 
 ## How the site shows it
 
@@ -23,6 +23,13 @@ discipline's catch-all ("General … & colloquia") comes first. This grouping is
   field, and files the talk under that field's general bucket.
 * **Single-subject sources.** A source that lists only mathematics files an event that nothing
   else tags under General mathematics (`default_field` in `scraper/institutes.yaml`).
+* **A general topic gives way.** A topic marked "(general)" (partial differential equations,
+  mathematical logic, numerical analysis, optimisation, probability, dynamical systems) is kept only
+  when no narrower topic of the same area applies: an elliptic-PDE talk is filed under Elliptic &
+  parabolic PDE, not also under PDE (general) (`NARROWER` in `scraper/taxonomy_math.py`).
+* **Split topics keep saved selections.** When a topic is split, a visitor's saved selection of
+  the old topic is widened once to the topics it was split into (`MIGRATIONS` in
+  `scraper/taxonomy.py`).
 * **No guessing on what the embedding model cannot read.** French, non-Latin and speaker-name
   titles get no embedding guess; keywords, series and declared codes still apply.
 
@@ -66,22 +73,22 @@ Gravitation & GR events are tagged **Physics → Gravitation** and also **Astron
 
 ### Mathematics
 
-* **Number theory** (`math.nt`): Analytic number theory; Algebraic number theory; Elliptic curves & arithmetic geometry; Modular & automorphic forms, Langlands; Additive & Diophantine number theory; Cryptography (mathematical); Coding theory & information theory
-* **Topology** (`math.topology`): Algebraic topology & homotopy theory; Low-dimensional topology & knot theory; Differential & geometric topology, manifolds; General & set-theoretic topology
-* **Algebra & representation theory** (`math.algebra`): Commutative algebra; Noncommutative rings & modules; Group theory; Lie algebras & representation theory; Hopf algebras, quantum groups & tensor categories; Field & Galois theory, polynomials; Linear & multilinear algebra; Homological algebra & K-theory; Universal algebra, lattices & semigroups
-* **Geometry** (`math.geometry`): Algebraic geometry; Differential & Riemannian geometry; Symplectic & contact geometry; Complex & Kähler geometry; Convex & discrete geometry; Lie groups & homogeneous spaces; Tropical & toric geometry
+* **Number theory** (`math.nt`): Analytic number theory; Algebraic number theory; Elliptic curves & arithmetic geometry; Modular & automorphic forms, Langlands; Additive & Diophantine number theory; Cryptography (mathematical); Coding theory
+* **Topology** (`math.topology`): Algebraic topology & homotopy theory; Low-dimensional topology & knot theory; Differential & geometric topology, manifolds; General & set-theoretic topology; Applied & computational topology (TDA)
+* **Algebra & representation theory** (`math.algebra`): Commutative algebra; Noncommutative rings & modules; Representations of algebras, quivers & cluster algebras; Group theory; Geometric group theory; Lie algebras & representation theory; Hopf algebras, quantum groups & tensor categories; Field & Galois theory, polynomials; Linear & multilinear algebra; Homological algebra & K-theory; Universal algebra, lattices & semigroups
+* **Geometry** (`math.geometry`): Algebraic geometry; Moduli spaces, Teichmüller theory & hyperbolic geometry; Enumerative geometry & mirror symmetry; Differential & Riemannian geometry; Geometric analysis & geometric flows; Symplectic & contact geometry; Complex & Kähler geometry; Convex & discrete geometry; Lie groups & homogeneous spaces; Tropical & toric geometry
 * **Probability** (`math.probability`): Probability theory & stochastic processes (general); Stochastic analysis, SDEs & SPDEs; Random walks, Markov chains & mixing; Random geometry: SLE, percolation, random maps & trees; Random matrices & free probability
 * **Statistics** (`math.stat`, since 2026-11-10; ranked like Probability in every profile): Mathematical statistics & inference; Bayesian statistics & computation; High-dimensional & nonparametric statistics; Time series, spatial & spatio-temporal statistics; Causal inference & design of experiments; Biostatistics & epidemiological methods; Statistics in the physical sciences & astrostatistics
 * **Mathematical physics** (`math.mathphys`): Mathematical quantum mechanics & spectral theory; Rigorous statistical mechanics; Mathematical QFT, TQFT & vertex algebras; Integrable systems & solitons; Mathematical relativity & geometric analysis of spacetime
-* **Analysis & PDE** (`math.analysis`): Real analysis, measure theory & fractals; Complex analysis & function theory; Harmonic analysis & Fourier analysis; Functional analysis & operator theory; Operator algebras & noncommutative geometry; Ordinary differential equations; Partial differential equations; Calculus of variations & optimal transport; Approximation theory & special functions; Integral equations, transforms & inverse problems; Potential theory & pluripotential theory
+* **Analysis & PDE** (`math.analysis`): Real analysis, measure theory & fractals; Complex analysis & function theory; Harmonic analysis & Fourier analysis; Functional analysis & operator theory; Operator algebras & noncommutative geometry; Ordinary differential equations; Partial differential equations (general); Elliptic & parabolic PDE; Dispersive & wave equations; Fluid & kinetic PDE; Calculus of variations; Optimal transport; Approximation theory & special functions; Integral equations, transforms & inverse problems; Potential theory & pluripotential theory
 * **General mathematics & colloquia** (`math.other`)
-* **Logic, foundations & category theory** (`math.logic`): Mathematical logic & set theory; Category theory & higher categories
+* **Logic, foundations & category theory** (`math.logic`): Mathematical logic (general); Model theory; Set theory; Computability & proof theory; Type theory, proof assistants & formalised mathematics; Category theory & higher categories
 * **Combinatorics & discrete mathematics** (`math.comb`): Algebraic combinatorics; Enumerative & analytic combinatorics; Extremal & probabilistic combinatorics, Ramsey theory; Graph theory
-* **Dynamical systems & ergodic theory** (`math.dyn`): Ergodic theory & topological dynamics; Hyperbolic dynamics & Hamiltonian systems; Complex & holomorphic dynamics; Dynamical systems (general)
-* **Numerical analysis & scientific computing** (`math.numeric`): Numerical analysis & scientific computing; Computer algebra & experimental mathematics
-* **Optimisation, control & games** (`math.optim`): Optimisation & operations research; Control theory & systems; Game theory, economics & finance
-* **Applied & interdisciplinary mathematics** (`math.applied`): Mathematical biology & medicine; Mathematical mechanics & continuum mechanics; Applied mathematics & mathematical modelling
-* **Mathematics education & history** (`math.edu`): Mathematics education & history
+* **Dynamical systems & ergodic theory** (`math.dyn`): Ergodic theory & topological dynamics; Hyperbolic dynamics & Hamiltonian systems; Complex & holomorphic dynamics; Homogeneous & arithmetic dynamics; Dynamical systems (general)
+* **Numerical analysis & scientific computing** (`math.numeric`): Numerical analysis & scientific computing (general); Numerical PDE & finite elements; Numerical linear algebra & high-performance computing; Uncertainty quantification & data assimilation; Computer algebra & experimental mathematics
+* **Optimisation, control & games** (`math.optim`): Optimisation (general); Continuous & convex optimisation; Discrete optimisation & operations research; Control theory & systems; Game theory & mathematical economics; Mathematical finance & insurance
+* **Applied & interdisciplinary mathematics** (`math.applied`): Mathematical biology & medicine; Mathematical mechanics & continuum mechanics; Mathematical imaging & signal processing; Information theory; Applied mathematics & mathematical modelling
+* **Mathematics education & history** (`math.edu`): Mathematics education & outreach; History & philosophy of mathematics
 
 ## Audit by area
 

@@ -11,8 +11,21 @@ from classify import classify
 from coverage_data import HELD_OUT, OFF_TOPIC
 
 
+def _widen(wanted):
+    """The held-out titles name the topics of the day they were written. When a topic is later
+    split, it stands for what it was split into (T.MIGRATIONS, the same map the site applies to
+    saved selections), so the set itself never has to be rewritten."""
+    out = set(wanted)
+    for m in T.MIGRATIONS:
+        for w in list(out):
+            for new in m["map"].get("t:" + w, []) + m["map"].get("b:" + w, []):
+                out.add(new.split(":", 1)[1])
+    return out
+
+
 def _hit(tags, wanted):
     """A tag counts when it is a wanted node or lies under one."""
+    wanted = _widen(wanted)
     return any(w in T.ancestors(t) or t.startswith(w) for t in tags for w in wanted)
 
 

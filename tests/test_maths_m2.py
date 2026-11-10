@@ -60,15 +60,15 @@ def test_indico_keeps_the_series_and_normalise_passes_it_on(monkeypatch):
 FRENCH_CASES = [
     ("Mejdi Azaiez (INP Bordeaux)", "AnEDP et Méca Flu", "math.analysis.pde"),
     ("Mejdi Azaiez (INP Bordeaux)", "AnEDP et Méca Flu", "math.applied.mechanics"),
-    ("Séance de décembre", "CTOP (Convexité, Transport Optimal et Probabilités)", "math.analysis.calculus"),
+    ("Séance de décembre", "CTOP (Convexité, Transport Optimal et Probabilités)", "math.analysis.ot"),   # M3c topic
     ("Journées des Jeunes EDPistes en France 2026-2027", "Colloques", "math.analysis.pde"),
     ("Colloque tournant 2027 du RT algèbre", "Conférences", "math.algebra"),
     ("Derived Seminar", "Derived Seminar", "math.geometry.algebraic"),
-    ("Adrien Abgrall : \"Plongements entre groupes d’Artin à angles droits sans carrés\"", "GdT Actions !", "math.algebra.group"),
+    ("Adrien Abgrall : \"Plongements entre groupes d’Artin à angles droits sans carrés\"", "GdT Actions !", "math.algebra.ggt"),  # M3c topic
     ("Grigalius Taujanskas", "Mathématique-Physique", "math.mathphys"),
     ("14e séminaire ITZYKSON - Dualité markovienne : méthodes algébriques et applications", "Physique", "math.probability.walks"),
     ("Séminaire des jeunes EDPistes (1)", "Séminaire MACS (Modélisation, Analyse et Calcul Scientifique)", "math.numeric.analysis"),
-    ("Séminaire FDD - FiME - MIRTE", "Séminaire commun Chaire FDD - Laboratoire FiME", "math.optim.game"),
+    ("Séminaire FDD - FiME - MIRTE", "Séminaire commun Chaire FDD - Laboratoire FiME", "math.optim.finance"),  # M3c topic
     ("Séminaire des doctorant·es SO", "Séminaire de Statistique et Optimisation", "math.optim"),
     ("Dynamique du billard dans un prisme", "", "math.dyn"),
     ("Modèles mathématiques pour la dynamique collective cellulaire", "", "math.applied.modelling"),

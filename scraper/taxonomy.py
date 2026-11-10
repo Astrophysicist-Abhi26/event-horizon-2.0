@@ -363,7 +363,7 @@ RULES = {
     "math.comb": [r"combinatori\w*", r"graph theor\w*", r"posets?"],
     "math.logic": [r"mathematical logic", r"model theory", r"set theory", r"g(?:ö|o)del", r"incompleteness",
                    r"proof theory", r"formal(?:i[sz]ed|i[sz]ation)? (?:proofs?|mathematics)", r"theorem prov\w*", r"CS:Lean"],
-    "math.dyn": [r"dynamical systems?", r"(?<!quantum )chaos(?! (?:in|and) (?:black holes?|quantum|many-body))"],
+    "math.dyn": [r"dynamical systems?", r"(?<!quantum )(?<!polynomial )(?<!propagation of )chaos(?! (?:in|and) (?:black holes?|quantum|many-body))"],
     "math.optim": [r"game theory", r"optimal control", r"convex optimi[sz]ation"],
     "math.numeric": [r"numerical methods?"],
     "math.edu": [r"history of mathematics"],
@@ -401,7 +401,7 @@ RULES = {
     "phys.fluids": [
         r"turbulen\w*", r"fluids?", r"plasmas?", r"hydrodynamic\w*",
         r"magnetohydrodynamic\w*", r"CS:MHD", r"convection",
-        r"(?<!normalizing )(?<!normalising )flows?(?! matching|-based| models?)", r"climate (?:dynamics|physics|model\w*|chaos)", r"atmospher\w*",
+        r"(?<!normalizing )(?<!normalising )flows?(?! matching|-based| models?) ||| (?:ricci|curvature|gradient|geometric|unipotent|geodesic|horocycle|harmonic map|calabi|yamabe|willmore|teichm(?:ü|u)ller|wasserstein|homogeneous|translation|hamiltonian) flows?", r"climate (?:dynamics|physics|model\w*|chaos)", r"atmospher\w*",
         r"ocean\w*", r"stochasticity", r"diffusion(?! models?| and flow|-based)",
     ],
     "phys.general": [
@@ -430,7 +430,7 @@ _ARXIV_MATH = {
     "pr": "math.probability", "st": "math.stat",
     "mp": "math.mathphys",
     "ds": "math.dyn", "co": "math.comb", "lo": "math.logic", "oc": "math.optim",
-    "it": "math.nt.coding", "gm": "math.other", "ho": "math.edu",
+    "it": "math.applied.info", "gm": "math.other", "ho": "math.edu",
 }
 
 
@@ -449,7 +449,7 @@ _ARXIV_CS = {
     "cs_db": "cs.data", "cs_ir": "cs.data", "cs_dl": "cs.data", "cs_si": "cs.data",
     "cs_hc": "cs.hci", "cs_gr": "cs.hci", "cs_mm": "cs.hci",
     "cs_ro": "cs.robotics",
-    "cs_na": "math.analysis", "cs_it": "math.other",
+    "cs_na": "math.analysis", "cs_it": "math.applied.info",
 }
 
 # Topic tags of the CS aggregators: huggingface/ai-deadlines tags, ccf-deadlines
@@ -688,6 +688,7 @@ NEGATIVE_PROTOTYPES = {
 # cannot disturb its calibration.
 # ---------------------------------------------------------------------------
 from taxonomy_math import TOPICS as _MATH_TOPICS, UMBRELLAS as _MATH_UMBRELLAS      # noqa: E402
+from taxonomy_math import NARROWER as _MATH_NARROWER                               # noqa: E402
 from taxonomy_physics import TOPICS as _PHYS_TOPICS, UMBRELLAS as _PHYS_UMBRELLAS    # noqa: E402
 
 PARENT_SF = {}      # topic id -> its sub-field
@@ -726,6 +727,12 @@ def _display_order():
     return out
 
 
+# a "(general)" topic -> the narrower topics of its area it gives way to (taxonomy_math.NARROWER)
+NARROWER = {g: set(ns) for g, ns in _MATH_NARROWER.items()}
+for _g, _ns in NARROWER.items():
+    assert _g in PARENT_SF and _ns <= set(PARENT_SF), (_g, _ns)
+    assert {PARENT_SF[n] for n in _ns} == {PARENT_SF[_g]}, _g     # same branch
+
 _ordered = _display_order()
 assert len(_ordered) == len(SUBFIELDS)
 SUBFIELDS.clear()
@@ -748,7 +755,16 @@ class _Unless:
         return None if m is None or self.unless.search(text) else m
 
 
+_APOS = re.compile(r"(?<!\[)'")
+
+
+def _apostrophes(pattern):
+    """An apostrophe in a pattern also matches the typographic one: "Fraenkel’s conjecture"."""
+    return _APOS.sub("['’]", pattern)
+
+
 def _compile(pattern):
+    pattern = _apostrophes(pattern)
     if " ||| " in pattern:
         word, unless = pattern.split(" ||| ", 1)
         return _Unless(_compile(word), re.compile(W + "(?:" + unless + ")" + W, re.I))
@@ -769,7 +785,7 @@ COMPILED = {sf: [_compile(p) for p in pats] for sf, pats in RULES.items()}
 
 def _prefilter_part(pattern):
     """The same match as _compile(pattern), ignoring case and any ||| context: a superset."""
-    word = pattern.split(" ||| ", 1)[0]
+    word = _apostrophes(pattern).split(" ||| ", 1)[0]
     if word.startswith("CS:"):
         return "(?:" + W + word[3:] + W + ")"
     return "(?:" + W + "(?:" + word.replace("CS_INLINE_AI", "AI") + ")" + W + ")"
@@ -867,6 +883,32 @@ MIGRATIONS = [
         "t:math.probability.stat": ["b:math.stat"],
         "t:math.probability.theory": ["t:math.probability.theory", "t:math.probability.stochastic",
                                       "t:math.probability.walks", "t:math.probability.geometry"],
+    }},
+    # M3c: 24 more maths topics; each old topic widens to the topics its keywords went to
+    {"version": "2026-11-10-m3c", "map": {
+        "t:math.logic.logic": ["t:math.logic.logic", "t:math.logic.model", "t:math.logic.sets",
+                               "t:math.logic.computability", "t:math.logic.formal"],
+        "t:math.algebra.group": ["t:math.algebra.group", "t:math.algebra.ggt"],
+        "t:math.algebra.rings": ["t:math.algebra.rings", "t:math.algebra.quivers"],
+        "t:math.algebra.lie": ["t:math.algebra.lie", "t:math.algebra.quivers"],
+        "t:math.geometry.algebraic": ["t:math.geometry.algebraic", "t:math.geometry.moduli",
+                                      "t:math.geometry.enumerative"],
+        "t:math.geometry.complex": ["t:math.geometry.complex", "t:math.geometry.moduli"],
+        "t:math.geometry.lie": ["t:math.geometry.lie", "t:math.geometry.moduli"],
+        "t:math.geometry.diff": ["t:math.geometry.diff", "t:math.geometry.analysis"],
+        "t:math.topology.algebraic": ["t:math.topology.algebraic", "t:math.topology.applied"],
+        "t:math.analysis.pde": ["t:math.analysis.pde", "t:math.analysis.elliptic", "t:math.analysis.waves",
+                                "t:math.analysis.fluids"],
+        "t:math.analysis.calculus": ["t:math.analysis.calculus", "t:math.analysis.ot"],
+        "t:math.dyn.ergodic": ["t:math.dyn.ergodic", "t:math.dyn.homogeneous"],
+        "t:math.numeric.analysis": ["t:math.numeric.analysis", "t:math.numeric.pde", "t:math.numeric.linalg",
+                                    "t:math.numeric.uq"],
+        "t:math.numeric.symbolic": ["t:math.numeric.symbolic", "t:math.logic.formal"],
+        "t:math.optim.optimisation": ["t:math.optim.optimisation", "t:math.optim.convex", "t:math.optim.discrete"],
+        "t:math.optim.game": ["t:math.optim.game", "t:math.optim.finance"],
+        "t:math.applied.modelling": ["t:math.applied.modelling", "t:math.applied.imaging"],
+        "t:math.nt.coding": ["t:math.nt.coding", "t:math.applied.info", "t:math.applied.imaging"],
+        "t:math.edu.education": ["t:math.edu.education", "t:math.edu.history"],
     }},
 ]
 
