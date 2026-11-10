@@ -299,11 +299,11 @@ def too_little_text(e):
 # Words that mark a French title. Two different ones are needed, so a name ("Au", "Du"),
 # "et al." or "Paris" alone does not count.
 _FRENCH = re.compile(
-    r"(?<!\w)(?:les|des|du|aux|au|une|pour|sur|dans|avec|entre|et|sont|par|à|[ld]'|titre|venir|"
+    r"(?<!\w)(?:les|des|du|aux|au|une|pour|sur|dans|avec|entre|et|sont|par|à|titre|venir|"
     r"s[ée]minaires?|journ[ée]es?|colloques?|expos[ée]s?|soutenance|th[èe]se|rentr[ée]e|s[ée]ance|"
     r"th[ée]orie|[ée]quations?|g[ée]om[ée]trie|alg[èe]bre|probabilit[ée]s|math[ée]matiques?|physique|"
     r"mod[èe]les?|m[ée]thodes?|probl[èe]mes?|num[ée]rique|d[ée]riv[ée]es|partielles|calcul|groupe|travail|"
-    r"doctorant\S*)(?!\w)", re.I)
+    r"doctorant\S*)(?!\w)|(?<!\w)[ld]['’](?=\w)", re.I)          # l'analyse, d'Alembert
 # a talk slot titled by its speakers: "Marie Doumic (INRIA Paris)", "Colloquium: Bertrand Maury",
 # "Séminaire 08/01/2027 - Mathurin Massias and Claire Boyer"
 _SLOT = re.compile(r"seminar|s[ée]minaire|colloqu|lecture|talk|expos[ée]|webinar|journal club|"

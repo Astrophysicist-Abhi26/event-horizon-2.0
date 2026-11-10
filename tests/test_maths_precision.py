@@ -73,14 +73,14 @@ def test_no_embedding_guess_for_french_names_and_placeholders():
                ("Session régionale du séminaire des doctorant·e·s", "Séminaire des doctorants · Lyon"),
                ("Un cadre général pour l'analyse numérique des inéquations variationnelles", ""),
                ("Ruth Baker (Oxford University)", "Maths Bio"), ("Louis de Broglie", "Colloquium"),
-               ("Квантовая гравитация и космология", ""), ("Hadrien Notarantonio", "Géométrie, Algèbre, Dynamique et Topologie")]
+               ("Квантовая гравитация и космология", ""), ("Introduction à l'analyse harmonique", ""), ("Hadrien Notarantonio", "Géométrie, Algèbre, Dynamique et Topologie")]
     allowed = [("Joe Formaggio (MIT)", "Neutrino mass measurement with Project 8 and KATRIN at MIT, and what comes next"),
                ("Sharp Survival Estimates for Jump Processes — Jing Wang", ""),
                ("Self-dual theories, celestial algebras and Moyal deformations — Ricardo Monteiro", ""),
                ("Au+Au collisions at RHIC and the QGP", ""), ("Dark Energy Survey Collaboration Meeting", ""),
                ("Introduction to the TBA equations of integrable models", ""), ("De Sitter space and la Jolla workshop", ""),
                ("Software Provenance with Snakemake", ""), ("International Space Radio Interferometry Conference", ""),
-               ("Forming Stars in Cardiff", ""), ("Journées Arithmétiques 2027", "The Journées Arithmétiques is a major conference in number theory")]
+               ("Forming Stars in Cardiff", ""), ("The d'Alembert operator on curved backgrounds", ""), ("Journées Arithmétiques 2027", "The Journées Arithmétiques is a major conference in number theory")]
     for t, d in blocked:
         assert S.no_embedding_guess({"title": t, "description": d}), t
     for t, d in allowed:
