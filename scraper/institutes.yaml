@@ -526,7 +526,7 @@ sources:
     checked: 2026-11-04
 
   - name: Vakil algebraic geometry
-    default_field: math.geometry.algebraic  # lists only algebraic geometry
+    default_field: math.other  # algebraic geometry and neighbouring fields: branch unknown
     kind: listing
     url: https://math.stanford.edu/~vakil/conferences.html
     location: see event

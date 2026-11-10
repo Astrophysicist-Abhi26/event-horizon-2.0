@@ -19,7 +19,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | Site | Live, refreshed daily and on every change to `main` | https://astrophysicist-abhi26.github.io/event-horizon-2.0/ · the daily run is scheduled for 08:00 IST but GitHub starts it 6–8 hours late (it ran at 14:30–15:30 IST on 7–9 Nov) |
 | Events | Healthy | 1,434 upcoming events (2026-11-09) |
 | Sources | 70 entries in `institutes.yaml` (14 parked) plus 9 global feeds | Parked ones and reasons: `institutes.yaml`, RUNBOOK |
-| Health alerts | #48 open: IISc Mathematics, IISER Kolkata and ICTP Indico timed out on 2026-11-09 | Closes itself when the next run reaches them |
+| Health alerts | None open: #48 (IISc Mathematics, IISER Kolkata, ICTP Indico timeouts on 2026-11-09) closed itself on 2026-11-10 when all three answered again | — |
 | Disciplines | Physics · Astronomy & cosmology · Mathematics · Computer science · AI & ML | 54 sub-fields, 132 topics |
 | Physics | 13 branches, 67 topics | to be measured |
 | Astronomy & cosmology | 10 sub-fields, no topic level | to be measured |
@@ -108,7 +108,7 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 
 | Date | PR | What changed |
 |---|---|---|
-| 2026-11-10 | #49 (M1) | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
+| 2026-11-10 | #49 (M1, deployed by run #70 at 06:01 UTC) | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
 | 2026-11-07 | #46 | Logo R2; maths in titles typeset; titles in other scripts behind a switch |
 | 2026-11-06 | #43 | Shorter watchlist notes; Symmetry 2027 in person (likely) |
 | 2026-11-06 | #41 | Placeholder, holiday, exam and cancelled entries dropped; no embedding guesses on bare names |

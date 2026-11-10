@@ -67,7 +67,10 @@ Optional keys for any entry: `include` / `exclude` (a regex on the title: keep o
 drop, matching items, e.g. a notice board's tenders) and `title_in_description` (for
 calendars that name an entry after its speaker and put the real title in a "Title:" line),
 and `title_label` (for pages whose headings are generic, such as "International Conference",
-with the full name after a label like "Details:").
+with the full name after a label like "Details:"). `default_field` (for a source that lists one
+subject only: an event no keyword tags is filed in that bucket, such as `math.other` for General
+mathematics) and, for Indico servers, `skip_categories` (regexes on the category name for
+categories that are not research events, such as staff training).
 | `listing` | an HTML page that lists upcoming events (last resort) |
 
 Check a new entry against the live site before opening a pull request:
@@ -128,6 +131,15 @@ word then counts only if the same text does not also mention the context. For ex
 `topolog\w* ||| insulators?|quantum matter` keeps "topology of manifolds" in mathematics but
 leaves "topological insulators" to condensed matter. Titles that must get no maths tag at all
 are listed in `tests/test_maths_precision.py`.
+
+French keywords live in `scraper/taxonomy_math_fr.py`. Write them with their accents; they are
+made accent-tolerant automatically. Use French words or phrases only: a word that is also
+English ("inference", "optimisation") would tag English events too, and
+`tests/test_maths_m2.py` checks a list of English titles for that.
+
+The seminar series a talk belongs to (an Indico category such as "Séminaire de Géométrie
+Complexe") counts like the title. A series naming more than three branches of one field counts
+only for that field's general bucket.
 
 To add a new topic, put it in the right file under its sub-field. A profile can weight a topic
 by its id in `scraper/profiles.yaml`; otherwise it takes the weight of its sub-field.

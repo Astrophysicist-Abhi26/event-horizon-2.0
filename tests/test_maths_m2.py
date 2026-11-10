@@ -114,7 +114,7 @@ def test_french_patterns_do_not_fire_on_english_text():
 def test_maths_only_sources_fall_back_to_general_mathematics():
     defaults = SI.default_fields()
     assert defaults["French maths Indico"] == "math.other"
-    assert defaults["Vakil algebraic geometry"] == "math.geometry.algebraic"
+    assert defaults["Vakil algebraic geometry"] == "math.other"     # it also lists neighbouring fields
     e = {"title": "Bertrand Remy", "series": "Théminaire", "description": "Théminaire", "source": "French maths Indico"}
     assert S.classify_event(e, None, None, defaults) == (["math.other"], ["math"], ["source"])
     # only when nothing else tags it
@@ -136,3 +136,21 @@ def test_words_for_areas_with_their_own_branch_leave_general_mathematics():
     assert "math.other" not in tags("Combinatorics seminar")
     assert "math.nt.coding" not in tags("Quantum information theory and entanglement")
     assert not under("math.dyn", tags("Quantum chaos and black holes"))
+
+
+# ---------------------------------------------------------------------------
+# found on the held-out half (2026-11-10), fixed after it was scored
+# ---------------------------------------------------------------------------
+def test_held_out_findings():
+    # a placeholder with the speaker in brackets
+    for t in ["TBA (Hu Yining)", "Séminaire Combinatoire et Théorie des Nombres ICJ: TBA (Hu Yining)", "TBA (Anthony Masson) - ICJ"]:
+        assert S.JUNK_TITLE.search(t), t
+    for t in ["Thermodynamic Bethe Ansatz (TBA) and ODE/IM", "Introduction to the TBA equations of integrable models"]:
+        assert not S.JUNK_TITLE.search(t), t
+    # a navigation link is not an event
+    assert S.NOT_EVENTS.match("Return to my homepage")
+    # one French word plus an accented lowercase word is French; capitalised names with accents are not
+    assert S.foreign_title("Analyse spectrale semiclassique des opérateurs de Bloch-Torrey")
+    for t in ["Poincaré duality and Kähler manifolds", "Schrödinger operators with Erdős–Rényi potentials",
+              "Hénon maps and the Lorenz attractor", "The strong coupling regime of QCD"]:
+        assert not S.foreign_title(t), t

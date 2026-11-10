@@ -65,7 +65,8 @@ TYPE_RULES = [
 JUNK_TITLE = C.JUNK_TITLE      # placeholders, holidays, exams, cancellations (see common.py)
 NOT_EVENTS = re.compile(
     r"^(programs?|past programs?|program committee|lectures?|events?|current (&|and) upcoming|"
-    r"special (events|lectures)|summer courses?|archives?|home|news|load more)$", re.I)
+    r"special (events|lectures)|summer courses?|archives?|home|news|load more|"
+    r"(?:return|back) to (?:my |the )?(?:home ?page|top|index))$", re.I)
 
 
 def classify_type(title, raw_type, source):
@@ -320,7 +321,9 @@ _NAME_GLUE = {"and", "et", "&", "und", "de", "van", "der", "von", "da", "di", "d
 def foreign_title(title):
     """French (two French marker words), or mostly in a non-Latin script."""
     t = clean(title)
-    if len({m.group(0).lower() for m in _FRENCH.finditer(t)}) >= 2:
+    marks = {m.group(0).lower() for m in _FRENCH.finditer(t)}
+    marks |= {w for w in re.findall(r"\b[a-zàâçéèêëîïôûùü]*[àâçéèêëîïôûù][a-zàâçéèêëîïôûùü]*\b", t) if len(w) > 3}
+    if len(marks) >= 2:
         return True
     letters = [ch for ch in t if ch.isalpha()]
     latin = sum(1 for ch in letters if "LATIN" in unicodedata.name(ch, ""))
