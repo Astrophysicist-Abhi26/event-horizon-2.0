@@ -203,7 +203,7 @@ JUNK_TITLE = re.compile(
     r"|^\W*(?:tba|tbd|tbc|vacant|none|n/?a|no (?:seminar|talk|session)s?|seminars?|talks?|colloquium|"
     r"meetings?|bi-?weekly meetings?|pause\b.*|f[ée]ri[ée]|jour f[ée]ri[ée].*|public holiday|holiday|closed)\W*$"
     rf"|(?:^|[:,\-–—]\s*)(?:\([^()]{{1,40}}\)\s*)?{_Q}\s*(?:{_PLACEHOLDER})\s*{_Q}{_VENUE}\s*\.?\s*$"
-    r"|[:\-–—]\s*[-–—]*\s*$"                                      # "Séminaire de Géométrie Complexe: -"
+    rf"|[:\-–—]\s*$|:\s*[-–—]+{_VENUE}\s*$"                         # "Séminaire …: -", "Séminaire …: - ICJ"
     r"|\bcancel+ed\b|\bannul[ée]e?\b|\bpostponed\b|\bexams?\b", re.I)
 
 

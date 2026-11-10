@@ -496,6 +496,8 @@ sources:
     base: https://indico.math.cnrs.fr
     category: 0
     location: France
+    # staff IT training, the IT network's census page and outreach for school pupils (2026-11-10)
+    skip_categories: ["^Formations$", "^RT Mathrice$", "lycées"]
     min_expected: 10
     checked: 2026-11-04
 

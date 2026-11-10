@@ -308,7 +308,11 @@ _FRENCH = re.compile(
 # "Séminaire 08/01/2027 - Mathurin Massias and Claire Boyer"
 _SLOT = re.compile(r"seminar|s[ée]minaire|colloqu|lecture|talk|expos[ée]|webinar|journal club|"
                    r"working group|groupe de travail|series", re.I)
-_NAME_GLUE = {"and", "et", "&", "with", "avec", "und", "de", "van", "der", "von", "da", "di", "du", "le",
+# words that name an event, not a person: "International Space Radio Interferometry Conference"
+_NOT_A_NAME = re.compile(r"\b(?:conference|congress|workshop|school|symposium|meeting|summit|forum|days|week|"
+                         r"program(?:me)?|course|festival|award|prize|lab|group|institute|centre|center|university|"
+                         r"software|data|science|physics|mathematics|computing|systems?|theory|methods?)\b", re.I)
+_NAME_GLUE = {"and", "et", "&", "und", "de", "van", "der", "von", "da", "di", "du", "le",
               "la", "del", "dos", "das", "ter", "ten", "bin", "al", "y", "e"}
 
 
@@ -324,18 +328,24 @@ def foreign_title(title):
 
 def names_only(title):
     """The title only names people (speakers), apart from a series or date prefix."""
-    t = re.sub(r"\([^()]*\)|\[[^\[\]]*\]", " ", clean(title))     # affiliations, "[DPS Seminar]"
+    raw = clean(title)
+    t = re.sub(r"\([^()]*\)|\[[^\[\]]*\]", " ", raw)     # affiliations, "[DPS Seminar]"
     segs = [x.strip(" ,.") for x in re.split(r"\s*[:|–—]\s*|\s+-+\s+", t) if x.strip(" ,.")]
-    names = 0
+    names, prefix, glue, longest = 0, False, False, 0
     for seg in segs:
         if _SLOT.search(seg) and len(seg.split()) <= 6:
-            continue                               # "Colloquium", "Séminaire 08/01/2027"
-        words = [w for w in re.split(r"[\s,]+", seg) if w and w.lower() not in _NAME_GLUE]
-        if not 1 <= len(words) <= 8 or re.search(r"\d", seg) or classify_keyword_hits(seg) \
-                or not all(w[:1].isupper() for w in words if w[:1].isalpha()):
+            prefix = True                          # "Colloquium", "Séminaire 08/01/2027"
+            continue
+        parts = [w for w in re.split(r"[\s,]+", seg) if w]
+        words = [w for w in parts if w.lower() not in _NAME_GLUE]
+        glue = glue or len(words) < len(parts)
+        if not 1 <= len(words) <= 8 or re.search(r"\d", seg) or _NOT_A_NAME.search(seg) \
+                or classify_keyword_hits(seg) or not all(w[:1].isupper() for w in words if w[:1].isalpha()):
             return False
         names += 1
-    return names > 0
+        longest = max(longest, len(words))
+    # a person shows by an affiliation in brackets, a series prefix, "A and B", or a short name
+    return names > 0 and (prefix or glue or t != raw or longest <= 3)
 
 
 def no_embedding_guess(e):
