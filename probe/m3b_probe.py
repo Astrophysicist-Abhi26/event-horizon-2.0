@@ -32,12 +32,12 @@ for name, path in (("old", OLD), ("new", os.path.join(ROOT, "scraper"))):
     print(name, "dump:", r.returncode, r.stderr[-600:])
 old, new = json.load(open("_old.json")), json.load(open("_new.json"))
 import taxonomy as T                           # noqa: E402
-fam = lambda t: T.ancestors(t)[-1]
+fam = lambda t: T.ancestors(t)[-1] if t in T.SUBFIELDS else t.split(".")[0]
 for label, res in (("old", old), ("new", new)):
     rows = [(e, r) for e, r in zip(ev, res) if not r["junk"]]
     m = [x for x in rows if any(fam(t) == "math" for t in x[1]["subs"])]
     mi = [x for x in m if x[1]["info"]]
-    mt = [x for x in mi if any(fam(t) == "math" and t in T.PARENT_SF for t in x[1]["subs"])]
+    mt = [x for x in mi if any(fam(t) == "math" and (t in T.PARENT_SF or t.count(".") >= 2) for t in x[1]["subs"])]
     print(f"  {label}: recognised as maths {len(m)} | informative titles {len(mi)}, with a topic {len(mt)} ({100*len(mt)//max(1,len(mi))}%)")
 print("\n## events under Probability / Statistics (new)")
 c = collections.Counter(t for e, r in zip(ev, new) for t in r["subs"] if t.startswith(("math.probability", "math.stat")))
