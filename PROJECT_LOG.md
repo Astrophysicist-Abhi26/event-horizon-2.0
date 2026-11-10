@@ -17,13 +17,13 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | Area | State | Numbers (latest measurement) |
 |---|---|---|
 | Site | Live, refreshed daily and on every change to `main` | https://astrophysicist-abhi26.github.io/event-horizon-2.0/ · the daily run is scheduled for 08:00 IST but GitHub starts it 6–8 hours late (it ran at 14:30–15:30 IST on 7–9 Nov) |
-| Events | Healthy | 1,434 upcoming events (2026-11-09) |
+| Events | Healthy | 1,398 upcoming events, 1,244 classified (2026-11-10, run #75) |
 | Sources | 70 entries in `institutes.yaml` (14 parked) plus 9 global feeds | Parked ones and reasons: `institutes.yaml`, RUNBOOK |
-| Health alerts | #50 open (2026-11-10): IISER Kolkata Physical Sciences (read timeouts since 2026-11-09) and IIT Bhubaneswar School of Basic Sciences (connection timeout). It replaced #48; IISc Mathematics and ICTP Indico recovered | Both show their last good events ("stale"); a source broken for 7 days raises a chronic alert, then park it |
+| Health alerts | #52 open (2026-11-10, replaced #50): IISER Kolkata Physical Sciences, read timeouts since 2026-11-09 (last good run 2026-11-08). IIT Bhubaneswar, both IIT Jodhpur sources and NCRA-TIFR recovered in run #75 | Kolkata shows its last good event ("stale"); if still broken on 2026-11-16 it is chronic: park it |
 | Disciplines | Physics · Astronomy & cosmology · Mathematics · Computer science · AI & ML | 55 sub-fields, 165 topics |
 | Physics | 13 branches, 67 topics | to be measured |
 | Astronomy & cosmology | 10 sub-fields, no topic level | to be measured |
-| Mathematics | 16 branches, 98 topics: **being reworked (M1, M2, M3a, M3b done; M3c in review; M4 next)** | 401 recognised as maths; 77% of informative maths titles have a topic (2026-11-10, after M3c); French maths Indico 68% to a specific branch |
+| Mathematics | 16 branches, 98 topics: **being reworked (M1, M2, M3 done; M4 next)** | 401 recognised as maths; 77% of informative maths titles have a topic (2026-11-10, after M3c); French maths Indico 68% to a specific branch |
 | Computer science | 8 branches, no topics yet | 220 events; 0% with a topic |
 | AI & ML | 8 branches, no topics yet | 154 events; 0% with a topic |
 | Profiles | 14 ranking profiles | — |
@@ -39,7 +39,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | ✅ | [#51](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/51) |
 | M3a | Faster keyword matching, no tag changes (P-9) | ✅ | [#53](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/53) |
 | M3b | Statistics branch (D-1, D-9) and Probability topics; saved selections keep working (P-3); map checked at phone width (P-6) | ✅ | [#54](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/54) |
-| M3c | 24 more maths topics: PDE split (D-2), information theory / finance / history moved (D-3), logic, algebra, geometry, topology, dynamics, numerical, optimisation; general topics give way (D-14) | 🔄 | (this one) |
+| M3c | 24 more maths topics: PDE split (D-2), information theory / finance / history moved (D-3), logic, algebra, geometry, topology, dynamics, numerical, optimisation; general topics give way (D-14) | ✅ | [#55](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/55) |
 | M4 | Maths sources, each probed first: NCM, ATM, TIFR, TIFR-CAM, ISI, IISER/IIT maths, KSoM; RMS/IMS on the watchlist; AMS, EMS, MathMeetings, INI, Fields, MFO, CIRM, HIM, ESI, Lorentz | ⏭️ | — |
 | C1 | Computer science: about 40 topics and Indian CSE sources | 🗓️ | — |
 | A1 | AI & ML: topics | 🗓️ | — |
@@ -118,7 +118,7 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 
 | Date | PR | What changed |
 |---|---|---|
-| 2026-11-10 | M3c | 24 more maths topics (logic ×4, geometric group theory, quivers & cluster algebras, moduli, enumerative geometry, geometric analysis, applied topology, PDE ×3, optimal transport, homogeneous dynamics, numerical ×3, convex and discrete optimisation, finance, imaging, information theory, history); "(general)" topics give way to narrower ones; saved selections widened once (migration 2026-11-10-m3c); typographic apostrophes match; maths flows no longer tag fluid dynamics; tests 170 → 183 |
+| 2026-11-10 | #55 (M3c, deployed by run #75 at 18:45 UTC) | 24 more maths topics (logic ×4, geometric group theory, quivers & cluster algebras, moduli, enumerative geometry, geometric analysis, applied topology, PDE ×3, optimal transport, homogeneous dynamics, numerical ×3, convex and discrete optimisation, finance, imaging, information theory, history); "(general)" topics give way to narrower ones; saved selections widened once (migration 2026-11-10-m3c); typographic apostrophes match; maths flows no longer tag fluid dynamics; tests 170 → 183 |
 | 2026-11-10 | #54 (M3b, deployed by run #74 at 13:53 UTC) | Statistics becomes its own branch (7 topics); Probability gets stochastic analysis, random walks & Markov chains, random geometry; saved selections widened once; arXiv math.ST/stat.* → Statistics |
 | 2026-11-10 | #53 (M3a, deployed by run #73) | Keyword matching about 2.5–3.5x faster with identical tags (a combined check per sub-field before its patterns) |
 | 2026-11-10 | #51 (M2, deployed by run #71 at 06:28 UTC) | French maths keywords (~200 patterns); series names count like titles, more than 3 branches → General mathematics; maths-only sources fall back to General mathematics; legacy words moved out of General mathematics; "TBA (speaker)" placeholders; tests 153 → 163 |
