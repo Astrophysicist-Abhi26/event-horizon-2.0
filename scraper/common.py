@@ -189,6 +189,24 @@ def norm_title(title):
     return re.sub(r"\s+", " ", t).strip()
 
 
+# Placeholders and housekeeping that calendar feeds carry (seen on 2026-11-05: "TBA", "vacant",
+# "-Férié", "HE215 final exam", "*** CANCELLED *** ..."; on 2026-11-09: "Titre à venir",
+# "TBA ENS", "(Thibault) TBA - ICJ", "Séminaire de Probabilités: Vacances", "Séminaire …: -").
+# They are not events a visitor can attend.
+_PLACEHOLDER = (r"tba|tbd|tbc|to be (?:announced|confirmed|determined)|(?:à|a) (?:confirmer|pr[ée]ciser)|"
+                r"titre (?:et r[ée]sum[ée] )?(?:à|a) (?:venir|pr[ée]ciser|confirmer|d[ée]finir)|"
+                r"(?:à|a) venir|f[ée]ri[ée]|jour f[ée]ri[ée]|vacances(?: \w+){0,2}|rel[âa]che")
+_VENUE = r"(?:\s*[-–—]?\s*(?-i:[A-Z][A-Z-]{1,8}))?"      # "TBA ENS", "TBA - ICJ" (a capitalised venue code)
+_Q = "[\"“”«»'‘’]?"
+JUNK_TITLE = re.compile(
+    r"^\W*$"                                                     # "-", "—": no words at all
+    r"|^\W*(?:tba|tbd|tbc|vacant|none|n/?a|no (?:seminar|talk|session)s?|seminars?|talks?|colloquium|"
+    r"meetings?|bi-?weekly meetings?|pause\b.*|f[ée]ri[ée]|jour f[ée]ri[ée].*|public holiday|holiday|closed)\W*$"
+    rf"|(?:^|[:,\-–—]\s*)(?:\([^()]{{1,40}}\)\s*)?{_Q}\s*(?:{_PLACEHOLDER})\s*{_Q}{_VENUE}\s*\.?\s*$"
+    rf"|[:\-–—]\s*$|:\s*[-–—]+{_VENUE}\s*$"                         # "Séminaire …: -", "Séminaire …: - ICJ"
+    r"|\bcancel+ed\b|\bannul[ée]e?\b|\bpostponed\b|\bexams?\b", re.I)
+
+
 # ---------------------------------------------------------------------------
 # Dates
 # ---------------------------------------------------------------------------

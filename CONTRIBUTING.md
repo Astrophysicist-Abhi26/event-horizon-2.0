@@ -123,6 +123,12 @@ To fix a missed event: add a pattern for its wording to the right topic, add the
 Keep patterns specific: a bare common word ("sensors", "mixing", "partitions") tags
 unrelated events, and `OFF_TOPIC` is there to catch that.
 
+When a word means something else in a known context, add that context after ` ||| `: the
+word then counts only if the same text does not also mention the context. For example
+`topolog\w* ||| insulators?|quantum matter` keeps "topology of manifolds" in mathematics but
+leaves "topological insulators" to condensed matter. Titles that must get no maths tag at all
+are listed in `tests/test_maths_precision.py`.
+
 To add a new topic, put it in the right file under its sub-field. A profile can weight a topic
 by its id in `scraper/profiles.yaml`; otherwise it takes the weight of its sub-field.
 

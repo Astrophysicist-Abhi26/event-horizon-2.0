@@ -311,7 +311,7 @@ RULES = {
         r"h-bases", r"arithmetic statistics", r"CS:CM-types?", r"complex multiplication",
     ],
     "math.topology": [
-        r"topolog\w*(?! (?:insulator|phase|order|matter|superconduct|quantum|photonic|materials))",
+        r"topolog\w*(?! (?:insulator|phase|order|matter|superconduct|quantum|photonic|materials|states?|bands?|semimetal|defects?|solitons?|charges?|excitations?|edge|phenomena|magnon|qubits?|protection|crystalline)) ||| (?:quantum|topological|condensed|soft|active) matter|insulators?|semimetals?|superconduct\w*|quantum hall|berry|photonic\w*|materials?|band structures?|magnon\w*|qubits?",
         r"homotop\w*", r"homolog\w*", r"cohomolog\w*", r"knots?(?! per)", r"knot theory",
         r"manifolds?", r"CS:TQFTs?", r"cobordism", r"fundamental groups?",
         r"mapping class", r"[34]-manifolds?", r"sheaf|sheaves", r"persistent homology",
@@ -327,10 +327,10 @@ RULES = {
         r"cluster algebras?", r"operads?", r"koszul", r"vertex operator", r"2-groups?",
     ],
     "math.geometry": [
-        r"geometr(?:y|ies|ic)(?! deep learning)", r"algebraic geometry", r"differential geometry",
-        r"riemannian", r"symplectic", r"calabi[- ]yau", r"moduli", r"curvature",
-        r"minimal surfaces?", r"hodge", r"k(?:ä|a)hler", r"mirror symmetry", r"spinors?",
-        r"monopoles?", r"orbifolds?", r"varieties", r"surfaces of",
+        r"(?<!quantum )(?<!spacetime )(?<!band )geometr(?:y|ies|ic)(?! deep learning| phases?| optics| frustration) ||| berry|topological (?:phases?|matter|insulators?)", r"algebraic geometry", r"differential geometry",
+        r"riemannian", r"symplectic", r"calabi[- ]yau", r"moduli(?! (?:stabili[sz]ation|fields?|problem|inflation|decay))", r"(?<!berry )(?<!spacetime )curvature(?! perturbations?| radiation| of spacetime) ||| berry|inflation\w*|cosmolog\w*|black holes?",
+        r"minimal surfaces?", r"hodge", r"k(?:ä|a)hler", r"mirror symmetry", r"(?<!dirac )(?<!weyl )(?<!majorana )spinors?(?![- ]helicity)",
+        r"(?<!magnetic )monopoles?(?! searches?| production| dark matter)", r"orbifolds?", r"varieties", r"surfaces of",
     ],
     "math.analysis": [
         r"(?:functional|harmonic|complex|real|fourier|microlocal|spectral|nonlinear|numerical) analysis",
@@ -341,11 +341,11 @@ RULES = {
         r"amenab\w*", r"ergodic", r"schr(?:ö|o)dinger equations?", r"blow-?up",
     ],
     "math.probability": [
-        r"probabilit\w*", r"stochastic\w*", r"random (?:matri\w*|walks?|graphs?|fields?|processes)",
+        r"probabilit\w*", r"stochastic\w*(?! (?:gravitational|GW|background|inflation))", r"random (?:matri\w*|walks?|graphs?|fields?|processes)",
         r"brownian", r"markov", r"martingales?",
-        r"statistic\w*(?! (?:mechanic|physic))", r"bayesian", r"statistical inference",
+        r"(?<!quantum )(?<!anyonic )(?<!fractional )(?<!exchange )(?<!counting )(?<!photon )(?<!Bose-Einstein )(?<!Fermi-Dirac )statistic\w*(?! (?:mechanic|physic|field theor))", r"bayesian", r"statistical inference",
         r"causal inference", r"large deviations?", r"percolation", r"extreme values?",
-        r"fokker[- ]planck", r"regression", r"monte carlo", r"uncertainty quantification",
+        r"fokker[- ]planck", r"regression", r"(?<!quantum )(?<!diffusion )(?<!variational )monte carlo(?! event generators?| generators?)", r"uncertainty quantification",
         r"spin glass\w*",
     ],
     "math.mathphys": [
@@ -358,7 +358,7 @@ RULES = {
         r"mathemat\w*", r"combinatori\w*", r"graph theor\w*", r"mathematical logic",
         r"model theory", r"set theory", r"g(?:ö|o)del", r"incompleteness", r"proof theory",
         r"dynamical systems?", r"game theory", r"optimal control", r"convex optimi[sz]ation",
-        r"numerical methods?", r"information theor\w*", r"coding theory", r"cryptograph\w*",
+        r"numerical methods?", r"information theor\w*", r"coding theory",
         r"formal(?:i[sz]ed|i[sz]ation)? (?:proofs?|mathematics)", r"theorem prov\w*",
         r"CS:Lean", r"posets?", r"history of mathematics", r"chaos",
     ],
@@ -482,6 +482,25 @@ for _sf, _w, _codes in [
 ]:
     for _c in _codes:
         _CODES.setdefault(_c, []).append((_sf, _w))
+
+
+# A meeting that ticks four or more INSPIRE categories is a broad one (EPS-HEP ticks 11, the AIP
+# Congress 16). Its "Math and Math Physics" box then says little about the programme, so it only
+# supports other maths evidence. Focused ones keep it: MITP "Strings, Symmetries, and
+# Singularities" ticks two boxes (seen on 2026-11-10).
+BROAD_DECLARED = 4
+
+
+def declared_evidence(codes):
+    """-> list of (subfield, weight) for all the codes declared on one event."""
+    codes = [c for c in codes or [] if c]
+    out = []
+    for code in codes:
+        for sf, w in declared_codes(code):
+            if sf == "math.mathphys" and len(codes) >= BROAD_DECLARED:
+                w = WEAK
+            out.append((sf, w))
+    return out
 
 
 def declared_codes(code):
@@ -711,7 +730,23 @@ SUBFIELDS.update(_ordered)
 # ---------------------------------------------------------------------------
 # Compilation helpers
 # ---------------------------------------------------------------------------
+class _Unless:
+    """"word ||| context": the word counts only when the same text does not also mention the
+    context. For common words that mean something else nearby: "topological" in a title about
+    quantum matter or insulators is condensed matter, not topology."""
+
+    def __init__(self, pattern, unless):
+        self.pattern, self.unless = pattern, unless
+
+    def search(self, text):
+        m = self.pattern.search(text)
+        return None if m is None or self.unless.search(text) else m
+
+
 def _compile(pattern):
+    if " ||| " in pattern:
+        word, unless = pattern.split(" ||| ", 1)
+        return _Unless(_compile(word), re.compile(W + "(?:" + unless + ")" + W, re.I))
     if pattern.startswith("CS:"):
         return re.compile(W + pattern[3:] + W)
     pattern = pattern.replace("CS_INLINE_AI", "AI")
