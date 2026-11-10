@@ -726,7 +726,7 @@ function drawMf(){
   $("mfHint").textContent=MF_PICK.size?(MF_PROF_TOUCHED?"":"Suggested from your fields. You can change it."):"Relevance (0–100) is computed for this profile; the i button next to “Ranked for” explains how.";
 }
 function saveMyFields(){
-  MYF=[...MF_PICK];try{localStorage.setItem("eh-myfields",JSON.stringify(MYF));localStorage.setItem("eh-mf-seen","1")}catch(e){}
+  MYF=[...MF_PICK];try{localStorage.setItem("eh-myfields",JSON.stringify(MYF));localStorage.setItem("eh-myfields-tv",taxVersion());localStorage.setItem("eh-mf-seen","1")}catch(e){}
   SEL=new Set(MYF);setProfile($("mfProf").value,true);$("mfDlg").close();fieldsChanged();
 }
 
@@ -787,9 +787,17 @@ function openRel(e){
 
 function checked(group){return new Set([...document.querySelectorAll(`input[data-group=${group}]:checked`)].map(c=>c.value))}
 
+// When a branch or topic was split or moved, a selection saved before that change is widened once to
+// what the old id covered (TAX.migrations, from scraper/taxonomy.py). `since` is the version it was saved at.
+function taxVersion(){const m=(TAX&&TAX.migrations)||[];return m.length?m[m.length-1].version:""}
+function migrateIds(ids,since){
+  let out=[...(ids||[])];
+  ((TAX&&TAX.migrations)||[]).forEach(m=>{if(!since||m.version>since)out=out.flatMap(id=>m.map[id]||[id])});
+  return [...new Set(out)];
+}
 function saveState(){
   const st={q:$("q").value,min:$("minScore").value,region:document.querySelector("input[name=region]:checked").value,
-    sort:$("sort").value,uncl:$("showUncl").checked,other:$("showOther").checked,sel:[...SEL],view:VIEW,nav:NAV,
+    sort:$("sort").value,uncl:$("showUncl").checked,other:$("showOther").checked,sel:[...SEL],tv:taxVersion(),view:VIEW,nav:NAV,
     off:[...document.querySelectorAll("#filters input[data-group]:not(:checked)")].map(c=>c.dataset.group+"|"+c.value)};
   try{localStorage.setItem(STORE,JSON.stringify(st))}catch(e){}
 }
@@ -800,7 +808,7 @@ function loadState(){
   const r=document.querySelector(`input[name=region][value="${st.region}"]`);if(r)r.checked=true;
   (st.off||[]).forEach(k=>{const[g,v]=k.split("|");if(g==="sub")return;   // the old field tree: replaced by the field browser
     const el=document.querySelector(`#filters input[data-group="${g}"][value="${CSS.escape(v)}"]`);if(el)el.checked=false});
-  SEL=new Set((st.sel||[]).filter(id=>NODE[id]));
+  SEL=new Set(migrateIds(st.sel,st.tv).filter(id=>NODE[id]));
   if(["tabs","cols","map"].includes(st.view))VIEW=st.view;
   if(st.nav&&NODE[st.nav.d]){NAV.d=st.nav.d;NAV.b=NODE[st.nav.b]&&NODE[NAV.d].children.includes(st.nav.b)?st.nav.b:null}
 }
@@ -871,7 +879,10 @@ function init(data){
   const cnt=f=>EVENTS.reduce((m,e)=>{[].concat(f(e)).forEach(v=>{if(v)m[v]=(m[v]||0)+1});return m},{});
   const types=cnt(e=>e.type),countries=cnt(e=>e.country||"Unknown");
   buildNodes();
-  try{MYF=JSON.parse(lsGet("eh-myfields")||"null");if(MYF)MYF=MYF.filter(id=>NODE[id])}catch(e){MYF=null}
+  try{MYF=JSON.parse(lsGet("eh-myfields")||"null");
+    if(MYF){const tv=lsGet("eh-myfields-tv")||"";MYF=migrateIds(MYF,tv).filter(id=>NODE[id]);
+      if(tv!==taxVersion()){localStorage.setItem("eh-myfields",JSON.stringify(MYF));localStorage.setItem("eh-myfields-tv",taxVersion())}}
+  }catch(e){MYF=null}
   checkList($("fType"),Object.keys(types).sort(),types,"type");
   checkList($("fCountry"),Object.keys(countries).sort((a,b)=>a==="India"?-1:b==="India"?1:a.localeCompare(b)),countries,"country");
   loadState();

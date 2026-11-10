@@ -66,7 +66,7 @@ SUBFIELDS = {
     "math.topology":  ("math", "Topology"),
     "math.algebra":   ("math", "Algebra & representation theory"),
     "math.geometry":  ("math", "Geometry"),
-    "math.probability": ("math", "Probability & statistics"),
+    "math.probability": ("math", "Probability"),
     "math.mathphys":  ("math", "Mathematical physics"),
     "math.analysis":  ("math", "Analysis & PDE"),
     "math.other":     ("math", "General mathematics & colloquia"),
@@ -343,10 +343,14 @@ RULES = {
     "math.probability": [
         r"probabilit\w*", r"stochastic\w*(?! (?:gravitational|GW|background|inflation))", r"random (?:matri\w*|walks?|graphs?|fields?|processes)",
         r"brownian", r"markov", r"martingales?",
-        r"(?<!quantum )(?<!anyonic )(?<!fractional )(?<!exchange )(?<!counting )(?<!photon )(?<!Bose-Einstein )(?<!Fermi-Dirac )statistic\w*(?! (?:mechanic|physic|field theor))", r"bayesian", r"statistical inference",
-        r"causal inference", r"large deviations?", r"percolation", r"extreme values?",
-        r"fokker[- ]planck", r"regression", r"(?<!quantum )(?<!diffusion )(?<!variational )monte carlo(?! event generators?| generators?)", r"uncertainty quantification",
+        r"large deviations?", r"percolation", r"extreme values?",
+        r"fokker[- ]planck", r"(?<!quantum )(?<!diffusion )(?<!variational )monte carlo(?! event generators?| generators?)",
         r"spin glass\w*",
+    ],
+    # Statistics is its own branch since 2026-11-10; these words were under "Probability & statistics"
+    "math.stat": [
+        r"(?<!quantum )(?<!anyonic )(?<!fractional )(?<!exchange )(?<!counting )(?<!photon )(?<!Bose-Einstein )(?<!Fermi-Dirac )statistic\w*(?! (?:mechanic|physic|field theor))",
+        r"bayesian", r"statistical inference", r"causal inference", r"regression", r"uncertainty quantification",
     ],
     "math.mathphys": [
         r"mathematical physics", r"integrable (?:systems?|models?|hierarch\w*)",
@@ -423,7 +427,7 @@ _ARXIV_MATH = {
     "sg": "math.geometry", "cv": "math.analysis",
     "ap": "math.analysis.pde", "ca": "math.analysis.ode", "fa": "math.analysis.functional",
     "oa": "math.analysis.opalg", "sp": "math.analysis.functional", "na": "math.numeric",
-    "pr": "math.probability", "st": "math.probability",
+    "pr": "math.probability", "st": "math.stat",
     "mp": "math.mathphys",
     "ds": "math.dyn", "co": "math.comb", "lo": "math.logic", "oc": "math.optim",
     "it": "math.nt.coding", "gm": "math.other", "ho": "math.edu",
@@ -613,7 +617,7 @@ def declared_codes(code):
     if m and m.group(0) in _ARXIV_CS:
         return [(_ARXIV_CS[m.group(0)], STRONG)]
     if c in ("stat", "stat_th", "stat_me", "stat_ap", "stat_co", "math_st"):
-        return [("math.probability", STRONG)]
+        return [("math.stat", STRONG)]
     if c.startswith(("cs_", "eess_")) or c in ("cs", "computer_science"):
         return [("cs.general", MEDIUM)]
     return out
@@ -851,7 +855,20 @@ def export_for_frontend():
         "chain": {sf: ancestors(sf) for sf in SUBFIELDS},
         "mirrors": sorted(MIRRORS),
         "display": display_tree(),
+        "migrations": MIGRATIONS,
     }
+
+
+# When a branch or topic is split or moved, a visitor's saved selection is widened to what the
+# old id used to cover. Each entry applies once, to selections saved before its version.
+MIGRATIONS = [
+    {"version": "2026-11-10", "map": {
+        "b:math.probability": ["b:math.probability", "b:math.stat"],
+        "t:math.probability.stat": ["b:math.stat"],
+        "t:math.probability.theory": ["t:math.probability.theory", "t:math.probability.stochastic",
+                                      "t:math.probability.walks", "t:math.probability.geometry"],
+    }},
+]
 
 
 # ---------------------------------------------------------------------------
@@ -880,7 +897,7 @@ DISPLAY = [
      ["astro.general", "@cosmology", "@gr", "astro.he", "astro.galactic", "astro.stellar"]),
     ("math", "Mathematics", "math",
      ["math.other", "math.logic", "math.comb", "math.nt", "math.algebra", "math.geometry",
-      "math.topology", "math.analysis", "math.dyn", "math.probability", "@mathphys",
+      "math.topology", "math.analysis", "math.dyn", "math.probability", "math.stat", "@mathphys",
       "math.numeric", "math.optim", "math.applied", "math.edu"]),
     ("cs", "Computer science", "cs",
      ["cs.general", "cs.theory", "cs.systems", "cs.security", "cs.pl", "cs.data", "cs.hci",

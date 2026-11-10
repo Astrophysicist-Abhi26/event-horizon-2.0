@@ -23,7 +23,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | Disciplines | Physics · Astronomy & cosmology · Mathematics · Computer science · AI & ML | 54 sub-fields, 132 topics |
 | Physics | 13 branches, 67 topics | to be measured |
 | Astronomy & cosmology | 10 sub-fields, no topic level | to be measured |
-| Mathematics | 15 branches, 65 topics: **being reworked (M1, M2 done; M3, M4 next)** | 376 maths events (2026-11-10, after M2); French maths Indico 68% to a specific branch |
+| Mathematics | 16 branches, 74 topics: **being reworked (M1, M2, M3a done; M3b in review; M3c, M4 next)** | 376 maths events (2026-11-10, after M2); French maths Indico 68% to a specific branch |
 | Computer science | 8 branches, no topics yet | 220 events; 0% with a topic |
 | AI & ML | 8 branches, no topics yet | 154 events; 0% with a topic |
 | Profiles | 14 ranking profiles | — |
@@ -37,8 +37,8 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 |---|---|---|---|
 | M1 | Maths precision: placeholder slots, no embedding guesses on French or name-only titles, maths keywords that tag physics events | ✅ | [#49](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/49) |
 | M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | ✅ | [#51](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/51) |
-| M3a | Faster keyword matching, no tag changes (P-9) | 🔄 | (this one) |
-| M3b | Statistics branch (D-1, D-9) and Probability topics; saved selections keep working (P-3); map checked at phone width (P-6) | ⏭️ | — |
+| M3a | Faster keyword matching, no tag changes (P-9) | ✅ | [#53](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/53) |
+| M3b | Statistics branch (D-1, D-9) and Probability topics; saved selections keep working (P-3); map checked at phone width (P-6) | 🔄 | (this one) |
 | M3c | The other ~25 new maths topics: PDE split (D-2), information theory / finance / history moved (D-3), logic, algebra, geometry, topology, dynamics, numerical, optimisation | 🗓️ | — |
 | M4 | Maths sources, each probed first: NCM, ATM, TIFR, TIFR-CAM, ISI, IISER/IIT maths, KSoM; RMS/IMS on the watchlist; AMS, EMS, MathMeetings, INI, Fields, MFO, CIRM, HIM, ESI, Lorentz | 🗓️ | — |
 | C1 | Computer science: about 40 topics and Indian CSE sources | 🗓️ | — |
@@ -94,10 +94,10 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 | X-5 | ROADMAP step 5 did not say maths is in progress | ROADMAP | M1 | ✅ |
 | P-1 | Common words (group, ring, field, category, measure, graph, network, model, knot, bundle) also appear in physics and CS titles | 24 physics/CS/AI titles that must get no maths tag (`tests/test_maths_precision.py`) | Extend the set in M2–M3 | 🔄 |
 | P-2 | A broad series name can hit many branches | "Géométrie, Algèbre, Dynamique et Topologie" | M2: a series naming more than 3 branches counts for General mathematics | ✅ |
-| P-3 | Splitting a topic narrows a visitor's saved selection | — | Old ids stay as the general bucket; the site maps old ids to new ones (M3) | 🔴 |
-| P-4 | Statistics/ML double tags raise such events in ML profiles | — | Intended; the cosmology-ml parity test must stay unchanged (M3) | 🔴 |
+| P-3 | Splitting a topic narrows a visitor's saved selection | — | M3b: a saved selection or My fields from before a split is widened once (TAX.migrations); tested in a browser | ✅ |
+| P-4 | Statistics/ML double tags raise such events in ML profiles | — | M3b: Statistics keeps Probability's weights (D-9), so double tags rank as before; parity test unchanged | ✅ |
 | P-5 | The new Statistics branch needs embedding examples; the classifier recalibrates itself | — | Labelled examples in M3; check the health line after merging | 🔴 |
-| P-6 | About 98 maths topics crowd the outer ring of the field map | — | Check at phone width; show topics after clicking a discipline if needed (M3) | 🔴 |
+| P-6 | About 98 maths topics crowd the outer ring of the field map | — | Checked in M3b: the map's outer ring shows branches (16 for maths), topics only after a click; no crowding, no sideways scroll on a phone | ✅ |
 | P-7 | Test titles used to write patterns are no longer a fair test | — | M2: dev/held-out split by event id; held-out scored once (see section 6). Repeat for M3 | 🔄 |
 | P-8 | New sources: JavaScript pages, terms of use, duplicates across aggregators, a flood of conferences in "explore" | — | Probe each source before enabling it (M4) | 🔴 |
 | P-9 | Classification time grows with the number of patterns (4,849 → 5,046) | Measured 2026-11-10: about 120 ms for one event with a 3,000-character description, because every pattern was tried on its own | M3a: one combined check per sub-field first; 120 → 48 ms, the same tags (test compares every title) | ✅ |
@@ -112,7 +112,8 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 
 | Date | PR | What changed |
 |---|---|---|
-| 2026-11-10 | M3a | Keyword matching about 2.5–3.5x faster with identical tags (a combined check per sub-field before its patterns) |
+| 2026-11-10 | M3b | Statistics becomes its own branch (7 topics); Probability gets stochastic analysis, random walks & Markov chains, random geometry; saved selections widened once; arXiv math.ST/stat.* → Statistics |
+| 2026-11-10 | #53 (M3a) | Keyword matching about 2.5–3.5x faster with identical tags (a combined check per sub-field before its patterns) |
 | 2026-11-10 | #51 (M2, deployed by run #71 at 06:28 UTC) | French maths keywords (~200 patterns); series names count like titles, more than 3 branches → General mathematics; maths-only sources fall back to General mathematics; legacy words moved out of General mathematics; "TBA (speaker)" placeholders; tests 153 → 163 |
 | 2026-11-10 | #49 (M1, deployed by run #70 at 06:01 UTC) | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
 | 2026-11-07 | #46 | Logo R2; maths in titles typeset; titles in other scripts behind a switch |
@@ -142,6 +143,7 @@ Measured on the live site's events by a temporary probe (removed before each mer
 | 2026-11-10 after M1 ¹ | 1,383 | 201 / 263 (76%) | 58 / 182 (32%) | 5 tagged, 3–4 right | 0% | 0% | 153 |
 | 2026-11-10 before M2 ² | 1,373 | 193 / 254 (75%) | 57 / 178 (32%); specific branch 44 (25%) | — | 0% | 0% | 153 |
 | 2026-11-10 after M2 ² | 1,370 | 256 / 376 (68%) | 137 / 175 by keywords (78%), 175 with the fallback (100%); specific branch 119 (68%) | — | 0% | 0% | 163 |
+| 2026-11-10 M3b ³ | 1,383 | informative titles: 234 → 235 of 319 (73%); 395 recognised as maths | — | — | 0% | 0% | 170 |
 
 ¹ Same live events re-classified by the old and the new code with the same embedding results. Organisers' declared
 codes are not stored in `events.json`, so neither run has them; that is why these numbers differ from the baseline.
@@ -154,6 +156,9 @@ or a broad series); topics for them come with M3. **Held-out half** of the Frenc
 without looking at them, scored once): specific branch 50 (68%), tagged by keywords 57 (77%), the rest by the
 fallback; checked by hand, 73 of 74 right at branch level (wrong: "6th Smilei user & training workshop", a plasma
 simulation code, fell back to General mathematics). Caveat: the ~95 series names were all seen beforehand.
+
+³ Live data after M2; old code = M3a, new = M3b. 35 events re-filed (statistics events from Probability to Statistics, SDE and
+spanning-tree talks to the new Probability topics); one false positive found and fixed (software reliability engineering).
 
 **How to read "with a topic".** A topic is the finest level (Geometry → Algebraic geometry). The share of maths
 events with a topic can fall while the number with a topic rises: M2 added 122 events that are recognised as maths

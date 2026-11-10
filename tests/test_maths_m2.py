@@ -22,7 +22,7 @@ def tags(title, series=None, description=None):
 def test_series_counts_like_a_title():
     assert "math.probability" in tags("Irene Marcovici (Université de Rouen)", "Statistique - Probabilités - Optimisation et Contrôle")
     assert tags("Claire Barbier (UniCA)", "Maths Bio") == ["math.applied.biology"]
-    assert "math.probability.stat" in tags("Moritz Madern from University of Vienna", "Séminaire de Biostatistique")
+    assert "math.stat.bio" in tags("Moritz Madern from University of Vienna", "Séminaire de Biostatistique")
 
 
 def test_a_series_naming_more_than_three_branches_says_only_mathematics():
@@ -66,7 +66,7 @@ FRENCH_CASES = [
     ("Derived Seminar", "Derived Seminar", "math.geometry.algebraic"),
     ("Adrien Abgrall : \"Plongements entre groupes d’Artin à angles droits sans carrés\"", "GdT Actions !", "math.algebra.group"),
     ("Grigalius Taujanskas", "Mathématique-Physique", "math.mathphys"),
-    ("14e séminaire ITZYKSON - Dualité markovienne : méthodes algébriques et applications", "Physique", "math.probability.theory"),
+    ("14e séminaire ITZYKSON - Dualité markovienne : méthodes algébriques et applications", "Physique", "math.probability.walks"),
     ("Séminaire des jeunes EDPistes (1)", "Séminaire MACS (Modélisation, Analyse et Calcul Scientifique)", "math.numeric.analysis"),
     ("Séminaire FDD - FiME - MIRTE", "Séminaire commun Chaire FDD - Laboratoire FiME", "math.optim.game"),
     ("Séminaire des doctorant·es SO", "Séminaire de Statistique et Optimisation", "math.optim"),
@@ -78,7 +78,7 @@ FRENCH_CASES = [
     ("Groupe de travail parisien de calcul des variations", "", "math.analysis.calculus"),
     ("Séminaire de Géométrie Complexe", "", "math.geometry.complex"),
     ("Rencontres de théorie analytique des nombres", "", "math.nt.analytic"),
-    ("Séminaire Calcul stochastique", "", "math.probability.theory"),
+    ("Séminaire Calcul stochastique", "", "math.probability.stochastic"),
 ]
 
 

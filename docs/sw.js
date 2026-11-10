@@ -1,7 +1,7 @@
 /* Event Horizon 2.0 service worker.
    Static assets: cache-first. Pages + events.json: network-first with
    cache fallback, so the app opens offline with the last known events. */
-const VERSION = "rh-v8";
+const VERSION = "rh-v9";
 const SHELL = ["./", "index.html", "bg.js", "vendor/katex/katex.min.js", "vendor/katex/katex.min.css", "manifest.webmanifest",
                "icon-192.png", "icon-512.png", "icon-maskable-512.png", "logo.svg", "favicon.svg", "favicon-32.png",
                "apple-touch-icon.png"];

@@ -1,6 +1,6 @@
 # Subject coverage: physics and mathematics
 
-What Event Horizon 2.0 recognises, area by area. The taxonomy has three levels: **field → sub-field → topic**, with 132 topics under the physics and mathematics sub-fields (the full list is below), and a few new sub-fields carved out of the old catch-alls. Re-measured on 2026-11-04 after adding them.
+What Event Horizon 2.0 recognises, area by area. The taxonomy has three levels: **field → sub-field → topic**, with 141 topics under the physics and mathematics sub-fields (the full list is below), and a few new sub-fields carved out of the old catch-alls. Re-measured on 2026-11-04 after adding them; Statistics became its own mathematics branch on 2026-11-10.
 
 ## How the site shows it
 
@@ -70,7 +70,8 @@ Gravitation & GR events are tagged **Physics → Gravitation** and also **Astron
 * **Topology** (`math.topology`): Algebraic topology & homotopy theory; Low-dimensional topology & knot theory; Differential & geometric topology, manifolds; General & set-theoretic topology
 * **Algebra & representation theory** (`math.algebra`): Commutative algebra; Noncommutative rings & modules; Group theory; Lie algebras & representation theory; Hopf algebras, quantum groups & tensor categories; Field & Galois theory, polynomials; Linear & multilinear algebra; Homological algebra & K-theory; Universal algebra, lattices & semigroups
 * **Geometry** (`math.geometry`): Algebraic geometry; Differential & Riemannian geometry; Symplectic & contact geometry; Complex & Kähler geometry; Convex & discrete geometry; Lie groups & homogeneous spaces; Tropical & toric geometry
-* **Probability & statistics** (`math.probability`): Probability theory & stochastic processes; Random matrices & free probability; Mathematical statistics & data analysis
+* **Probability** (`math.probability`): Probability theory & stochastic processes (general); Stochastic analysis, SDEs & SPDEs; Random walks, Markov chains & mixing; Random geometry: SLE, percolation, random maps & trees; Random matrices & free probability
+* **Statistics** (`math.stat`, since 2026-11-10; ranked like Probability in every profile): Mathematical statistics & inference; Bayesian statistics & computation; High-dimensional & nonparametric statistics; Time series, spatial & spatio-temporal statistics; Causal inference & design of experiments; Biostatistics & epidemiological methods; Statistics in the physical sciences & astrostatistics
 * **Mathematical physics** (`math.mathphys`): Mathematical quantum mechanics & spectral theory; Rigorous statistical mechanics; Mathematical QFT, TQFT & vertex algebras; Integrable systems & solitons; Mathematical relativity & geometric analysis of spacetime
 * **Analysis & PDE** (`math.analysis`): Real analysis, measure theory & fractals; Complex analysis & function theory; Harmonic analysis & Fourier analysis; Functional analysis & operator theory; Operator algebras & noncommutative geometry; Ordinary differential equations; Partial differential equations; Calculus of variations & optimal transport; Approximation theory & special functions; Integral equations, transforms & inverse problems; Potential theory & pluripotential theory
 * **General mathematics & colloquia** (`math.other`)
