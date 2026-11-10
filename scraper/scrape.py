@@ -18,12 +18,14 @@ import os
 import re
 import sys
 import time
+import unicodedata
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import profiles as P                                      # noqa: E402
 import taxonomy as T                                      # noqa: E402
 from classify import classify                             # noqa: E402
+from classify import keyword_hits as classify_keyword_hits  # noqa: E402
 import common as C                                        # noqa: E402
 from common import clean, norm_title, today               # noqa: E402
 from geo import locate                                     # noqa: E402
@@ -60,14 +62,7 @@ TYPE_RULES = [
     (r"conference|symposium|congress|meeting|\bforum\b|\bdays\b|summit|\bfest\b", "Conference"),
     (r"colloqui|seminar|\btalks?\b|webinar|journal club|lecture\b", "Talk / Seminar"),
 ]
-# Placeholders and housekeeping that calendar feeds carry (seen on 2026-11-05: "TBA", "vacant",
-# "-Férié", "HE215 final exam", "*** CANCELLED *** ..."). They are not events a visitor can attend.
-JUNK_TITLE = re.compile(
-    r"^\W*(?:tba|tbd|tbc|vacant|none|n/?a|no (?:seminar|talk|session)s?|seminars?|talks?|colloquium|"
-    r"meetings?|bi-?weekly meetings?|pause\b.*|f[ée]ri[ée]|jour f[ée]ri[ée].*|public holiday|holiday|closed)\W*$"
-    r"|(?:^|[:,\-–—]\s*)[\"“”«»'‘’]?\s*(?:tba|tbd|tbc|to be (?:announced|confirmed|determined)|à confirmer|à préciser)"
-    r"\s*[\"“”«»'‘’]?\s*\.?\s*$"
-    r"|\bcancel+ed\b|\bannul[ée]e?\b|\bpostponed\b|\bexams?\b", re.I)
+JUNK_TITLE = C.JUNK_TITLE      # placeholders, holidays, exams, cancellations (see common.py)
 NOT_EVENTS = re.compile(
     r"^(programs?|past programs?|program committee|lectures?|events?|current (&|and) upcoming|"
     r"special (events|lectures)|summer courses?|archives?|home|news|load more)$", re.I)
@@ -301,6 +296,57 @@ def too_little_text(e):
     return len(clean(e.get("title")).split()) <= 3 and len(clean(e.get("description"))) < 40
 
 
+# Words that mark a French title. Two different ones are needed, so a name ("Au", "Du"),
+# "et al." or "Paris" alone does not count.
+_FRENCH = re.compile(
+    r"(?<!\w)(?:les|des|du|aux|au|une|pour|sur|dans|avec|entre|et|sont|par|à|[ld]'|titre|venir|"
+    r"s[ée]minaires?|journ[ée]es?|colloques?|expos[ée]s?|soutenance|th[èe]se|rentr[ée]e|s[ée]ance|"
+    r"th[ée]orie|[ée]quations?|g[ée]om[ée]trie|alg[èe]bre|probabilit[ée]s|math[ée]matiques?|physique|"
+    r"mod[èe]les?|m[ée]thodes?|probl[èe]mes?|num[ée]rique|d[ée]riv[ée]es|partielles|calcul|groupe|travail|"
+    r"doctorant\S*)(?!\w)", re.I)
+# a talk slot titled by its speakers: "Marie Doumic (INRIA Paris)", "Colloquium: Bertrand Maury",
+# "Séminaire 08/01/2027 - Mathurin Massias and Claire Boyer"
+_SLOT = re.compile(r"seminar|s[ée]minaire|colloqu|lecture|talk|expos[ée]|webinar|journal club|"
+                   r"working group|groupe de travail|series", re.I)
+_NAME_GLUE = {"and", "et", "&", "with", "avec", "und", "de", "van", "der", "von", "da", "di", "du", "le",
+              "la", "del", "dos", "das", "ter", "ten", "bin", "al", "y", "e"}
+
+
+def foreign_title(title):
+    """French (two French marker words), or mostly in a non-Latin script."""
+    t = clean(title)
+    if len({m.group(0).lower() for m in _FRENCH.finditer(t)}) >= 2:
+        return True
+    letters = [ch for ch in t if ch.isalpha()]
+    latin = sum(1 for ch in letters if "LATIN" in unicodedata.name(ch, ""))
+    return bool(letters) and latin < len(letters) / 2
+
+
+def names_only(title):
+    """The title only names people (speakers), apart from a series or date prefix."""
+    t = re.sub(r"\([^()]*\)|\[[^\[\]]*\]", " ", clean(title))     # affiliations, "[DPS Seminar]"
+    segs = [x.strip(" ,.") for x in re.split(r"\s*[:|–—]\s*|\s+-+\s+", t) if x.strip(" ,.")]
+    names = 0
+    for seg in segs:
+        if _SLOT.search(seg) and len(seg.split()) <= 6:
+            continue                               # "Colloquium", "Séminaire 08/01/2027"
+        words = [w for w in re.split(r"[\s,]+", seg) if w and w.lower() not in _NAME_GLUE]
+        if not 1 <= len(words) <= 8 or re.search(r"\d", seg) or classify_keyword_hits(seg) \
+                or not all(w[:1].isupper() for w in words if w[:1].isalpha()):
+            return False
+        names += 1
+    return names > 0
+
+
+def no_embedding_guess(e):
+    """When the English-only embedding model has nothing it can judge, it guesses (on 2026-11-09,
+    11 of 14 maths events tagged by it alone were "Number theory": "Titre à venir", speakers'
+    names). Keywords, declared codes and the series name still tag such events."""
+    if too_little_text(e) or foreign_title(e.get("title")):
+        return True
+    return names_only(e.get("title")) and len(clean(e.get("description"))) < 60
+
+
 def classify_all(events):
     status = {}
     embed_results = [None] * len(events)
@@ -320,8 +366,8 @@ def classify_all(events):
     except Exception as exc:
         llm_results, status["llm"] = [None] * len(events), {"status": "off", "detail": f"{exc}"[:200]}
     for e, emb, llm in zip(events, embed_results, llm_results):
-        if emb and too_little_text(e):
-            emb = None         # a name or one word gives the language model nothing to judge by
+        if emb and no_embedding_guess(e):
+            emb = None         # a name, a placeholder or French: nothing the model can judge
         subs, fields, basis = classify(e, emb if emb and emb[0] != "neg" else None, llm)
         e.update(subfields=subs, fields=fields, basis=basis)
         if llm and llm.get("reason"):

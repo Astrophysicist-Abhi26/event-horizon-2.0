@@ -22,8 +22,8 @@ import re
 import yaml
 from bs4 import BeautifulSoup
 
-from common import (check_robots, clean, first_url, get, ics_end_date, iso, parse_date_range,
-                    parse_ics, today)
+from common import (JUNK_TITLE, check_robots, clean, first_url, get, ics_end_date, iso,
+                    parse_date_range, parse_ics, today)
 from listing import extract_listing
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -206,9 +206,12 @@ _SERIES = re.compile(r"seminar|s[ée]minaire|colloqu|club|talks?|lectures?|serie
 
 
 def speaker_only(title):
-    """"Paolo Bellingeri": one to four capitalised words, nothing that names an event."""
+    """"Paolo Bellingeri": one to four capitalised words, nothing that names an event.
+    A placeholder ("Férié", "TBA ENS", "-") is not a speaker: it keeps its own title and is
+    dropped later, instead of becoming "<series>: Férié" (seen on 2026-11-09)."""
     words = (title or "").replace("(", " ").replace(")", " ").split()
-    return (1 <= len(words) <= 4 and not _EVENTISH.search(title) and not re.search(r"\d", title)
+    return (1 <= len(words) <= 4 and any(w[:1].isalpha() for w in words) and not JUNK_TITLE.search(title)
+            and not _EVENTISH.search(title) and not re.search(r"\d", title)
             and all(w[:1].isupper() for w in words if w[:1].isalpha()))
 
 
@@ -220,6 +223,8 @@ def _indico(cfg):
     cats = cfg.get("categories") or [cfg.get("category", 0)]
     base = cfg["base"].rstrip("/")
     insecure = bool(cfg.get("insecure_ok"))
+    # categories that are not research events, e.g. staff IT training ("Formations: Premiers pas avec GIT")
+    skip = [re.compile(p, re.I) for p in cfg.get("skip_categories") or []]
     out = []
     for cat in cats:
         try:
@@ -236,6 +241,8 @@ def _indico(cfg):
             start = iso(e.get("startDate"))
             title, series = clean(e.get("title")), e.get("category")
             series = clean(series.get("title") if isinstance(series, dict) else series)
+            if series and any(p.search(series) for p in skip):
+                continue
             who = None
             if series and _SERIES.search(series) and speaker_only(title):   # a seminar slot titled with just the speaker
                 who, title = title, f"{series}: {title}"
