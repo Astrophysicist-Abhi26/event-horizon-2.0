@@ -52,10 +52,9 @@ def gather_evidence(ev, embed_result=None):
     score = defaultdict(float)
     why = defaultdict(set)
 
-    for code in ev.get("declared") or []:
-        for sf, w in T.declared_codes(code):
-            score[sf] += w
-            why[sf].add("declared")
+    for sf, w in T.declared_evidence(ev.get("declared")):
+        score[sf] += w
+        why[sf].add("declared")
 
     for sf, hs in keyword_hits(ev.get("title", "")).items():
         score[sf] += TITLE_HIT

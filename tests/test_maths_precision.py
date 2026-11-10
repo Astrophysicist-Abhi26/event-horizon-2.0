@@ -133,3 +133,26 @@ def test_a_pattern_can_name_a_context_that_cancels_it():
     p = T._compile("topolog\\w* ||| insulators?")
     assert p.search("Topology of manifolds")
     assert p.search("Topological insulators and topology") is None
+
+
+# ---------------------------------------------------------------------------
+# INSPIRE's "Math and Math Physics" box on broad meetings
+# ---------------------------------------------------------------------------
+def _tags(title, declared=()):
+    return C.classify({"title": title, "description": "", "declared": list(declared)})[0]
+
+
+def test_inspire_math_box_counts_only_on_focused_meetings():
+    eps = ["Accelerators", "Astrophysics", "Computing", "Experiment-HEP", "Gravitation and Cosmology", "Instrumentation",
+           "Lattice", "Phenomenology-HEP", "Theory-HEP", "Math and Math Physics", "Data Analysis and Statistics"]
+    assert "math.mathphys" not in _tags("2027 European Physical Society Conference on High Energy Physics", eps)
+    loop = ["Gravitation and Cosmology", "Theory-HEP", "Theory-Nucl", "Phenomenology-HEP", "Astrophysics", "Math and Math Physics"]
+    assert "math.mathphys" not in _tags("Loop-the-Loop 2026", loop)
+    assert "math.mathphys" in _tags('MITP Topical Workshop: "Strings, Symmetries, and Singularities"', ["Theory-HEP", "Math and Math Physics"])
+    assert "math.mathphys" in _tags("Tunneling in QFT: XXVIII", ["Theory-HEP", "Quantum Physics", "Math and Math Physics"])
+    # a broad meeting about mathematical physics still gets it from its own words
+    assert "math.mathphys" in _tags("Mathematical physics days", eps)
+
+
+def test_optimisation_in_a_list_title_still_counts():
+    assert "math.optim.optimisation" in _tags("Calculus of Variations, Optimization and Image Processing")

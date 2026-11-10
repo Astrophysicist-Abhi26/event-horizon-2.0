@@ -484,6 +484,25 @@ for _sf, _w, _codes in [
         _CODES.setdefault(_c, []).append((_sf, _w))
 
 
+# A meeting that ticks four or more INSPIRE categories is a broad one (EPS-HEP ticks 11, the AIP
+# Congress 16). Its "Math and Math Physics" box then says little about the programme, so it only
+# supports other maths evidence. Focused ones keep it: MITP "Strings, Symmetries, and
+# Singularities" ticks two boxes (seen on 2026-11-10).
+BROAD_DECLARED = 4
+
+
+def declared_evidence(codes):
+    """-> list of (subfield, weight) for all the codes declared on one event."""
+    codes = [c for c in codes or [] if c]
+    out = []
+    for code in codes:
+        for sf, w in declared_codes(code):
+            if sf == "math.mathphys" and len(codes) >= BROAD_DECLARED:
+                w = WEAK
+            out.append((sf, w))
+    return out
+
+
 def declared_codes(code):
     """Map one declared subject code -> list of (subfield, weight)."""
     raw = str(code).strip()
