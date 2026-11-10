@@ -6,10 +6,15 @@ on:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: "3.12", cache: pip}
+      - uses: actions/cache@v6
+        with:
+          path: .cache/fastembed
+          key: fastembed-bge-small-en-v1.5
       - run: pip install -r requirements.txt
       - run: python -u probe/m1_probe.py
