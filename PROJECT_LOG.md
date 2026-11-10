@@ -36,7 +36,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | ID | Workstream | Status | Pull request |
 |---|---|---|---|
 | M1 | Maths precision: placeholder slots, no embedding guesses on French or name-only titles, maths keywords that tag physics events | ✅ | [#49](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/49) |
-| M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | ⏭️ | — |
+| M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | 🔄 | (this one) |
 | M3 | Maths depth: Statistics branch, about 33 new topics, information theory / finance / history moved | 🗓️ | — |
 | M4 | Maths sources, each probed first: NCM, ATM, TIFR, TIFR-CAM, ISI, IISER/IIT maths, KSoM; RMS/IMS on the watchlist; AMS, EMS, MathMeetings, INI, Fields, MFO, CIRM, HIM, ESI, Lorentz | 🗓️ | — |
 | C1 | Computer science: about 40 topics and Indian CSE sources | 🗓️ | — |
@@ -75,8 +75,8 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 | Q-1 | Holiday and TBA slots reach the site as "<series>: Férié", "…: TBA ENS", "…: -" | Probe 2026-11-09. Cause: the Indico reader took "Férié" for a speaker's name and prefixed the series, so the junk filter no longer matched | M1 | ✅ |
 | Q-2 | The embedding model guesses on French titles and bare speaker names | 14 maths events tagged by it alone; 13 wrong, 11 of them "Number theory" | M1 | ✅ |
 | Q-3 | Maths tags on physics events | 8 of a sample of 45 branch-only maths events were not maths (EPS-HEP, ICDMS, a topological-matter talk) | M1 | ✅ |
-| Q-4 | French maths Indico mostly unclassified | 81 of 229 classified (35%); the keywords are English | M2 | 🔴 |
-| Q-5 | A series name in the description counts only 0.5, below the 1.0 threshold | "Séminaire de Géométrie Complexe: Hadrien Notarantonio" gets nothing | M2 | 🔴 |
+| Q-4 | French maths Indico mostly unclassified | 81 of 229 classified (35%); the keywords are English | M2: specific branch 25% → 68% of French maths Indico; nothing left unclassified | ✅ |
+| Q-5 | A series name in the description counts only 0.5, below the 1.0 threshold | "Séminaire de Géométrie Complexe: Hadrien Notarantonio" gets nothing | M2: series names count like titles | ✅ |
 | Q-6 | Real maths missing a topic | Jump processes, intersection local times, uniform spanning trees, Santaló inequality | M3 | 🔴 |
 | Q-7 | CS and AI have no topic level | 0% of 220 and 154 events | C1, A1 | 🔴 |
 | Q-8 | Odd non-maths tags seen in passing | "Securing the Immersive Web" → reinforcement learning; "Data-Driven Modeling of Social Behavior" → astronomy | Audit during C1/A1 | 🔴 |
@@ -85,22 +85,22 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 | Q-11 | Physics keyword "gravity" tags fluid dynamics | "Global well-posedness for … gravity water waves" → gravitation | Physics audit, later | 🔴 |
 | Q-12 | INSPIRE's own category "Math and Math Physics" puts broad HEP conferences under Mathematics | Tux quantum-gravity workshop, Loop-the-Loop, LACES, Symmetry 2027 carry maths tags without any maths word | M1: measure how INSPIRE uses it, then weigh it | ✅ |
 | X-1 | Coding & information theory sits under Number theory | taxonomy_math.py | M3 (D-3) | 🔴 |
-| X-6 | "General mathematics" still holds words for areas that now have their own branch (combinatorics, logic, set theory, dynamical systems, game theory, information theory…) | taxonomy.py `math.other` | M2 | 🔴 |
+| X-6 | "General mathematics" still holds words for areas that now have their own branch (combinatorics, logic, set theory, dynamical systems, game theory, information theory…) | taxonomy.py `math.other` | M2: moved to Combinatorics, Logic, Dynamics, Optimisation, Numerical, Education | ✅ |
 | X-2 | Finance inside "Game theory, economics & finance"; education and history in one topic | taxonomy_math.py | M3 (D-3) | 🔴 |
 | X-3 | RUNBOOK said `requirements.txt` is not pinned; it has been pinned since PR #31 | RUNBOOK | M1 | ✅ |
 | X-4 | RUNBOOK listed the researchseminars.org timeouts twice | RUNBOOK | M1 | ✅ |
 | X-5 | ROADMAP step 5 did not say maths is in progress | ROADMAP | M1 | ✅ |
 | P-1 | Common words (group, ring, field, category, measure, graph, network, model, knot, bundle) also appear in physics and CS titles | 24 physics/CS/AI titles that must get no maths tag (`tests/test_maths_precision.py`) | Extend the set in M2–M3 | 🔄 |
-| P-2 | A broad series name can hit many branches | "Géométrie, Algèbre, Dynamique et Topologie" | Cap at 3 (D-5), M2 | 🔴 |
+| P-2 | A broad series name can hit many branches | "Géométrie, Algèbre, Dynamique et Topologie" | M2: a series naming more than 3 branches counts for General mathematics | ✅ |
 | P-3 | Splitting a topic narrows a visitor's saved selection | — | Old ids stay as the general bucket; the site maps old ids to new ones (M3) | 🔴 |
 | P-4 | Statistics/ML double tags raise such events in ML profiles | — | Intended; the cosmology-ml parity test must stay unchanged (M3) | 🔴 |
 | P-5 | The new Statistics branch needs embedding examples; the classifier recalibrates itself | — | Labelled examples in M3; check the health line after merging | 🔴 |
 | P-6 | About 98 maths topics crowd the outer ring of the field map | — | Check at phone width; show topics after clicking a discipline if needed (M3) | 🔴 |
-| P-7 | Test titles used to write patterns are no longer a fair test | — | Separate "dev" and "held-out" title sets (M2, M3) | 🔴 |
+| P-7 | Test titles used to write patterns are no longer a fair test | — | M2: dev/held-out split by event id; held-out scored once (see section 6). Repeat for M3 | 🔄 |
 | P-8 | New sources: JavaScript pages, terms of use, duplicates across aggregators, a flood of conferences in "explore" | — | Probe each source before enabling it (M4) | 🔴 |
 | P-9 | Classification time grows with the number of patterns (4,849 now) | Measured 2026-11-10: about 120 ms for one event with a 3,000-character description, because every pattern is tried on its own | Merge each topic's patterns into one regex before M3 adds more | 🔴 |
 | Q-13 | Broad INSPIRE meetings get a tag for every box they tick | EPS-HEP 2027 → Astronomy and Gravitation as well as particle physics | Physics/astronomy audit, later | 🔴 |
-| Q-14 | The embedding guard removed a few right guesses until M2 lands | "Séminaire de Probabilités" speakers (Irene Marcovici, Julien Barre) lost Probability; "Dynamique du billard dans un prisme" lost Geometry | M2: series names and French keywords bring them back | 🔴 |
+| Q-14 | The embedding guard removed a few right guesses until M2 lands | "Séminaire de Probabilités" speakers (Irene Marcovici, Julien Barre) lost Probability; "Dynamique du billard dans un prisme" lost Geometry | M2: all three are back (series and French keywords) | ✅ |
 | P-10 | Cryptography is split between maths (number theory) and CS (security). M1 sends bare "cryptography" to CS only; words like "encryption" and "hash functions" still tag maths too | — | Finish in C1 | 🔴 |
 | O-1 | Two old remote branches, `claude/actions-bump-test` and `claude/fix-noise`, could not be deleted from here | — | Delete them on GitHub (Branches page) | 🔴 |
 
