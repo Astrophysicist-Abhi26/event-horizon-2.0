@@ -19,7 +19,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | Site | Live, refreshed daily and on every change to `main` | https://astrophysicist-abhi26.github.io/event-horizon-2.0/ · the daily run is scheduled for 08:00 IST but GitHub starts it 6–8 hours late (it ran at 14:30–15:30 IST on 7–9 Nov) |
 | Events | Healthy | 1,434 upcoming events (2026-11-09) |
 | Sources | 70 entries in `institutes.yaml` (14 parked) plus 9 global feeds | Parked ones and reasons: `institutes.yaml`, RUNBOOK |
-| Health alerts | None open: #48 (IISc Mathematics, IISER Kolkata, ICTP Indico timeouts on 2026-11-09) closed itself on 2026-11-10 when all three answered again | — |
+| Health alerts | #50 open (2026-11-10): IISER Kolkata Physical Sciences (read timeouts since 2026-11-09) and IIT Bhubaneswar School of Basic Sciences (connection timeout). It replaced #48; IISc Mathematics and ICTP Indico recovered | Both show their last good events ("stale"); a source broken for 7 days raises a chronic alert, then park it |
 | Disciplines | Physics · Astronomy & cosmology · Mathematics · Computer science · AI & ML | 54 sub-fields, 132 topics |
 | Physics | 13 branches, 67 topics | to be measured |
 | Astronomy & cosmology | 10 sub-fields, no topic level | to be measured |
@@ -37,7 +37,9 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 |---|---|---|---|
 | M1 | Maths precision: placeholder slots, no embedding guesses on French or name-only titles, maths keywords that tag physics events | ✅ | [#49](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/49) |
 | M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | ✅ | [#51](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/51) |
-| M3 | Maths depth: Statistics branch, about 33 new topics, information theory / finance / history moved; speed-up of the keyword matcher first (P-9) | ⏭️ | — |
+| M3a | Faster keyword matching, no tag changes (P-9) | 🔄 | (this one) |
+| M3b | Statistics branch (D-1, D-9) and Probability topics; saved selections keep working (P-3); map checked at phone width (P-6) | ⏭️ | — |
+| M3c | The other ~25 new maths topics: PDE split (D-2), information theory / finance / history moved (D-3), logic, algebra, geometry, topology, dynamics, numerical, optimisation | 🗓️ | — |
 | M4 | Maths sources, each probed first: NCM, ATM, TIFR, TIFR-CAM, ISI, IISER/IIT maths, KSoM; RMS/IMS on the watchlist; AMS, EMS, MathMeetings, INI, Fields, MFO, CIRM, HIM, ESI, Lorentz | 🗓️ | — |
 | C1 | Computer science: about 40 topics and Indian CSE sources | 🗓️ | — |
 | A1 | AI & ML: topics | 🗓️ | — |
@@ -59,7 +61,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 | D-6 | 2026-11-10 | Maths-only sources fall back to "General mathematics & colloquia" | Known to be maths, branch unknown |
 | D-7 | 2026-11-10 | No embedding guess for French or name-only titles; a multilingual model only if needed later | The English-only model guessed wrong on 13 of 14 such maths events |
 | D-8 | 2026-11-10 | Sources: Indian national bodies first (NCM, ATM, TIFR, TIFR-CAM, ISI), then AMS, EMS and the European institutes | Agreed order |
-| D-9 | open | Should the pure-mathematics profile weight Statistics below Probability (40 vs 60)? Until decided, Statistics inherits Probability's weights | To be settled in M3 |
+| D-9 | 2026-11-10 | The new Statistics branch keeps Probability's weights in every profile (no separate weight for pure mathematics) | Your choice: nothing in anyone's ranking moves |
 | D-10 | 2026-11-10 | Work in small pull requests, a few fixes at a time, each with a before/after report on the live data | Your instruction |
 | D-11 | 2026-11-07 | Logo R2 (tilted black hole) | Your choice from the round-5 study |
 | D-12 | 2026-11-05 | No Source filter on the site; fields shown as a vertical list; colourful field map with curved labels | Your feedback on the interface |
@@ -98,7 +100,7 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 | P-6 | About 98 maths topics crowd the outer ring of the field map | — | Check at phone width; show topics after clicking a discipline if needed (M3) | 🔴 |
 | P-7 | Test titles used to write patterns are no longer a fair test | — | M2: dev/held-out split by event id; held-out scored once (see section 6). Repeat for M3 | 🔄 |
 | P-8 | New sources: JavaScript pages, terms of use, duplicates across aggregators, a flood of conferences in "explore" | — | Probe each source before enabling it (M4) | 🔴 |
-| P-9 | Classification time grows with the number of patterns (4,849 now) | Measured 2026-11-10: about 120 ms for one event with a 3,000-character description, because every pattern is tried on its own | Merge each topic's patterns into one regex before M3 adds more | 🔴 |
+| P-9 | Classification time grows with the number of patterns (4,849 → 5,046) | Measured 2026-11-10: about 120 ms for one event with a 3,000-character description, because every pattern was tried on its own | M3a: one combined check per sub-field first; 120 → 48 ms, the same tags (test compares every title) | ✅ |
 | Q-13 | Broad INSPIRE meetings get a tag for every box they tick | EPS-HEP 2027 → Astronomy and Gravitation as well as particle physics | Physics/astronomy audit, later | 🔴 |
 | Q-14 | The embedding guard removed a few right guesses until M2 lands | "Séminaire de Probabilités" speakers (Irene Marcovici, Julien Barre) lost Probability; "Dynamique du billard dans un prisme" lost Geometry | M2: all three are back (series and French keywords) | ✅ |
 | Q-15 | A source-level fallback can misfile an off-subject event | "6th Smilei user & training workshop" (plasma simulation code) → General mathematics | Rare; correct by a keyword when seen | 🔴 |
@@ -110,7 +112,8 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 
 | Date | PR | What changed |
 |---|---|---|
-| 2026-11-10 | #51 (M2) | French maths keywords (~200 patterns); series names count like titles, more than 3 branches → General mathematics; maths-only sources fall back to General mathematics; legacy words moved out of General mathematics; "TBA (speaker)" placeholders; tests 153 → 163 |
+| 2026-11-10 | M3a | Keyword matching about 2.5–3.5x faster with identical tags (a combined check per sub-field before its patterns) |
+| 2026-11-10 | #51 (M2, deployed by run #71 at 06:28 UTC) | French maths keywords (~200 patterns); series names count like titles, more than 3 branches → General mathematics; maths-only sources fall back to General mathematics; legacy words moved out of General mathematics; "TBA (speaker)" placeholders; tests 153 → 163 |
 | 2026-11-10 | #49 (M1, deployed by run #70 at 06:01 UTC) | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
 | 2026-11-07 | #46 | Logo R2; maths in titles typeset; titles in other scripts behind a switch |
 | 2026-11-06 | #43 | Shorter watchlist notes; Symmetry 2027 in person (likely) |
@@ -151,6 +154,12 @@ or a broad series); topics for them come with M3. **Held-out half** of the Frenc
 without looking at them, scored once): specific branch 50 (68%), tagged by keywords 57 (77%), the rest by the
 fallback; checked by hand, 73 of 74 right at branch level (wrong: "6th Smilei user & training workshop", a plasma
 simulation code, fell back to General mathematics). Caveat: the ~95 series names were all seen beforehand.
+
+**How to read "with a topic".** A topic is the finest level (Geometry → Algebraic geometry). The share of maths
+events with a topic can fall while the number with a topic rises: M2 added 122 events that are recognised as maths
+but carry little detail (a speaker's name on a maths server, a seminar named after its branch). From M3 on, two
+numbers are reported: **recognised as maths**, and **topic share among informative titles** (titles that name a
+subject; a bare speaker name can never carry a topic).
 
 **Targets for the maths work:** maths events with a topic ≥ 85%; French maths Indico
 classified ≥ 80% (≥ 60% to a specific branch); embedding-only maths tags ≥ 90% right or not
