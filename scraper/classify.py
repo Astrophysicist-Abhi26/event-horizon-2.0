@@ -124,6 +124,10 @@ def assign(score, why):
     # a topic implies its sub-field: "String theory" is enough, "High-energy theory" is not repeated
     for t in [t for t in tagged if t in T.PARENT_SF]:
         tagged.discard(T.PARENT_SF[t])
+    # a "(general)" topic gives way to a narrower one: "Elliptic PDE" is not also "PDE (general)"
+    for g, narrower in T.NARROWER.items():
+        if g in tagged and tagged & narrower:
+            tagged.discard(g)
     # INSPIRE's "Gravitation and Cosmology" gives cosmo.general a weak prior;
     # keep it only if something else points at cosmology too
     if tagged == {"cosmo.general"} and why["cosmo.general"] == {"declared"} \
