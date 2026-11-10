@@ -1,3 +1,4 @@
+# run 2: after the held-out fixes
 """Temporary (removed before merge): before/after and held-out report for PR M2.
 
 Old code = origin/main, new code = this branch, same live events, same embedding results.
