@@ -109,9 +109,9 @@ NOT_MATHS = [
 ]
 STILL_MATHS = [
     ("Field extensions and Galois groups", "math.algebra.field"), ("Isogeny-based cryptography", "math.nt.crypto"),
-    ("Diffusions on manifolds", "math.probability.theory"), ("Perfect matchings in hypergraphs", "math.comb.graph"),
-    ("Markov chain Monte Carlo methods", "math.probability"), ("Stochastic processes and SPDEs", "math.probability.theory"),
-    ("Statistics for high-energy physics", "math.probability"), ("Low-dimensional topology and knot theory", "math.topology.low"),
+    ("Diffusions on manifolds", "math.probability.stochastic"), ("Perfect matchings in hypergraphs", "math.comb.graph"),
+    ("Markov chain Monte Carlo methods", "math.probability"), ("Stochastic processes and SPDEs", "math.probability.stochastic"),
+    ("Statistics for high-energy physics", "math.stat"), ("Low-dimensional topology and knot theory", "math.topology.low"),
     ("Topological data analysis", "math.topology"), ("Ricci curvature and optimal transport", "math.geometry.diff"),
     ("Mean curvature flow", "math.geometry.diff"), ("Moduli spaces of curves", "math.geometry.algebraic"),
     ("Tensors and tensor rank", "math.algebra.linear"), ("Riemannian geometry", "math.geometry"),

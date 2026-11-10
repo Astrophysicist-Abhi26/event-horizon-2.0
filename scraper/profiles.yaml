@@ -329,7 +329,7 @@ profiles:
     blurb: >-
       Probability, statistics, numerical analysis, optimisation, control, modelling
       and mathematical biology, with PDEs and dynamical systems.
-    focus: [math.probability, math.numeric, math.optim, math.applied, math.dyn]
+    focus: [math.probability, math.stat, math.numeric, math.optim, math.applied, math.dyn]
     focus_label: applied mathematics
     interests:
       math.probability: 100
