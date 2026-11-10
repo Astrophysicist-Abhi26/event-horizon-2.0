@@ -30,7 +30,7 @@ import common as C                                        # noqa: E402
 from common import clean, norm_title, today               # noqa: E402
 from geo import locate                                     # noqa: E402
 import sources as G                                        # noqa: E402
-from sources_india import (empty_ok_names, india_sources, scrape_issue_intake,  # noqa: E402
+from sources_india import (default_fields, empty_ok_names, india_sources, scrape_issue_intake,  # noqa: E402
                            scrape_watchlist)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -205,7 +205,8 @@ def normalise(raw):
             country=country, region=region, online=online,
             type=classify_type(title, e.get("raw_type"), e.get("source")),
             source=e.get("source"), sources=[e.get("source")],
-            speaker=e.get("speaker"), description=clean(e.get("description")),
+            speaker=e.get("speaker"), series=clean(e.get("series")) or None,
+            description=clean(e.get("description")),
             declared=[d for d in (e.get("declared") or []) if d],
             priority=bool(e.get("priority"))))
     return out
@@ -232,8 +233,8 @@ def _merge(twin, e):
             twin["sources"].append(s)
     twin["declared"] = sorted(set(twin["declared"]) | set(e["declared"]))
     twin["priority"] = twin["priority"] or e["priority"]
-    for f in ("deadline", "location", "speaker", "end_date"):
-        twin[f] = twin[f] or e[f]
+    for f in ("deadline", "location", "speaker", "end_date", "series"):
+        twin[f] = twin.get(f) or e.get(f)
     if len(e["description"] or "") > len(twin["description"] or ""):
         twin["description"] = e["description"]
     if twin["region"] == "unknown" and e["region"] != "unknown":
@@ -357,6 +358,18 @@ def no_embedding_guess(e):
     return names_only(e.get("title")) and len(clean(e.get("description"))) < 60
 
 
+def classify_event(e, emb=None, llm=None, defaults=None):
+    """One event's (subfields, fields, basis), given the embedding and Claude results."""
+    if emb and no_embedding_guess(e):
+        emb = None             # a name, a placeholder or French: nothing the model can judge
+    subs, fields, basis = classify(e, emb if emb and emb[0] != "neg" else None, llm)
+    fallback = next((defaults[s] for s in e.get("sources") or [e.get("source")] if s in (defaults or {})), None)
+    if not subs and fallback:
+        # a source that lists one subject only: known to be mathematics, branch unknown (2026-11-10)
+        subs, fields, basis = [fallback], [T.parent(fallback)], ["source"]
+    return subs, fields, basis
+
+
 def classify_all(events):
     status = {}
     embed_results = [None] * len(events)
@@ -375,10 +388,9 @@ def classify_all(events):
         llm_results, status["llm"] = llm_all(events)
     except Exception as exc:
         llm_results, status["llm"] = [None] * len(events), {"status": "off", "detail": f"{exc}"[:200]}
+    defaults = default_fields()
     for e, emb, llm in zip(events, embed_results, llm_results):
-        if emb and no_embedding_guess(e):
-            emb = None         # a name, a placeholder or French: nothing the model can judge
-        subs, fields, basis = classify(e, emb if emb and emb[0] != "neg" else None, llm)
+        subs, fields, basis = classify_event(e, emb, llm, defaults)
         e.update(subfields=subs, fields=fields, basis=basis)
         if llm and llm.get("reason"):
             e["reason"] = llm["reason"]

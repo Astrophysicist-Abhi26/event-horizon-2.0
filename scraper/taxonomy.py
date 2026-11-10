@@ -311,7 +311,7 @@ RULES = {
         r"h-bases", r"arithmetic statistics", r"CS:CM-types?", r"complex multiplication",
     ],
     "math.topology": [
-        r"topolog\w*(?! (?:insulator|phase|order|matter|superconduct|quantum|photonic|materials|states?|bands?|semimetal|defects?|solitons?|charges?|excitations?|edge|phenomena|magnon|qubits?|protection|crystalline)) ||| (?:quantum|topological|condensed|soft|active) matter|insulators?|semimetals?|superconduct\w*|quantum hall|berry|photonic\w*|materials?|band structures?|magnon\w*|qubits?",
+        r"topolog\w*(?! (?:insulator|phase|order|matter|superconduct|quantum|photonic|materials|states?|bands?|semimetal|defects?|solitons?|charges?|excitations?|edge|phenomena|magnon|qubits?|protection|crystalline)) ||| (?:quantum|topological|condensed|soft|active) matter|insulators?|semimetals?|superconduct\w*|quantum hall|berry|photonic\w*|materials?|band structures?|magnon\w*|qubits?|isolants?|matière",
         r"homotop\w*", r"homolog\w*", r"cohomolog\w*", r"knots?(?! per)", r"knot theory",
         r"manifolds?", r"CS:TQFTs?", r"cobordism", r"fundamental groups?",
         r"mapping class", r"[34]-manifolds?", r"sheaf|sheaves", r"persistent homology",
@@ -354,14 +354,15 @@ RULES = {
         r"CS:TQFTs?", r"mathematical relativity", r"spectral theory",
         r"quantum field theor\w* (?:mathematic\w*|rigorous)",
     ],
-    "math.other": [
-        r"mathemat\w*", r"combinatori\w*", r"graph theor\w*", r"mathematical logic",
-        r"model theory", r"set theory", r"g(?:ö|o)del", r"incompleteness", r"proof theory",
-        r"dynamical systems?", r"game theory", r"optimal control", r"convex optimi[sz]ation",
-        r"numerical methods?", r"information theor\w*", r"coding theory",
-        r"formal(?:i[sz]ed|i[sz]ation)? (?:proofs?|mathematics)", r"theorem prov\w*",
-        r"CS:Lean", r"posets?", r"history of mathematics", r"chaos",
-    ],
+    "math.other": [r"mathemat\w*"],
+    # These words were under General mathematics before the branches below existed (moved 2026-11-10)
+    "math.comb": [r"combinatori\w*", r"graph theor\w*", r"posets?"],
+    "math.logic": [r"mathematical logic", r"model theory", r"set theory", r"g(?:ö|o)del", r"incompleteness",
+                   r"proof theory", r"formal(?:i[sz]ed|i[sz]ation)? (?:proofs?|mathematics)", r"theorem prov\w*", r"CS:Lean"],
+    "math.dyn": [r"dynamical systems?", r"(?<!quantum )chaos(?! (?:in|and) (?:black holes?|quantum|many-body))"],
+    "math.optim": [r"game theory", r"optimal control", r"convex optimi[sz]ation"],
+    "math.numeric": [r"numerical methods?"],
+    "math.edu": [r"history of mathematics"],
 
     "phys.gr": [
         r"general relativity", r"gravitation\w*", r"gravity", r"spacetimes?", r"space-time",
@@ -752,6 +753,12 @@ def _compile(pattern):
     pattern = pattern.replace("CS_INLINE_AI", "AI")
     return re.compile(W + "(?:" + pattern + ")" + W, re.I)
 
+
+# French keywords for mathematics (and a little physics and AI): taxonomy_math_fr.py
+from taxonomy_math_fr import FRENCH as _FRENCH, fold as _fold      # noqa: E402
+for _sf, _pats in _FRENCH.items():
+    assert _sf in SUBFIELDS, _sf
+    RULES[_sf] = list(RULES.get(_sf, [])) + [_fold(p) for p in _pats]
 
 COMPILED = {sf: [_compile(p) for p in pats] for sf, pats in RULES.items()}
 

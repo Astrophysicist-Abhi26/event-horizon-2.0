@@ -97,6 +97,7 @@ sources:
     checked: 2026-09-24
 
   - name: IISc Mathematics seminars
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: listing
     url: https://math.iisc.ac.in/SeminarsByYear/Seminars{year}.html
     location: Department of Mathematics, IISc, Bengaluru, India
@@ -282,6 +283,7 @@ sources:
     checked: 2026-10-25       # server works; nothing upcoming yet. www.saha.ac.in answers 500
 
   - name: IIT Bombay Mathematics seminars
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: ical                # the department's WebCalendar, published as iCal
     url: https://www.math.iitb.ac.in/webcal/publish.php?user=__public__
     page: https://www.math.iitb.ac.in/NewsEvents/seminars.php
@@ -292,6 +294,7 @@ sources:
     enabled: false            # host has not answered GitHub's servers since 2026-10-25 (RUNBOOK I-5)
 
   - name: IIT Bombay Mathematics events
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: listing
     url: https://www.math.iitb.ac.in/NewsEvents/events.php
     location: IIT Bombay, Mumbai, India
@@ -398,6 +401,7 @@ sources:
     checked: 2026-10-25
 
   - name: IIT Jodhpur Mathematics seminars
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: listing
     url: https://iitj.ac.in/mathematics/en/Seminars-and-Meetings
     location: Department of Mathematics, IIT Jodhpur, Jodhpur, India
@@ -412,6 +416,7 @@ sources:
     checked: 2026-10-25
 
   - name: IIT (BHU) Mathematical Sciences events
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: table
     url: https://www.iitbhu.ac.in/dept/mat/events
     location: Department of Mathematical Sciences, IIT (BHU), Varanasi, India
@@ -492,6 +497,7 @@ sources:
     checked: 2026-11-04
 
   - name: French maths Indico
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: indico
     base: https://indico.math.cnrs.fr
     category: 0
@@ -509,6 +515,7 @@ sources:
     enabled: false          # worked in a probe, then 403 Forbidden in the scheduled run (2026-11-04)
 
   - name: Math institutes events
+    default_field: math.other  # lists only mathematics: an event nothing else tags goes to this bucket
     kind: listing
     urls:
       - https://www.mathinstitutes.org/events
@@ -519,6 +526,7 @@ sources:
     checked: 2026-11-04
 
   - name: Vakil algebraic geometry
+    default_field: math.geometry.algebraic  # lists only algebraic geometry
     kind: listing
     url: https://math.stanford.edu/~vakil/conferences.html
     location: see event

@@ -73,11 +73,11 @@ def _collect(cfg, one):
 
 
 def _event(cfg, title, url, start, end=None, location=None, description="",
-           raw_type=None, speaker=None, online=False, tz=None):
+           raw_type=None, speaker=None, online=False, tz=None, series=None):
     return dict(title=clean(title), url=url, start_date=start, end_date=end or start,
                 deadline=None, location=clean(location) or cfg.get("location"),
                 country=None, online=online, tz=tz,
-                description=clean(description)[:1500], speaker=speaker,
+                description=clean(description)[:1500], speaker=speaker, series=clean(series) or None,
                 source=cfg["name"], raw_type=raw_type or cfg.get("type"),
                 declared=[], priority=False)
 
@@ -250,7 +250,7 @@ def _indico(cfg):
                               iso(e.get("endDate")),
                               clean(e.get("location") or e.get("room") or ""),
                               description=" · ".join(x for x in (series, e.get("description") or "") if x),
-                              raw_type=e.get("type"), tz=e.get("timezone"), speaker=who))
+                              raw_type=e.get("type"), tz=e.get("timezone"), speaker=who, series=series))
     return [e for e in out if e["title"]]
 
 
@@ -293,7 +293,7 @@ def labelled_list_from_html(cfg, html, page_url):
         loc = ", ".join(x for x in (labels.get("venue") or labels.get("place"),
                                      cfg.get("location")) if x)
         out.append(_event(cfg, f"{title} — {speaker}" if speaker else title, page_url, start,
-                          location=loc, description=series, raw_type=cfg.get("type"),
+                          location=loc, description=series, series=series, raw_type=cfg.get("type"),
                           speaker=who))
     return out
 
@@ -479,6 +479,12 @@ def _registry(include_disabled=False):
 
 
 FEED_KINDS = {"ical", "google_calendar", "wp_events", "indico", "rss", "iiser_pune"}
+
+
+def default_fields():
+    """{source name: sub-field} for sources that list one subject only (all mathematics, say):
+    an event nothing else tags still belongs there, in that subject's general bucket."""
+    return {e["name"]: e["default_field"] for e in _registry() if e.get("default_field")}
 
 
 def empty_ok_names():

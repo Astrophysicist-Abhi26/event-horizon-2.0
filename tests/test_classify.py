@@ -15,7 +15,10 @@ LABELS = yaml.safe_load(open(os.path.join(os.path.dirname(T.__file__), "labels.y
 def test_taxonomy_consistent():
     original = {s for s in T.SUBFIELDS if s not in T.PARENT_SF and s not in T.INHERITS and s not in T.MIRRORS}
     assert original == set(T.PROTOTYPES)           # the embedding classifier knows only these
-    assert set(T.RULES) == original | set(T.PARENT_SF)
+    # every sub-field and topic has keywords; a branch added as a container of topics (Combinatorics,
+    # Logic ...) may have branch-level words too, such as "combinatorics" (2026-11-10)
+    assert original | set(T.PARENT_SF) <= set(T.RULES) <= set(T.SUBFIELDS)
+    assert set(T.RULES) - original - set(T.PARENT_SF) <= set(T.INHERITS)
     assert all(T.SUBFIELDS[s][0] in T.FIELDS for s in T.SUBFIELDS)
     # a topic sits in the same field as its sub-field, and every sub-field resolves to its field
     for t, up in T.PARENT_SF.items():
