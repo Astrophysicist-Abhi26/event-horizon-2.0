@@ -35,7 +35,7 @@ Other documents go deeper: [ROADMAP.md](ROADMAP.md) (the long-term plan),
 
 | ID | Workstream | Status | Pull request |
 |---|---|---|---|
-| M1 | Maths precision: placeholder slots, no embedding guesses on French or name-only titles, maths keywords that tag physics events | ✅ | M1 (2026-11-10) |
+| M1 | Maths precision: placeholder slots, no embedding guesses on French or name-only titles, maths keywords that tag physics events | ✅ | [#49](https://github.com/Astrophysicist-Abhi26/event-horizon-2.0/pull/49) |
 | M2 | French keywords; series names count like titles (max 3 branches); maths-only sources fall back to "General mathematics"; legacy words out of "General mathematics" (X-6) | ⏭️ | — |
 | M3 | Maths depth: Statistics branch, about 33 new topics, information theory / finance / history moved | 🗓️ | — |
 | M4 | Maths sources, each probed first: NCM, ATM, TIFR, TIFR-CAM, ISI, IISER/IIT maths, KSoM; RMS/IMS on the watchlist; AMS, EMS, MathMeetings, INI, Fields, MFO, CIRM, HIM, ESI, Lorentz | 🗓️ | — |
@@ -108,7 +108,7 @@ Status: 🔴 open · 🔄 being fixed · ✅ fixed (kept for the record).
 
 | Date | PR | What changed |
 |---|---|---|
-| 2026-11-10 | M1 | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
+| 2026-11-10 | #49 (M1) | 51 placeholder slots dropped (Indico "Férié", "TBA ENS", "…: -"); Indico training and outreach categories skipped; no embedding guesses on French, non-Latin or speaker-name titles; 16 maths patterns narrowed ("field theory", "cryptography", "diffusion", "topological", "curvature" …) with a new "unless" context rule; INSPIRE's maths box weak on meetings that tick 4+ boxes; tests 142 → 153; this log; RUNBOOK and ROADMAP corrected |
 | 2026-11-07 | #46 | Logo R2; maths in titles typeset; titles in other scripts behind a switch |
 | 2026-11-06 | #43 | Shorter watchlist notes; Symmetry 2027 in person (likely) |
 | 2026-11-06 | #41 | Placeholder, holiday, exam and cancelled entries dropped; no embedding guesses on bare names |
