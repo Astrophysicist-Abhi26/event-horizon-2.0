@@ -51,6 +51,8 @@ def keyword_hits(text):
     if not text:
         return hits
     for sf, pats in T.COMPILED.items():
+        if not T.PREFILTER[sf].search(text):
+            continue                    # none of this sub-field's patterns can match
         for p in pats:
             m = p.search(text)
             if m:
