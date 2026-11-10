@@ -74,5 +74,5 @@ def test_saved_selections_are_widened_to_what_the_old_ids_covered():
 
 def test_physics_statistics_words_stay_physics():
     for t in ["Bose-Einstein statistics of photons", "Statistical Physics of Long-Range Interacting Systems",
-              "Clinical Trials Methodology Workshop"]:
+              "Clinical Trials Methodology Workshop", "ISSRE 2027 — International Symposium on Software Reliability Engineering"]:
         assert not any(s.startswith("math.stat") for s in tags(t)), (t, tags(t))
